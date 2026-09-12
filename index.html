@@ -218,11 +218,11 @@
               return;
           }
 
-          if(user === 'admin' && pass === '1234') {
-              localStorage.setItem('currentUser', 'admin');
-              currentLoggedInUser = 'admin';
+          if(user === 'thetwinhtut' && pass === '521999') {
+              localStorage.setItem('currentUser', 'thetwinhtut');
+              currentLoggedInUser = 'thetwinhtut';
               document.getElementById('loginOverlay').style.display = 'none';
-              document.getElementById('welcomeUserText').textContent = 'admin';
+              document.getElementById('welcomeUserText').textContent = 'thetwinhtut';
               currentUserTeam = 'ALL';
               document.querySelectorAll('.admin-only').forEach(el => el.style.display = 'flex');
               document.getElementById('targetTeam').innerHTML = `
@@ -249,7 +249,7 @@
                       alert("Password မှားယွင်းနေပါသည်။");
                   }
               } else {
-                  alert("මෙම Username မရှိပါ။");
+                  alert("Log In ဝင်ရောက်နေသော Username မရှိပါ။");
               }
           } catch(e) {
               alert("Login Error: " + e.message);

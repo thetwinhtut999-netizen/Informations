@@ -108,6 +108,7 @@
       let noticesData = {};
       let readNoticeIds = JSON.parse(localStorage.getItem('readNotices') || '[]');
       let currentUserTeam = 'GKK777'; 
+      let currentLoggedInUser = '';
 
       window.toggleTheme = function() {
           const html = document.documentElement;
@@ -141,6 +142,7 @@
 
           const loggedUser = localStorage.getItem('currentUser');
           if(loggedUser) {
+              currentLoggedInUser = loggedUser;
               document.getElementById('loginOverlay').style.display = 'none';
               document.getElementById('welcomeUserText').textContent = loggedUser;
               checkUserPermissions(loggedUser);
@@ -195,7 +197,6 @@
           }
       };
 
-      // Switch login view or change password view
       window.switchLoginMode = function(mode) {
           if(mode === 'changePass') {
               document.getElementById('normalLoginSection').style.display = 'none';
@@ -217,6 +218,7 @@
 
           if(user === 'admin' && pass === '1234') {
               localStorage.setItem('currentUser', 'admin');
+              currentLoggedInUser = 'admin';
               document.getElementById('loginOverlay').style.display = 'none';
               document.getElementById('welcomeUserText').textContent = 'admin';
               currentUserTeam = 'ALL';
@@ -237,6 +239,7 @@
                   const data = userSnap.data();
                   if(data.password === pass) {
                       localStorage.setItem('currentUser', user);
+                      currentLoggedInUser = user;
                       document.getElementById('loginOverlay').style.display = 'none';
                       document.getElementById('welcomeUserText').textContent = user;
                       checkUserPermissions(user);
@@ -251,7 +254,6 @@
           }
       };
 
-      // First time / user initiated password change with confirm password
       window.handleChangePassword = async function() {
           const user = document.getElementById('cpUser').value.trim().toLowerCase();
           const oldPass = document.getElementById('cpOldPass').value.trim();
@@ -287,7 +289,7 @@
                       document.getElementById('cpConfirmPass').value = '';
                       switchLoginMode('login');
                   } else {
-                      alert("Password အဟောင်း (Temporary password) မှားယွင်းနေပါသည်။");
+                      alert("Password အဟောင်း မှားယွင်းနေပါသည်။");
                   }
               } else {
                   alert("මෙම Username မရှိပါ။");
@@ -503,8 +505,20 @@
               groupedHtml = '<span style="font-size:12px; color:var(--text-sub);">မည်သူမှ တုံ့ပြန်ထားခြင်း မရှိသေးပါ။</span>';
           }
 
+          // Admin တွေအတွက်သာ Edit နဲ့ Delete ခလုတ်ပြရန်
+          let adminActionsHtml = '';
+          if(currentLoggedInUser === 'admin' || currentUserTeam === 'ALL') {
+              adminActionsHtml = `
+                  <div style="display:flex; gap:8px; margin-bottom:12px;">
+                      <button class="btn-action" style="background:var(--primary-light); color:var(--primary);" onclick="openEditModal('${id}')"><i class="fa-solid fa-pen-to-square"></i> ပြင်ရန် (Edit)</button>
+                      <button class="btn-action" style="background:#fee2e2; color:#ef4444;" onclick="deleteNotice('${id}')"><i class="fa-solid fa-trash"></i> ဖျက်ရန် (Delete)</button>
+                  </div>
+              `;
+          }
+
           document.getElementById('modalTitleText').textContent = data.title;
           document.getElementById('modalContentBody').innerHTML = `
+              ${adminActionsHtml}
               <div style="line-height:1.6; margin-bottom:16px; word-break: break-word;">${data.content}</div>
               <div class="action-grid">
                   <button class="btn-action" onclick="submitReaction('${id}', '👍')">👍 ဖတ်ပြီးပြီ</button>
@@ -534,6 +548,71 @@
 
       window.closeNoticeModal = function() {
           document.getElementById('noticeModal').classList.remove('active');
+      };
+
+      // ဖျက်ရန် (Delete) လုပ်ဆောင်ချက်
+      window.deleteNotice = async function(id) {
+          if(!confirm("ဤအသိပေးစာကို ဖျက်ရန် သေချာပါသလား?")) return;
+          try {
+              await deleteDoc(doc(db, "announcements", id));
+              closeNoticeModal();
+              alert("အသိပေးစာကို ဖျက်ပြီးပါပြီ။");
+          } catch(e) {
+              alert("Error deleting: " + e.message);
+          }
+      };
+
+      // ပြင်ဆင်ရန် (Edit) မိုဒယ်ဖွင့်ခြင်း
+      window.openEditModal = function(id) {
+          const data = noticesData[id];
+          if(!data) return;
+          document.getElementById('editPostId').value = id;
+          document.getElementById('editTitle').value = data.title;
+          document.getElementById('editEditor').innerHTML = data.content;
+          document.getElementById('editModal').classList.add('active');
+      };
+
+      window.closeEditModal = function() {
+          document.getElementById('editModal').classList.remove('active');
+      };
+
+      window.formatEditDoc = function(cmd, value = null) {
+          document.execCommand(cmd, false, value);
+      };
+
+      window.insertImageToEditEditor = function(event) {
+          const file = event.target.files[0];
+          if(!file) return;
+          const reader = new FileReader();
+          reader.onload = function(e) {
+              const imgHtml = `<br><img src="${e.target.result}" style="max-width:100%; height:auto; border-radius:8px; margin:8px auto; display:block;"><br>`;
+              document.execCommand('insertHTML', false, imgHtml);
+          };
+          reader.readAsDataURL(file);
+      };
+
+      // ပြင်ဆင်ပြီးသား အချက်အလက်များကို သိမ်းဆည်းရန် (Update)
+      window.updateAnnouncement = async function() {
+          const id = document.getElementById('editPostId').value;
+          const title = document.getElementById('editTitle').value;
+          const content = document.getElementById('editEditor').innerHTML;
+
+          if(!title || !content || content === '<br>') {
+              alert("ခေါင်းစဉ်နှင့် အကြောင်းအရာ ဖြည့်စွက်ပေးပါ။");
+              return;
+          }
+
+          try {
+              await updateDoc(doc(db, "announcements", id), {
+                  title: title,
+                  content: content
+              });
+              closeEditModal();
+              closeNoticeModal();
+              alert("အသိပေးစာကို ပြင်ဆင်ပြီးပါပြီ။");
+          } catch(e) {
+              alert("Error updating: " + e.message);
+          }
       };
 
       window.submitReaction = async function(postId, emoji) {
@@ -571,29 +650,68 @@
         <div id="normalLoginSection">
             <h2 style="font-size: 20px; font-weight: 700; margin-bottom: 6px;">Notice Hub ဝင်ရန်</h2>
             <p style="font-size: 13px; color: var(--text-sub); margin-bottom: 20px;">Username နှင့် Password ဖြင့် ဝင်ရောက်ပါ</p>
-            <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 16px;">
-                <input type="text" id="loginUser" class="input-field" placeholder="Username">
-                <div class="input-group">
-                    <input type="password" id="loginPass" class="input-field" placeholder="Password" style="padding-right: 45px;">
-                    <button type="button" class="password-toggle" onclick="togglePasswordVisibility('loginPass', 'eyeIcon')"><i id="eyeIcon" class="fa-solid fa-eye"></i></button>
+            <div style="display: flex; flex-direction: column; gap: 12px; text-align: left;">
+                <div>
+                    <label style="font-size: 12px; font-weight: 600; color: var(--text-sub);">Username</label>
+                    <input type="text" id="loginUser" class="input-field" placeholder="username ထည့်ပါ" style="margin-top: 4px;">
+                </div>
+                <div>
+                    <label style="font-size: 12px; font-weight: 600; color: var(--text-sub);">Password</label>
+                    <div class="input-group" style="margin-top: 4px;">
+                        <input type="password" id="loginPass" class="input-field" placeholder="password ထည့်ပါ">
+                        <button type="button" class="password-toggle" onclick="togglePasswordVisibility('loginPass', 'loginPassIcon')">
+                            <i id="loginPassIcon" class="fa-solid fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+                <button class="btn-submit" onclick="handleLogin()" style="width: 100%; margin-top: 8px;">ဝင်မည်</button>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px; font-size: 12px;">
+                    <a href="#" onclick="switchLoginMode('changePass')" style="color: var(--primary); text-decoration: none;">Password ပြောင်းရန် / ပထမအကြိမ်</a>
                 </div>
             </div>
-            <button class="btn-submit" style="width: 100%; margin-bottom: 12px;" onclick="handleLogin()">ဝင်ရောက်မည်</button>
-            <button type="button" style="background: none; border: none; color: var(--primary); font-size: 12px; font-weight: 600; cursor: pointer;" onclick="switchLoginMode('changePass')">🔑 Password အသစ်ပြောင်းမည် (First Time)</button>
         </div>
 
-        <!-- Change Password Section (First Time or User Reset) -->
+        <!-- Change Password Section -->
         <div id="changePassSection" style="display: none;">
-            <h2 style="font-size: 18px; font-weight: 700; margin-bottom: 6px;">Password အသစ်သတ်မှတ်ရန်</h2>
-            <p style="font-size: 12px; color: var(--text-sub); margin-bottom: 16px;">Admin ပေးထားသော Temporary Password ဖြင့် Password အသစ် ပြောင်းလဲပါ</p>
-            <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; text-align: left;">
-                <input type="text" id="cpUser" class="input-field" placeholder="Username">
-                <input type="password" id="cpOldPass" class="input-field" placeholder="Password အဟောင်း (Temporary)">
-                <input type="password" id="cpNewPass" class="input-field" placeholder="Password အသစ်">
-                <input type="password" id="cpConfirmPass" class="input-field" placeholder="Password အသစ်ကို အတည်ပြုရန် (Confirm)">
+            <h2 style="font-size: 20px; font-weight: 700; margin-bottom: 6px;">Password ပြောင်းရန်</h2>
+            <p style="font-size: 13px; color: var(--text-sub); margin-bottom: 20px;">Temporary password ဖြင့် Password အသစ်သတ်မှတ်ပါ</p>
+            <div style="display: flex; flex-direction: column; gap: 12px; text-align: left;">
+                <div>
+                    <label style="font-size: 12px; font-weight: 600; color: var(--text-sub);">Username</label>
+                    <input type="text" id="cpUser" class="input-field" placeholder="username ထည့်ပါ" style="margin-top: 4px;">
+                </div>
+                <div>
+                    <label style="font-size: 12px; font-weight: 600; color: var(--text-sub);">Password အဟောင်း (သို့) Temp Pass</label>
+                    <div class="input-group" style="margin-top: 4px;">
+                        <input type="password" id="cpOldPass" class="input-field" placeholder="password အဟောင်း">
+                        <button type="button" class="password-toggle" onclick="togglePasswordVisibility('cpOldPass', 'cpOldPassIcon')">
+                            <i id="cpOldPassIcon" class="fa-solid fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+                <div>
+                    <label style="font-size: 12px; font-weight: 600; color: var(--text-sub);">Password အသစ်</label>
+                    <div class="input-group" style="margin-top: 4px;">
+                        <input type="password" id="cpNewPass" class="input-field" placeholder="password အသစ်">
+                        <button type="button" class="password-toggle" onclick="togglePasswordVisibility('cpNewPass', 'cpNewPassIcon')">
+                            <i id="cpNewPassIcon" class="fa-solid fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+                <div>
+                    <label style="font-size: 12px; font-weight: 600; color: var(--text-sub);">Password အသစ်ကို အတည်ပြုရန်</label>
+                    <div class="input-group" style="margin-top: 4px;">
+                        <input type="password" id="cpConfirmPass" class="input-field" placeholder="password အသစ် ထပ်ထည့်ပါ">
+                        <button type="button" class="password-toggle" onclick="togglePasswordVisibility('cpConfirmPass', 'cpConfirmPassIcon')">
+                            <i id="cpConfirmPassIcon" class="fa-solid fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+                <button class="btn-submit" onclick="handleChangePassword()" style="width: 100%; margin-top: 8px;">Password ပြောင်းမည်</button>
+                <div style="text-align: center; margin-top: 10px; font-size: 12px;">
+                    <a href="#" onclick="switchLoginMode('login')" style="color: var(--primary); text-decoration: none;">← Login သို့ ပြန်သွားရန်</a>
+                </div>
             </div>
-            <button class="btn-submit" style="width: 100%; margin-bottom: 10px;" onclick="handleChangePassword()">Password ပြောင်းမည်</button>
-            <button type="button" style="background: none; border: none; color: var(--text-sub); font-size: 12px; cursor: pointer;" onclick="switchLoginMode('login')"><i class="fa-solid fa-arrow-left"></i> အဝင်စာမျက်နှာသို့ ပြန်သွားရန်</button>
         </div>
 
     </div>
@@ -603,18 +721,20 @@
     <div class="hero-header">
         <div class="brand-container">
             <div class="brand-info">
-                <div class="cat-avatar">🐱<span class="bell-badge">🔔</span></div>
+                <div class="cat-avatar">🐱<span class="bell-badge" id="unreadBadge" style="display:none;">0</span></div>
                 <div>
-                    <div style="font-size: 18px; font-weight: 700;">Notice Hub</div>
-                    <div style="font-size: 12px; opacity: 0.9;">ကြိုဆိုပါတယ်၊ <span id="welcomeUserText" style="font-weight: 700;">User</span></div>
+                    <h1 style="font-size: 18px; font-weight: 700;">Notice Hub</h1>
+                    <div style="font-size: 12px; opacity: 0.9;" id="welcomeUserText">Loading...</div>
                 </div>
             </div>
             <div class="settings-bar">
-                <button class="icon-btn" onclick="toggleTheme()"><i class="fa-solid fa-moon"></i></button>
                 <button class="icon-btn" onclick="toggleThemeDropdown(event)"><i class="fa-solid fa-palette"></i></button>
-                <button class="icon-btn" onclick="handleLogout()"><i class="fa-solid fa-right-from-bracket"></i></button>
-                <div id="themeDropdown" class="theme-dropdown" onclick="event.stopPropagation()">
-                    <div style="font-size: 12px; font-weight: 700; margin-bottom: 4px;">အရောင် အပြင်အဆင်</div>
+                <button class="icon-btn" onclick="handleLogout()" title="Logout"><i class="fa-solid fa-right-from-bracket"></i></button>
+
+                <div class="theme-dropdown" id="themeDropdown">
+                    <div style="font-size: 12px; font-weight: 600; color: var(--text-sub); margin-bottom: 6px;">Theme Mode</div>
+                    <button class="btn-action" style="width:100%; margin-bottom: 10px;" onclick="toggleTheme()"><i class="fa-solid fa-circle-half-stroke"></i> Light / Dark</button>
+                    <div style="font-size: 12px; font-weight: 600; color: var(--text-sub); margin-bottom: 6px;">Accent Color</div>
                     <div class="color-bubbles">
                         <div class="color-bubble" style="background: #4f46e5;" onclick="setAccent('indigo')"></div>
                         <div class="color-bubble" style="background: #059669;" onclick="setAccent('emerald')"></div>
@@ -628,70 +748,130 @@
     </div>
 
     <div class="tab-bar">
-        <button id="tab-feed-btn" class="tab-btn active" onclick="switchTab('feed')"><i class="fa-solid fa-bullhorn"></i> အသိပေးစာများ <span id="unreadBadge" class="badge" style="display:none;">0</span></button>
-        <button id="tab-admin-btn" class="tab-btn admin-only" onclick="switchTab('admin')" style="display:none;"><i class="fa-solid fa-pen-nib"></i> Admin Panel</button>
+        <button class="tab-btn active" id="tab-feed-btn" onclick="switchTab('feed')"><i class="fa-solid fa-bullhorn"></i> အသိပေးစာများ</button>
+        <button class="tab-btn admin-only" id="tab-post-btn" onclick="switchTab('post')" style="display:none;"><i class="fa-solid fa-pen-nib"></i> အသစ်တင်ရန်</button>
+        <button class="tab-btn admin-only" id="tab-admin-btn" onclick="switchTab('admin')" style="display:none;"><i class="fa-solid fa-users-gear"></i> Admin Panel</button>
     </div>
 
     <div class="main-content">
-        <div id="tab-feed" class="tab-content active"><div id="noticeMenuList"></div></div>
+        <!-- Feed Tab -->
+        <div class="tab-content active" id="tab-feed">
+            <div id="noticeMenuList"></div>
+        </div>
 
-        <div id="tab-admin" class="tab-content">
+        <!-- Post Tab -->
+        <div class="tab-content" id="tab-post">
             <div class="form-card">
-                <h3 style="margin-bottom: 14px; font-weight: 700; color: var(--primary); font-size: 16px;"><i class="fa-solid fa-circle-plus"></i> အသိပေးစာအသစ် ထည့်သွင်းရန်</h3>
+                <h3 style="font-size: 16px; font-weight: 700; margin-bottom: 14px;">အသိပေးစာ အသစ် ရေးရန်</h3>
                 <div style="margin-bottom: 12px;">
-                    <label style="font-size: 12px; font-weight: 700; display: block; margin-bottom: 4px;">မည်သည့်အဖွဲ့အတွက်လဲ</label>
-                    <select id="targetTeam" class="input-field">
+                    <label style="font-size: 12px; font-weight: 600; color: var(--text-sub);">အဖွဲ့ရွေးချယ်ရန်</label>
+                    <select id="targetTeam" class="input-field" style="margin-top: 4px;">
+                        <option value="GKK777">GKK777 အဖွဲ့အတွက်</option>
+                        <option value="GKK99">GKK99 အဖွဲ့အတွက်</option>
                     </select>
                 </div>
                 <div style="margin-bottom: 12px;">
-                    <label style="font-size: 12px; font-weight: 700; display: block; margin-bottom: 4px;">ခေါင်းစဉ်</label>
-                    <input type="text" id="title" class="input-field" placeholder="ခေါင်းစဉ်">
+                    <label style="font-size: 12px; font-weight: 600; color: var(--text-sub);">ခေါင်းစဉ်</label>
+                    <input type="text" id="title" class="input-field" placeholder="ခေါင်းစဉ် ရေးပါ..." style="margin-top: 4px;">
                 </div>
                 <div style="margin-bottom: 14px;">
-                    <label style="font-size: 12px; font-weight: 700; display: block; margin-bottom: 4px;">အကြောင်းအရာ</label>
-                    <div class="editor-toolbar">
-                        <button type="button" class="tool-btn" onclick="formatDoc('bold')"><b>B</b></button>
-                        <button type="button" class="tool-btn" onclick="formatDoc('italic')"><i>I</i></button>
-                        <button type="button" class="tool-btn" onclick="formatDoc('underline')"><u>U</u></button>
-                        <label class="image-upload-btn"><i class="fa-regular fa-image"></i> ပုံထည့်ရန်<input type="file" accept="image/*" style="display: none;" onchange="insertImageToEditor(event)"></label>
+                    <label style="font-size: 12px; font-weight: 600; color: var(--text-sub);">အကြောင်းအရာ</label>
+                    <div style="margin-top: 4px;">
+                        <div class="editor-toolbar">
+                            <button type="button" class="tool-btn" onclick="formatDoc('bold')"><i class="fa-solid fa-bold"></i></button>
+                            <button type="button" class="tool-btn" onclick="formatDoc('italic')"><i class="fa-solid fa-italic"></i></button>
+                            <button type="button" class="tool-btn" onclick="formatDoc('underline')"><i class="fa-solid fa-underline"></i></button>
+                            <button type="button" class="tool-btn" onclick="formatDoc('insertUnorderedList')"><i class="fa-solid fa-list-ul"></i></button>
+                        </div>
+                        <div id="editor" class="editor-content" contenteditable="true"></div>
+                        <label class="image-upload-btn">
+                            <i class="fa-regular fa-image"></i> ပုံထည့်ရန်
+                            <input type="file" accept="image/*" onchange="insertImageToEditor(event)" style="display: none;">
+                        </label>
                     </div>
-                    <div id="editor" class="editor-content" contenteditable="true"></div>
                 </div>
-                <button class="btn-submit" style="width: 100%;" onclick="postAnnouncement()">အသိပေးစာ လွှင့်တင်မည်</button>
+                <button class="btn-submit" onclick="postAnnouncement()" style="width: 100%;">လွှင့်တင်မည်</button>
+            </div>
+        </div>
+
+        <!-- Admin Tab -->
+        <div class="tab-content" id="tab-admin">
+            <div class="form-card">
+                <h3 style="font-size: 16px; font-weight: 700; margin-bottom: 14px;">ဝန်ထမ်းအကောင့် အသစ်ဖန်တီးရန်</h3>
+                <div style="display: flex; flex-direction: column; gap: 10px;">
+                    <div>
+                        <label style="font-size: 12px; font-weight: 600; color: var(--text-sub);">Username</label>
+                        <input type="text" id="newUsername" class="input-field" placeholder="ဥပမာ - staff01" style="margin-top: 4px;">
+                    </div>
+                    <div>
+                        <label style="font-size: 12px; font-weight: 600; color: var(--text-sub);">Password (Temporary)</label>
+                        <input type="text" id="newPassword" class="input-field" placeholder="လျှို့ဝှက်နံပါတ်" style="margin-top: 4px;">
+                    </div>
+                    <div>
+                        <label style="font-size: 12px; font-weight: 600; color: var(--text-sub);">အဖွဲ့ (Team)</label>
+                        <select id="newTeam" class="input-field" style="margin-top: 4px;">
+                            <option value="GKK777">GKK777</option>
+                            <option value="GKK99">GKK99</option>
+                        </select>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 8px; margin-top: 4px;">
+                        <input type="checkbox" id="newIsAdmin" style="width: 16px; height: 16px;">
+                        <label for="newIsAdmin" style="font-size: 13px; font-weight: 600;">Admin အဖြစ် သတ်မှတ်ရန်</label>
+                    </div>
+                    <button class="btn-submit" onclick="createNewUser()" style="margin-top: 8px;">အကောင့်ဖန်တီးမည်</button>
+                </div>
             </div>
 
             <div class="form-card">
-                <h3 style="margin-bottom: 14px; font-weight: 700; color: var(--primary); font-size: 16px;"><i class="fa-solid fa-users-gear"></i> ဝန်ထမ်းအကောင့်များ စီမံခန့်ခွဲရန်</h3>
-                <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 14px;">
-                    <input type="text" id="newUsername" class="input-field" placeholder="Username အသစ်">
-                    <input type="password" id="newPassword" class="input-field" placeholder="Temporary Password">
-                    <select id="newTeam" class="input-field">
-                        <option value="GKK777">GKK777</option>
-                        <option value="GKK99">GKK99</option>
-                    </select>
-                    <label style="font-size: 12px; display: flex; align-items: center; gap: 8px;"><input type="checkbox" id="newIsAdmin" style="width: 15px; height: 15px;"> Admin ပေးထားမည်</label>
-                    <button class="btn-submit" style="width: 100%;" onclick="createNewUser()">အကောင့်အသစ် ဖန်တီးမည်</button>
-                </div>
-                <div style="border-top: 1px solid var(--border); padding-top: 12px;">
-                    <div style="font-size: 12px; font-weight: 700; margin-bottom: 6px;">လက်ရှိ အကောင့်များ စာရင်း</div>
-                    <div id="usersTableContainer" style="max-height: 180px; overflow-y: auto;"></div>
-                </div>
+                <h3 style="font-size: 16px; font-weight: 700; margin-bottom: 10px;">လက်ရှိ အကောင့်များ စာရင်း</h3>
+                <div id="usersTableContainer" style="overflow-x: auto;"></div>
             </div>
         </div>
     </div>
 </div>
 
-<div id="noticeModal" class="modal-overlay">
+<!-- View Notice Modal -->
+<div class="modal-overlay" id="noticeModal">
     <div class="modal-card">
         <div class="modal-header">
-            <div>
-                <span style="font-size: 10px; color: var(--primary); font-weight: 700;">Official Notice</span>
-                <h3 id="modalTitleText" style="font-size: 15px; font-weight: 700;"></h3>
-            </div>
+            <h3 id="modalTitleText" style="font-size: 16px; font-weight: 700;">အသေးစိတ်</h3>
             <button class="modal-close" onclick="closeNoticeModal()"><i class="fa-solid fa-xmark"></i></button>
         </div>
         <div class="modal-body" id="modalContentBody"></div>
-        <div class="modal-footer"><button class="btn-submit" onclick="closeNoticeModal()">ပိတ်မည်</button></div>
+    </div>
+</div>
+
+<!-- Edit Notice Modal -->
+<div class="modal-overlay" id="editModal">
+    <div class="modal-card">
+        <div class="modal-header">
+            <h3 style="font-size: 16px; font-weight: 700;">အသိပေးစာ ပြင်ဆင်ရန် (Edit)</h3>
+            <button class="modal-close" onclick="closeEditModal()"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="modal-body">
+            <input type="hidden" id="editPostId">
+            <div style="margin-bottom: 12px;">
+                <label style="font-size: 12px; font-weight: 600; color: var(--text-sub);">ခေါင်းစဉ်</label>
+                <input type="text" id="editTitle" class="input-field" style="margin-top: 4px;">
+            </div>
+            <div style="margin-bottom: 14px;">
+                <label style="font-size: 12px; font-weight: 600; color: var(--text-sub);">အကြောင်းအရာ</label>
+                <div style="margin-top: 4px;">
+                    <div class="editor-toolbar">
+                        <button type="button" class="tool-btn" onclick="formatEditDoc('bold')"><i class="fa-solid fa-bold"></i></button>
+                        <button type="button" class="tool-btn" onclick="formatEditDoc('italic')"><i class="fa-solid fa-italic"></i></button>
+                        <button type="button" class="tool-btn" onclick="formatEditDoc('underline')"><i class="fa-solid fa-underline"></i></button>
+                        <button type="button" class="tool-btn" onclick="formatEditDoc('insertUnorderedList')"><i class="fa-solid fa-list-ul"></i></button>
+                    </div>
+                    <div id="editEditor" class="editor-content" contenteditable="true"></div>
+                    <label class="image-upload-btn">
+                        <i class="fa-regular fa-image"></i> ပုံပြောင်းထည့်ရန်
+                        <input type="file" accept="image/*" onchange="insertImageToEditEditor(event)" style="display: none;">
+                    </label>
+                </div>
+            </div>
+            <button class="btn-submit" onclick="updateAnnouncement()" style="width: 100%;">ပြင်ဆင်ပြီးပါက သိမ်းမည်</button>
+        </div>
     </div>
 </div>
 

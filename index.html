@@ -68,6 +68,8 @@
 
         .action-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 16px 0; }
         .btn-action { padding: 10px 6px; border-radius: 12px; border: 1px solid var(--border); background: var(--surface); color: var(--text-main); font-size: 12px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px; }
+        .btn-action.active-react { background: var(--primary-light); border-color: var(--primary); color: var(--primary); }
+        
         .staff-status-box { background: var(--bg); border: 1px solid var(--border); border-radius: 14px; padding: 12px; margin-bottom: 14px; }
         details.emoji-group { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 8px 10px; margin-top: 6px; }
         details.emoji-group summary { cursor: pointer; font-weight: 600; font-size: 12px; display: flex; justify-content: space-between; align-items: center; }
@@ -90,7 +92,7 @@
 
     <script type="module">
       import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-      import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, serverTimestamp, doc, updateDoc, arrayUnion, setDoc, getDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+      import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, serverTimestamp, doc, updateDoc, setDoc, getDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
       const firebaseConfig = {
         apiKey: "AIzaSyAI5hJOp52rLWJf6LkCE9xEve2YwS5bf1Y",
@@ -489,8 +491,14 @@
           const groupedReactions = {};
           const emojiLabels = { '👍': 'ဖတ်ပြီးပြီ', '❤️': 'လက်ခံသည်', '✔️': 'သိရှိပါပြီ' };
 
+          // လက်ရှိ User ရဲ့ Reaction ကို စစ်ဆေးရန်
+          let myReaction = null;
+
           if(data.reactions) {
               Object.entries(data.reactions).forEach(([user, emoji]) => {
+                  if(user === currentLoggedInUser) {
+                      myReaction = emoji;
+                  }
                   if(!groupedReactions[emoji]) groupedReactions[emoji] = [];
                   groupedReactions[emoji].push(user);
                   totalCount++;
@@ -505,7 +513,6 @@
               groupedHtml = '<span style="font-size:12px; color:var(--text-sub);">မည်သူမှ တုံ့ပြန်ထားခြင်း မရှိသေးပါ။</span>';
           }
 
-          // Admin တွေအတွက်သာ Edit နဲ့ Delete ခလုတ်ပြရန်
           let adminActionsHtml = '';
           if(currentLoggedInUser === 'admin' || currentUserTeam === 'ALL') {
               adminActionsHtml = `
@@ -521,9 +528,9 @@
               ${adminActionsHtml}
               <div style="line-height:1.6; margin-bottom:16px; word-break: break-word;">${data.content}</div>
               <div class="action-grid">
-                  <button class="btn-action" onclick="submitReaction('${id}', '👍')">👍 ဖတ်ပြီးပြီ</button>
-                  <button class="btn-action" onclick="submitReaction('${id}', '❤️')">❤️ လက်ခံသည်</button>
-                  <button class="btn-action" onclick="submitReaction('${id}', '✔️')">✔️ သိရှိပါပြီ</button>
+                  <button class="btn-action ${myReaction === '👍' ? 'active-react' : ''}" onclick="submitReaction('${id}', '👍')">👍 ဖတ်ပြီးပြီ</button>
+                  <button class="btn-action ${myReaction === '❤️' ? 'active-react' : ''}" onclick="submitReaction('${id}', '❤️')">❤️ လက်ခံသည်</button>
+                  <button class="btn-action ${myReaction === '✔️' ? 'active-react' : ''}" onclick="submitReaction('${id}', '✔️')">✔️ သိရှိပါပြီ</button>
               </div>
               <div class="staff-status-box"><div style="font-size:12px; font-weight:700; color:var(--text-sub); margin-bottom:6px;">တုံ့ပြန်ထားသူများ (${totalCount})</div>${groupedHtml}</div>
               <div style="background:var(--bg); border-radius:14px; padding:12px; border:1px solid var(--border);">
@@ -550,7 +557,6 @@
           document.getElementById('noticeModal').classList.remove('active');
       };
 
-      // ဖျက်ရန် (Delete) လုပ်ဆောင်ချက်
       window.deleteNotice = async function(id) {
           if(!confirm("ဤအသိပေးစာကို ဖျက်ရန် သေချာပါသလား?")) return;
           try {
@@ -562,7 +568,6 @@
           }
       };
 
-      // ပြင်ဆင်ရန် (Edit) မိုဒယ်ဖွင့်ခြင်း
       window.openEditModal = function(id) {
           const data = noticesData[id];
           if(!data) return;
@@ -591,7 +596,6 @@
           reader.readAsDataURL(file);
       };
 
-      // ပြင်ဆင်ပြီးသား အချက်အလက်များကို သိမ်းဆည်းရန် (Update)
       window.updateAnnouncement = async function() {
           const id = document.getElementById('editPostId').value;
           const title = document.getElementById('editTitle').value;
@@ -615,8 +619,21 @@
           }
       };
 
+      // User တစ်ဦးလျှင် Post တစ်ခုအတွက် React (၁) ကြိမ်သာ သတ်မှတ်ခြင်း (Admin အတွက် မကန့်သတ်ပါ)
       window.submitReaction = async function(postId, emoji) {
           const user = localStorage.getItem('currentUser');
+          const data = noticesData[postId];
+
+          // Admin ဖြစ်ပါက React ကို အကြိမ်ရေ ကန့်သတ်ချက်မရှိ ထပ်ထည့်ခွင့်ပြုသည် (သို့မဟုတ် ရိုးရိုးထည့်ရန်)
+          if(user !== 'admin') {
+              if(data && data.reactions && data.reactions[user]) {
+                  // အကယ်၍ Staff က React တစ်ခုပေးပြီးသားဆိုလျှင် ထပ်မံပေးခွင့်မပြုတော့ဘဲ Alert ပြမည် သို့မဟုတ် React အသစ်သို့ ပြောင်းလဲခွင့်ပေးမည်။
+                  // ဤနေရာတွင် User တစ်ဦးလျှင် တစ်ကြိမ်သာ သတ်မှတ်ပေးရန်အတွက် ယခင်ပေးထားပြီးသားဆိုပါက ထပ်မပေးနိုင်စေရန် တားဆီးထားသည်။
+                  alert("သင်သည် ဤအသိပေးစာအတွက် React ပေးပြီးသား ဖြစ်ပါသည်။ (Admin မှလွဲ၍ တစ်ကြိမ်သာ ပေးနိုင်သည်)");
+                  return;
+              }
+          }
+
           try {
               const docRef = doc(db, "announcements", postId);
               const updateData = {};
@@ -626,13 +643,24 @@
           } catch(e) { alert(e.message); }
       };
 
+      // Comment အတွက် User တစ်ဦးလျှင် တစ်ကြိမ်သာ (Admin အတွက် မကန့်သတ်ပါ)
       window.sendComment = async function(postId) {
           const user = localStorage.getItem('currentUser');
           const input = document.getElementById(`comment-${postId}`);
           if(!input.value) return;
+
+          const data = noticesData[postId];
+          if(user !== 'admin' && data && data.comments) {
+              const hasCommented = data.comments.some(c => c.userName === user);
+              if(hasCommented) {
+                  alert("သင်သည် ဤအသိပေးစာအတွက် Comment ရေးပြီးသား ဖြစ်ပါသည်။ (Staff များအတွက် တစ်ကြိမ်သာ ခွင့်ပြုသည်)");
+                  return;
+              }
+          }
+
           try {
               await updateDoc(doc(db, "announcements", postId), {
-                  comments: arrayUnion({ userName: user, text: input.value, createdAt: new Date().toISOString() })
+                  comments: [...(data.comments || []), { userName: user, text: input.value, createdAt: new Date().toISOString() }]
               });
               input.value = '';
               renderModalBody(postId);

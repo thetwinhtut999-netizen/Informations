@@ -1,57 +1,170 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="my" data-theme="light" data-accent="indigo">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Staff App</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Notice Hub - Enterprise Portal</title>
+    
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#4f46e5">
+
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Padauk:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <style>
-        body {
-            font-family: sans-serif;
-            margin: 0;
-            padding: 16px;
-            background-color: #f4f7f6;
-        }
-        .container {
-            max-width: 600px;
-            margin: 0 auto;
-            background: #ffffff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        h2 {
-            color: #333;
-            text-align: center;
-        }
-        /* ဖုန်းမျက်နှာပြင်ပေါ်မှာ ခလုတ်တွေနဲ့ စာသားတွေ အံဝင်ခွင်ကျဖြစ်စေရန် */
-        button, input {
-            width: 100%;
-            padding: 12px;
-            margin-top: 10px;
-            font-size: 16px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            box-sizing: border-box;
-        }
-        button {
-            background-color: #007bff;
-            color: white;
-            border: none;
-            cursor: pointer;
-        }
-        button:active {
-            background-color: #0056b3;
-        }
+        :root[data-accent="indigo"] { --primary: #4f46e5; --primary-light: #e0e7ff; --gradient: linear-gradient(135deg, #312e81 0%, #4f46e5 50%, #0284c7 100%); }
+        :root[data-theme="light"] { --bg: #f8fafc; --surface: #ffffff; --text-main: #0f172a; --text-sub: #64748b; --border: #e2e8f0; --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05); }
+        :root[data-theme="dark"] { --bg: #0f172a; --surface: #1e293b; --text-main: #f8fafc; --text-sub: #94a3b8; --border: #334155; --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3); }
+
+        * { box-sizing: border-box; font-family: 'Padauk', 'Plus Jakarta Sans', sans-serif; margin: 0; padding: 0; }
+        body { background-color: var(--bg); color: var(--text-main); display: flex; justify-content: center; min-height: 100vh; width: 100vw; overflow-x: hidden; }
+
+        .app-shell { width: 100%; max-width: 100%; background: var(--bg); min-height: 100vh; display: flex; flex-direction: column; position: relative; }
+        
+        .login-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: var(--bg); display: flex; justify-content: center; align-items: center; z-index: 3000; padding: 16px; width: 100%; height: 100vh; }
+        .login-card { background: var(--surface); border: 1px solid var(--border); border-radius: 20px; width: 100%; max-width: 420px; padding: 24px; box-shadow: var(--shadow); text-align: center; }
+
+        .hero-header { background: var(--gradient); color: white; padding: 20px 16px; }
+        .brand-container { display: flex; justify-content: space-between; align-items: center; }
+        .brand-info { display: flex; align-items: center; gap: 12px; }
+        .cat-avatar { width: 45px; height: 45px; background: rgba(255,255,255,0.2); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px; border: 2px solid rgba(255,215,0,0.8); position: relative; }
+        .cat-avatar .bell-badge { position: absolute; bottom: -4px; right: -4px; background: #f59e0b; color: #fff; font-size: 10px; width: 16px; height: 16px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 2px solid #fff; }
+
+        .settings-bar { display: flex; gap: 6px; align-items: center; position: relative; }
+        .icon-btn { background: rgba(255,255,255,0.2); border: none; color: white; width: 34px; height: 34px; border-radius: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+
+        .tab-bar { display: flex; gap: 6px; padding: 12px 16px 6px 16px; background: var(--surface); border-bottom: 1px solid var(--border); }
+        .tab-btn { flex: 1; padding: 10px; background: var(--bg); border: 1px solid var(--border); border-radius: 12px; font-weight: 600; font-size: 13px; color: var(--text-sub); cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; }
+        .tab-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
+        .badge { background-color: #ef4444; color: white; font-size: 10px; font-weight: bold; padding: 2px 6px; border-radius: 20px; }
+
+        .main-content { padding: 16px; flex: 1; width: 100%; max-width: 800px; margin: 0 auto; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+        .notice-card-modern { background: var(--surface); border-radius: 14px; padding: 16px; margin-bottom: 12px; box-shadow: var(--shadow); border: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; cursor: pointer; position: relative; }
+        
+        .input-field, select.input-field { padding: 12px 14px; border: 1px solid var(--border); background: var(--surface); color: var(--text-main); border-radius: 12px; font-size: 14px; outline: none; width: 100%; }
+        .input-group { position: relative; display: flex; align-items: center; width: 100%; }
+        .password-toggle { position: absolute; right: 14px; background: none; border: none; color: var(--text-sub); cursor: pointer; }
+
+        .btn-submit { background: var(--primary); color: white; border: none; padding: 12px 18px; border-radius: 12px; font-weight: 600; font-size: 14px; cursor: pointer; width: 100%; }
     </style>
+
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+      import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, serverTimestamp, doc, updateDoc, arrayUnion, setDoc, getDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+      const firebaseConfig = {
+        apiKey: "AIzaSyAI5hJOp52rLWJf6LkCE9xEve2YwS5bf1Y",
+        authDomain: "company-notice-app-ea512.firebaseapp.com",
+        projectId: "company-notice-app-ea512",
+        storageBucket: "company-notice-app-ea512.firebasestorage.app",
+        messagingSenderId: "876175516131",
+        appId: "1:876175516131:web:aba275499133507f97c0d6",
+        measurementId: "G-1GWN701LRP"
+      };
+
+      const app = initializeApp(firebaseConfig);
+      const db = getFirestore(app);
+
+      window.addEventListener('DOMContentLoaded', () => {
+          const loggedUser = localStorage.getItem('currentUser');
+          if(loggedUser) {
+              document.getElementById('loginOverlay').style.display = 'none';
+              document.getElementById('welcomeUserText').textContent = loggedUser;
+          }
+      });
+
+      window.handleLogin = async function() {
+          const user = document.getElementById('loginUser').value.trim().toLowerCase();
+          const pass = document.getElementById('loginPass').value.trim();
+
+          if(!user || !pass) {
+              alert("Username နှင့် Password ထည့်သွင်းပေးပါ။");
+              return;
+          }
+
+          if(user === 'admin' && pass === '1234') {
+              localStorage.setItem('currentUser', 'admin');
+              document.getElementById('loginOverlay').style.display = 'none';
+              document.getElementById('welcomeUserText').textContent = 'admin';
+              return;
+          }
+
+          try {
+              const userRef = doc(db, "users", user);
+              const userSnap = await getDoc(userRef);
+              if(userSnap.exists()) {
+                  if(userSnap.data().password === pass) {
+                      localStorage.setItem('currentUser', user);
+                      document.getElementById('loginOverlay').style.display = 'none';
+                      document.getElementById('welcomeUserText').textContent = user;
+                  } else {
+                      alert("Password မှားယွင်းနေပါသည်။");
+                  }
+              } else {
+                  alert("මෙම Username မရှိပါ။");
+              }
+          } catch(e) {
+              alert("Login Error: " + e.message);
+          }
+      };
+
+      window.handleLogout = function() {
+          localStorage.removeItem('currentUser');
+          location.reload();
+      };
+    </script>
 </head>
 <body>
 
-    <div class="container">
-        <h2>ဝန်ထမ်းများအတွက် App</h2>
-        <p>ဖုန်းဆိုဒ်နဲ့ ကွတ်တိပေါ်စေရန် ပြင်ဆင်ထားပါပြီ။</p>
-        
-        <!-- လိုအပ်တဲ့ Form သို့မဟုတ် အချက်အလက်များကို ဤနေရာတွင် ထည့်ပါ -->
+<div id="loginOverlay" class="login-overlay">
+    <div class="login-card">
+        <div class="cat-avatar" style="margin: 0 auto 14px auto; width: 55px; height: 55px; font-size: 28px;">🐱<span class="bell-badge" style="width: 18px; height: 18px; font-size: 11px;">🔔</span></div>
+        <h2 style="font-size: 18px; font-weight: 700; margin-bottom: 6px;">Notice Hub ဝင်ရန်</h2>
+        <p style="font-size: 12px; color: var(--text-sub); margin-bottom: 16px;">Username နှင့် Password ဖြင့် ဝင်ရောက်ပါ</p>
+        <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 16px;">
+            <input type="text" id="loginUser" class="input-field" placeholder="Username">
+            <div class="input-group">
+                <input type="password" id="loginPass" class="input-field" placeholder="Password" style="padding-right: 45px;">
+            </div>
+        </div>
+        <button class="btn-submit" onclick="handleLogin()">ဝင်ရောက်မည်</button>
     </div>
+</div>
+
+<div class="app-shell">
+    <div class="hero-header">
+        <div class="brand-container">
+            <div class="brand-info">
+                <div class="cat-avatar">🐱<span class="bell-badge">🔔</span></div>
+                <div>
+                    <div style="font-size: 16px; font-weight: 700;">Notice Hub</div>
+                    <div style="font-size: 11px; opacity: 0.9;">ကြိုဆိုပါတယ်၊ <span id="welcomeUserText" style="font-weight: 700;">User</span></div>
+                </div>
+            </div>
+            <div class="settings-bar">
+                <button class="icon-btn" onclick="handleLogout()"><i class="fa-solid fa-right-from-bracket"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <div class="tab-bar">
+        <button id="tab-feed-btn" class="tab-btn active"><i class="fa-solid fa-bullhorn"></i> အသိပေးစာများ</button>
+    </div>
+
+    <div class="main-content">
+        <div id="tab-feed" class="tab-content active">
+            <div class="notice-card-modern">
+                <div>
+                    <div style="font-weight: 700; font-size: 14px; margin-bottom: 4px;">ကြိုဆိုပါတယ်</div>
+                    <div style="font-size: 12px; color: var(--text-sub);">အသိပေးစာများ ဤနေရာတွင် ပေါ်လာပါမည်။</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 </body>
 </html>

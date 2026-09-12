@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Notice Hub - Enterprise Portal</title>
     
+    <!-- PWA Manifest Link -->
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#4f46e5">
 
@@ -13,44 +14,61 @@
     
     <style>
         :root[data-accent="indigo"] { --primary: #4f46e5; --primary-light: #e0e7ff; --gradient: linear-gradient(135deg, #312e81 0%, #4f46e5 50%, #0284c7 100%); }
-        :root[data-theme="light"] { --bg: #f8fafc; --surface: #ffffff; --text-main: #0f172a; --text-sub: #64748b; --border: #e2e8f0; --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05); }
-        :root[data-theme="dark"] { --bg: #0f172a; --surface: #1e293b; --text-main: #f8fafc; --text-sub: #94a3b8; --border: #334155; --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3); }
+        :root[data-accent="emerald"] { --primary: #059669; --primary-light: #d1fae5; --gradient: linear-gradient(135deg, #064e3b 0%, #059669 50%, #0d9488 100%); }
+        :root[data-accent="rose"] { --primary: #e11d48; --primary-light: #ffe4e6; --gradient: linear-gradient(135deg, #881337 0%, #e11d48 50%, #c026d3 100%); }
+        :root[data-accent="amber"] { --primary: #d97706; --primary-light: #fef3c7; --gradient: linear-gradient(135deg, #78350f 0%, #d97706 50%, #ea580c 100%); }
+        :root[data-accent="purple"] { --primary: #7c3aed; --primary-light: #f3e8ff; --gradient: linear-gradient(135deg, #4c1d95 0%, #7c3aed 50%, #db2777 100%); }
+
+        :root[data-theme="light"] {
+            --bg: #f8fafc; --surface: #ffffff; --text-main: #0f172a; --text-sub: #64748b; --border: #e2e8f0; --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+        }
+        :root[data-theme="dark"] {
+            --bg: #0f172a; --surface: #1e293b; --text-main: #f8fafc; --text-sub: #94a3b8; --border: #334155; --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+        }
 
         * { box-sizing: border-box; font-family: 'Padauk', 'Plus Jakarta Sans', sans-serif; margin: 0; padding: 0; }
-        body { background-color: var(--bg); color: var(--text-main); display: flex; justify-content: center; min-height: 100vh; width: 100vw; overflow-x: hidden; }
+        body { background-color: var(--bg); color: var(--text-main); display: flex; justify-content: center; min-height: 100vh; overflow-x: hidden; }
 
-        .app-shell { width: 100%; max-width: 100%; background: var(--bg); min-height: 100vh; display: flex; flex-direction: column; position: relative; }
-        .login-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: var(--bg); display: flex; justify-content: center; align-items: center; z-index: 3000; padding: 16px; width: 100%; height: 100vh; }
-        .login-card { background: var(--surface); border: 1px solid var(--border); border-radius: 20px; width: 100%; max-width: 420px; padding: 24px; box-shadow: var(--shadow); text-align: center; }
+        .app-shell { width: 100%; max-width: 680px; background: var(--bg); min-height: 100vh; display: flex; flex-direction: column; box-shadow: var(--shadow); position: relative; overflow-x: hidden; }
+        .login-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: var(--bg); display: flex; justify-content: center; align-items: center; z-index: 3000; padding: 20px; }
+        .login-card { background: var(--surface); border: 1px solid var(--border); border-radius: 24px; width: 100%; max-width: 420px; padding: 32px; box-shadow: var(--shadow); text-align: center; }
 
-        .hero-header { background: var(--gradient); color: white; padding: 20px 16px; }
+        .hero-header { background: var(--gradient); color: white; padding: 24px 20px; }
         .brand-container { display: flex; justify-content: space-between; align-items: center; }
-        .brand-info { display: flex; align-items: center; gap: 12px; }
-        .cat-avatar { width: 45px; height: 45px; background: rgba(255,255,255,0.2); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px; border: 2px solid rgba(255,215,0,0.8); position: relative; }
-        .cat-avatar .bell-badge { position: absolute; bottom: -4px; right: -4px; background: #f59e0b; color: #fff; font-size: 10px; width: 16px; height: 16px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 2px solid #fff; }
+        .brand-info { display: flex; align-items: center; gap: 14px; }
+        .cat-avatar { width: 50px; height: 50px; background: rgba(255,255,255,0.2); border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 26px; border: 2px solid rgba(255,215,0,0.8); position: relative; }
+        .cat-avatar .bell-badge { position: absolute; bottom: -4px; right: -4px; background: #f59e0b; color: #fff; font-size: 11px; width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 2px solid #fff; }
 
-        .settings-bar { display: flex; gap: 6px; align-items: center; position: relative; }
-        .icon-btn { background: rgba(255,255,255,0.2); border: none; color: white; width: 34px; height: 34px; border-radius: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .settings-bar { display: flex; gap: 8px; align-items: center; position: relative; }
+        .icon-btn { background: rgba(255,255,255,0.2); border: none; color: white; width: 36px; height: 36px; border-radius: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
 
-        .tab-bar { display: flex; gap: 8px; padding: 12px 16px 6px 16px; background: var(--surface); border-bottom: 1px solid var(--border); width: 100%; }
-        .tab-btn { flex: 1; padding: 10px; background: var(--bg); border: 1px solid var(--border); border-radius: 12px; font-weight: 600; font-size: 13px; color: var(--text-sub); cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; white-space: nowrap; }
+        .theme-dropdown { position: absolute; top: 45px; right: 0; background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 12px; box-shadow: var(--shadow); display: none; z-index: 500; width: 210px; text-align: left; }
+        .theme-dropdown.active { display: block; }
+        .color-bubbles { display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
+        .color-bubble { width: 26px; height: 26px; border-radius: 50%; cursor: pointer; border: 2px solid var(--border); }
+
+        .tab-bar { display: flex; gap: 8px; padding: 14px 20px 6px 20px; background: var(--surface); border-bottom: 1px solid var(--border); }
+        .tab-btn { flex: 1; padding: 10px; background: var(--bg); border: 1px solid var(--border); border-radius: 12px; font-weight: 600; font-size: 13px; color: var(--text-sub); cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
         .tab-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
         .badge { background-color: #ef4444; color: white; font-size: 10px; font-weight: bold; padding: 2px 6px; border-radius: 20px; }
 
-        .main-content { padding: 16px; flex: 1; width: 100%; max-width: 800px; margin: 0 auto; }
+        .main-content { padding: 20px; flex: 1; }
         .tab-content { display: none; }
         .tab-content.active { display: block; }
 
-        .notice-card-modern { background: var(--surface); border-radius: 14px; padding: 16px; margin-bottom: 12px; box-shadow: var(--shadow); border: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; cursor: pointer; position: relative; }
-        .notice-card-modern.unread::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 5px; background-color: var(--primary); border-top-left-radius: 14px; border-bottom-left-radius: 14px; }
+        .notice-card-modern { background: var(--surface); border-radius: 16px; padding: 18px; margin-bottom: 12px; box-shadow: var(--shadow); border: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; cursor: pointer; position: relative; }
+        .notice-card-modern.unread::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 5px; background-color: var(--primary); }
 
         .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 23, 42, 0.7); display: none; justify-content: center; align-items: center; z-index: 9999; padding: 10px; }
         .modal-overlay.active { display: flex; }
+        
         .modal-card { background: var(--surface); border-radius: 20px; width: 100%; max-width: 500px; max-height: 90vh; display: flex; flex-direction: column; box-shadow: var(--shadow); border: 1px solid var(--border); overflow: hidden; }
         .modal-header { padding: 14px 18px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
-        .modal-body { padding: 16px; overflow-y: auto; flex: 1; word-break: break-word; }
+        .modal-body { padding: 16px; overflow-y: auto; flex: 1; word-break: break-word; overflow-x: hidden; }
         .modal-footer { padding: 12px 18px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; flex-shrink: 0; }
         .modal-close { background: var(--bg); border: 1px solid var(--border); width: 32px; height: 32px; border-radius: 50%; cursor: pointer; color: var(--text-sub); display: flex; align-items: center; justify-content: center; }
+
+        .modal-body img, .editor-content img { max-width: 100% !important; height: auto !important; border-radius: 8px; display: block; margin: 8px auto; object-fit: contain; }
 
         .action-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 16px 0; }
         .btn-action { padding: 10px 6px; border-radius: 12px; border: 1px solid var(--border); background: var(--surface); color: var(--text-main); font-size: 12px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px; }
@@ -59,17 +77,24 @@
         details.emoji-group summary { cursor: pointer; font-weight: 600; font-size: 12px; display: flex; justify-content: space-between; align-items: center; }
         .staff-tag { display: inline-flex; align-items: center; background: var(--primary-light); color: var(--primary); border: 1px solid var(--border); padding: 2px 8px; border-radius: 20px; font-size: 11px; margin: 2px; font-weight: 600; }
 
-        .input-field, select.input-field { padding: 12px 14px; border: 1px solid var(--border); background: var(--surface); color: var(--text-main); border-radius: 12px; font-size: 14px; outline: none; width: 100%; }
+        .input-field, select.input-field { padding: 10px 14px; border: 1px solid var(--border); background: var(--surface); color: var(--text-main); border-radius: 12px; font-size: 13px; outline: none; width: 100%; }
+        .input-group { position: relative; display: flex; align-items: center; width: 100%; }
+        .password-toggle { position: absolute; right: 14px; background: none; border: none; color: var(--text-sub); cursor: pointer; }
+
         .editor-toolbar { display: flex; gap: 6px; background: var(--bg); padding: 8px; border: 1px solid var(--border); border-bottom: none; border-top-left-radius: 12px; border-top-right-radius: 12px; }
         .tool-btn { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 6px 10px; cursor: pointer; color: var(--text-main); }
-        .editor-content { min-height: 150px; background: var(--surface); border: 1px solid var(--border); border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; padding: 14px; font-size: 14px; outline: none; color: var(--text-main); overflow-y: auto; }
-        .btn-submit { background: var(--primary); color: white; border: none; padding: 12px 18px; border-radius: 12px; font-weight: 600; font-size: 14px; cursor: pointer; width: 100%; }
+        .editor-content { min-height: 180px; max-height: 300px; background: var(--surface); border: 1px solid var(--border); border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; padding: 14px; font-size: 13px; outline: none; color: var(--text-main); overflow-y: auto; overflow-x: hidden; }
+        .image-upload-btn { background: var(--surface); border: 1px dashed var(--border); border-radius: 10px; padding: 8px 12px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; color: var(--primary); margin-top: 6px; }
+
+        .btn-submit { background: var(--primary); color: white; border: none; padding: 10px 18px; border-radius: 12px; font-weight: 600; cursor: pointer; }
         .form-card { background: var(--surface); border-radius: 20px; padding: 20px; box-shadow: var(--shadow); border: 1px solid var(--border); margin-bottom: 16px; }
+        .user-table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 10px; }
+        .user-table th, .user-table td { padding: 8px; border-bottom: 1px solid var(--border); text-align: left; }
     </style>
 
     <script type="module">
       import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-      import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, serverTimestamp, doc, updateDoc, arrayUnion, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+      import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, serverTimestamp, doc, updateDoc, arrayUnion, setDoc, getDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
       const firebaseConfig = {
         apiKey: "AIzaSyAI5hJOp52rLWJf6LkCE9xEve2YwS5bf1Y",
@@ -86,9 +111,38 @@
 
       let noticesData = {};
       let readNoticeIds = JSON.parse(localStorage.getItem('readNotices') || '[]');
-      let currentUserTeam = 'GKK777';
+      let currentUserTeam = 'GKK777'; 
+
+      window.toggleTheme = function() {
+          const html = document.documentElement;
+          const current = html.getAttribute('data-theme');
+          const next = current === 'dark' ? 'light' : 'dark';
+          html.setAttribute('data-theme', next);
+          localStorage.setItem('appTheme', next);
+      };
+
+      window.setAccent = function(color) {
+          document.documentElement.setAttribute('data-accent', color);
+          localStorage.setItem('appAccent', color);
+          document.getElementById('themeDropdown').classList.remove('active');
+      };
+
+      window.toggleThemeDropdown = function(e) {
+          e.stopPropagation();
+          document.getElementById('themeDropdown').classList.toggle('active');
+      };
+
+      window.addEventListener('click', () => {
+          const dropdown = document.getElementById('themeDropdown');
+          if(dropdown) dropdown.classList.remove('active');
+      });
 
       window.addEventListener('DOMContentLoaded', () => {
+          const savedTheme = localStorage.getItem('appTheme') || 'light';
+          const savedAccent = localStorage.getItem('appAccent') || 'indigo';
+          document.documentElement.setAttribute('data-theme', savedTheme);
+          document.documentElement.setAttribute('data-accent', savedAccent);
+
           const loggedUser = localStorage.getItem('currentUser');
           if(loggedUser) {
               document.getElementById('loginOverlay').style.display = 'none';
@@ -105,6 +159,7 @@
                   <option value="GKK777">GKK777 အဖွဲ့အတွက်</option>
                   <option value="GKK99">GKK99 အဖွဲ့အတွက်</option>
               `;
+              loadUsersList();
               loadNotices('ALL');
               return;
           }
@@ -115,22 +170,53 @@
               if(snap.exists()) {
                   const data = snap.data();
                   currentUserTeam = data.team || 'GKK777';
+
                   if(data.isAdmin) {
                       document.querySelectorAll('.admin-only').forEach(el => el.style.display = 'flex');
-                      document.getElementById('targetTeam').innerHTML = `<option value="${currentUserTeam}">${currentUserTeam} အဖွဲ့အတွက် (သင့်အဖွဲ့)</option>`;
+                      loadUsersList();
+                      const targetTeamSelect = document.getElementById('targetTeam');
+                      targetTeamSelect.innerHTML = `<option value="${currentUserTeam}">${currentUserTeam} အဖွဲ့အတွက် (သင့်အဖွဲ့)</option>`;
                   }
-                  loadNotices(currentUserTeam);
-              } else {
+
                   loadNotices(currentUserTeam);
               }
-          } catch(e) { console.error(e); loadNotices(currentUserTeam); }
+          } catch(e) {
+              console.error(e);
+          }
       }
+
+      window.togglePasswordVisibility = function(fieldId, iconId) {
+          const field = document.getElementById(fieldId);
+          const icon = document.getElementById(iconId);
+          if(field.type === 'password') {
+              field.type = 'text';
+              icon.classList.remove('fa-eye');
+              icon.classList.add('fa-eye-slash');
+          } else {
+              field.type = 'password';
+              icon.classList.remove('fa-eye-slash');
+              icon.classList.add('fa-eye');
+          }
+      };
+
+      window.switchLoginMode = function(mode) {
+          if(mode === 'changePass') {
+              document.getElementById('normalLoginSection').style.display = 'none';
+              document.getElementById('changePassSection').style.display = 'block';
+          } else {
+              document.getElementById('normalLoginSection').style.display = 'block';
+              document.getElementById('changePassSection').style.display = 'none';
+          }
+      };
 
       window.handleLogin = async function() {
           const user = document.getElementById('loginUser').value.trim().toLowerCase();
           const pass = document.getElementById('loginPass').value.trim();
 
-          if(!user || !pass) { alert("Username နှင့် Password ထည့်သွင်းပေးပါ။"); return; }
+          if(!user || !pass) {
+              alert("Username နှင့် Password ထည့်သွင်းပေးပါ။");
+              return;
+          }
 
           if(user === 'admin' && pass === '1234') {
               localStorage.setItem('currentUser', 'admin');
@@ -142,6 +228,7 @@
                   <option value="GKK777">GKK777 အဖွဲ့အတွက်</option>
                   <option value="GKK99">GKK99 အဖွဲ့အတွက်</option>
               `;
+              loadUsersList();
               loadNotices('ALL');
               return;
           }
@@ -150,20 +237,143 @@
               const userRef = doc(db, "users", user);
               const userSnap = await getDoc(userRef);
               if(userSnap.exists()) {
-                  if(userSnap.data().password === pass) {
+                  const data = userSnap.data();
+                  if(data.password === pass) {
                       localStorage.setItem('currentUser', user);
                       document.getElementById('loginOverlay').style.display = 'none';
                       document.getElementById('welcomeUserText').textContent = user;
                       checkUserPermissions(user);
-                  } else { alert("Password မှားယွင်းနေပါသည်။"); }
-              } else { alert("මෙම Username မရှိပါ။"); }
-          } catch(e) { alert("Login Error: " + e.message); }
+                  } else {
+                      alert("Password မှားယွင်းနေပါသည်။");
+                  }
+              } else {
+                  alert("මෙම Username မရှိပါ။");
+              }
+          } catch(e) {
+              alert("Login Error: " + e.message);
+          }
+      };
+
+      window.handleChangePassword = async function() {
+          const user = document.getElementById('cpUser').value.trim().toLowerCase();
+          const oldPass = document.getElementById('cpOldPass').value.trim();
+          const newPass = document.getElementById('cpNewPass').value.trim();
+          const confirmPass = document.getElementById('cpConfirmPass').value.trim();
+
+          if(!user || !oldPass || !newPass || !confirmPass) {
+              alert("အချက်အလက်များကို အပြည့်အစုံ ဖြည့်စွက်ပေးပါ။");
+              return;
+          }
+
+          if(newPass !== confirmPass) {
+              alert("Password အသစ်နှစ်ခု ကိုက်ညီမှု မရှိပါ။ ပြန်လည်စစ်ဆေးပါ။");
+              return;
+          }
+
+          if(newPass.length < 4) {
+              alert("Password အသစ်သည် အနည်းဆုံး ဂဏန်း (သို့) စာလုံး ၄ လုံး ပါရှိရပါမည်။");
+              return;
+          }
+
+          try {
+              const userRef = doc(db, "users", user);
+              const userSnap = await getDoc(userRef);
+              if(userSnap.exists()) {
+                  const data = userSnap.data();
+                  if(data.password === oldPass) {
+                      await updateDoc(userRef, { password: newPass });
+                      alert("Password အသစ် ပြောင်းလဲခြင်း အောင်မြင်ပါသည်။ ကျေးဇူးပြု၍ Password အသစ်ဖြင့် ဝင်ရောက်ပါ။");
+                      document.getElementById('cpUser').value = '';
+                      document.getElementById('cpOldPass').value = '';
+                      document.getElementById('cpNewPass').value = '';
+                      document.getElementById('cpConfirmPass').value = '';
+                      switchLoginMode('login');
+                  } else {
+                      alert("Password အဟောင်း (Temporary password) မှားယွင်းနေပါသည်။");
+                  }
+              } else {
+                  alert("මෙම Username မရှိပါ။");
+              }
+          } catch(e) {
+              alert("Error: " + e.message);
+          }
       };
 
       window.handleLogout = function() {
           localStorage.removeItem('currentUser');
           location.reload();
       };
+
+      window.createNewUser = async function() {
+          const username = document.getElementById('newUsername').value.trim().toLowerCase();
+          const password = document.getElementById('newPassword').value.trim();
+          const isAdmin = document.getElementById('newIsAdmin').checked;
+          const team = document.getElementById('newTeam').value;
+
+          if(!username || !password) {
+              alert("Username နှင့် Password ဖြည့်ပါ။");
+              return;
+          }
+
+          try {
+              await setDoc(doc(db, "users", username), {
+                  password: password,
+                  isAdmin: isAdmin,
+                  team: team,
+                  createdAt: serverTimestamp()
+              });
+              alert(`အကောင့်အသစ် (${username} - ${team}) ဖန်တီးပြီးပါပြီ။`);
+              document.getElementById('newUsername').value = '';
+              document.getElementById('newPassword').value = '';
+              loadUsersList();
+          } catch(e) {
+              alert("Error: " + e.message);
+          }
+      };
+
+      window.resetUserPassword = async function(username) {
+          const newPass = prompt(`(${username}) အတွက် Password အသစ် ရိုက်ထည့်ပါ:`);
+          if(!newPass) return;
+          try {
+              await updateDoc(doc(db, "users", username), { password: newPass });
+              alert(`Password ပြောင်းလဲပြီးပါပြီ။`);
+          } catch(e) {
+              alert("Error: " + e.message);
+          }
+      };
+
+      window.deleteUserAccount = async function(username) {
+          if(!confirm(`(${username}) အကောင့်ကို ဖျက်ရန် သေချာပါသလား?`)) return;
+          try {
+              await deleteDoc(doc(db, "users", username));
+              loadUsersList();
+          } catch(e) {
+              alert("Error: " + e.message);
+          }
+      };
+
+      async function loadUsersList() {
+          const container = document.getElementById('usersTableContainer');
+          if(!container) return;
+          onSnapshot(collection(db, "users"), (snapshot) => {
+              let html = `<table class="user-table"><tr><th>User</th><th>Team</th><th>Role</th><th>Actions</th></tr>`;
+              snapshot.forEach(docSnap => {
+                  const d = docSnap.data();
+                  const u = docSnap.id;
+                  html += `<tr>
+                      <td><b>${u}</b></td>
+                      <td><span style="font-size:10px; background:var(--primary-light); color:var(--primary); padding:2px 6px; border-radius:6px;">${d.team || 'GKK777'}</span></td>
+                      <td>${d.isAdmin ? 'Admin' : 'Staff'}</td>
+                      <td>
+                          <button class="btn-action" style="padding:2px 6px; font-size:10px; display:inline-flex;" onclick="resetUserPassword('${u}')">Pass</button>
+                          <button class="btn-action" style="padding:2px 6px; font-size:10px; display:inline-flex; color:#ef4444;" onclick="deleteUserAccount('${u}')">Del</button>
+                      </td>
+                  </tr>`;
+              });
+              html += `</table>`;
+              container.innerHTML = html;
+          });
+      }
 
       window.switchTab = function(tabName) {
           document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
@@ -172,7 +382,20 @@
           document.getElementById(`tab-${tabName}`).classList.add('active');
       };
 
-      window.formatDoc = function(cmd) { document.execCommand(cmd, false, null); };
+      window.formatDoc = function(cmd, value = null) {
+          document.execCommand(cmd, false, value);
+      };
+
+      window.insertImageToEditor = function(event) {
+          const file = event.target.files[0];
+          if(!file) return;
+          const reader = new FileReader();
+          reader.onload = function(e) {
+              const imgHtml = `<br><img src="${e.target.result}" style="max-width:100%; height:auto; border-radius:8px; margin:8px auto; display:block;"><br>`;
+              document.execCommand('insertHTML', false, imgHtml);
+          };
+          reader.readAsDataURL(file);
+      };
 
       window.postAnnouncement = async function() {
           const title = document.getElementById('title').value;
@@ -180,18 +403,28 @@
           const selectedTeam = document.getElementById('targetTeam').value;
           const finalTeam = (currentUserTeam === 'ALL') ? selectedTeam : currentUserTeam;
 
-          if(!title || !content || content === '<br>') { alert("ခေါင်းစဉ်နှင့် အကြောင်းအရာ ဖြည့်စွက်ပေးပါ။"); return; }
+          if(!title || !content || content === '<br>') {
+              alert("ခေါင်းစဉ်နှင့် အကြောင်းအရာ ဖြည့်စွက်ပေးပါ။");
+              return;
+          }
 
           try {
               await addDoc(collection(db, "announcements"), {
-                  title: title, content: content, targetTeam: finalTeam,
-                  createdAt: serverTimestamp(), reactions: {}, comments: []
+                  title: title,
+                  content: content,
+                  targetTeam: finalTeam,
+                  createdAt: serverTimestamp(),
+                  reactions: {},
+                  comments: []
               });
+
               document.getElementById('title').value = '';
               document.getElementById('editor').innerHTML = '';
-              alert("အသိပေးစာ လွှင့်တင်ပြီးပါပြီ။");
+              alert(`အသိပေးစာကို (${finalTeam}) အတွက် လွှင့်တင်ပြီးပါပြီ။`);
               switchTab('feed');
-          } catch(e) { alert("Error: " + e.message); }
+          } catch(e) {
+              alert("Error: " + e.message);
+          }
       };
 
       function loadNotices(userTeam) {
@@ -206,7 +439,9 @@
                   const data = docSnapshot.data();
                   const id = docSnapshot.id;
 
-                  if(userTeam !== 'ALL' && data.targetTeam && data.targetTeam !== userTeam) return;
+                  if(userTeam !== 'ALL' && data.targetTeam && data.targetTeam !== userTeam) {
+                      return;
+                  }
 
                   noticesData[id] = data;
                   const isUnread = !readNoticeIds.includes(id);
@@ -229,8 +464,12 @@
               });
 
               const badge = document.getElementById('unreadBadge');
-              if(unreadCount > 0) { badge.textContent = unreadCount; badge.style.display = 'inline-block'; }
-              else { badge.style.display = 'none'; }
+              if(unreadCount > 0) {
+                  badge.textContent = unreadCount;
+                  badge.style.display = 'inline-block';
+              } else {
+                  badge.style.display = 'none';
+              }
           });
       }
 
@@ -241,7 +480,7 @@
           let commentsHtml = '';
           if(data.comments) {
               data.comments.forEach(c => {
-                  commentsHtml += `<div style="background:var(--surface); border:1px solid var(--border); padding:8px 12px; border-radius:10px; margin-bottom:6px; font-size:12px;"><span style="font-weight:700; color:var(--primary);">${c.userName}:</span> ${c.text}</div>`;
+                  commentsHtml += `<div style="background:var(--surface); border:1px solid var(--border); padding:8px 12px; border-radius:10px; margin-bottom:6px; font-size:12px; word-break: break-word;"><span style="font-weight:700; color:var(--primary);">${c.userName}:</span> ${c.text}</div>`;
               });
           }
 
@@ -262,11 +501,13 @@
               Object.entries(groupedReactions).forEach(([emoji, users]) => {
                   groupedHtml += `<details class="emoji-group"><summary><span>${emoji} ${emojiLabels[emoji]} (${users.length})</span></summary><div style="margin-top:6px; display:flex; flex-wrap:wrap;">${users.map(u => `<span class="staff-tag">${u}</span>`).join('')}</div></details>`;
               });
-          } else { groupedHtml = '<span style="font-size:12px; color:var(--text-sub);">မည်သူမှ တုံ့ပြန်ထားခြင်း မရှိသေးပါ။</span>'; }
+          } else {
+              groupedHtml = '<span style="font-size:12px; color:var(--text-sub);">မည်သူမှ တုံ့ပြန်ထားခြင်း မရှိသေးပါ။</span>';
+          }
 
           document.getElementById('modalTitleText').textContent = data.title;
           document.getElementById('modalContentBody').innerHTML = `
-              <div style="line-height:1.6; margin-bottom:16px;">${data.content}</div>
+              <div style="line-height:1.6; margin-bottom:16px; word-break: break-word;">${data.content}</div>
               <div class="action-grid">
                   <button class="btn-action" onclick="submitReaction('${id}', '👍')">👍 ဖတ်ပြီးပြီ</button>
                   <button class="btn-action" onclick="submitReaction('${id}', '❤️')">❤️ လက်ခံသည်</button>
@@ -274,7 +515,7 @@
               </div>
               <div class="staff-status-box"><div style="font-size:12px; font-weight:700; color:var(--text-sub); margin-bottom:6px;">တုံ့ပြန်ထားသူများ (${totalCount})</div>${groupedHtml}</div>
               <div style="background:var(--bg); border-radius:14px; padding:12px; border:1px solid var(--border);">
-                  <div style="max-height:100px; overflow-y:auto; margin-bottom:8px;">${commentsHtml || '<div style="color:var(--text-sub); font-size:12px; text-align:center;">မှတ်ချက် မရှိသေးပါ</div>'}</div>
+                  <div style="max-height:120px; overflow-y:auto; margin-bottom:8px;">${commentsHtml || '<div style="color:var(--text-sub); font-size:12px; text-align:center;">မှတ်ချက် မရှိသေးပါ</div>'}</div>
                   <div style="display:flex; gap:6px;">
                       <input type="text" id="comment-${id}" class="input-field" placeholder="မှတ်ချက် ရေးရန်...">
                       <button class="btn-submit" style="width:45px; padding:0; flex-shrink:0;" onclick="sendComment('${id}')"><i class="fa-solid fa-paper-plane"></i></button>
@@ -288,11 +529,14 @@
               readNoticeIds.push(id);
               localStorage.setItem('readNotices', JSON.stringify(readNoticeIds));
           }
+          document.getElementById('noticeModal').dataset.activeId = id;
           renderModalBody(id);
           document.getElementById('noticeModal').classList.add('active');
       };
 
-      window.closeNoticeModal = function() { document.getElementById('noticeModal').classList.remove('active'); };
+      window.closeNoticeModal = function() {
+          document.getElementById('noticeModal').classList.remove('active');
+      };
 
       window.submitReaction = async function(postId, emoji) {
           const user = localStorage.getItem('currentUser');
@@ -323,14 +567,34 @@
 
 <div id="loginOverlay" class="login-overlay">
     <div class="login-card">
-        <div class="cat-avatar" style="margin: 0 auto 14px auto; width: 55px; height: 55px; font-size: 28px;">🐱<span class="bell-badge" style="width: 18px; height: 18px; font-size: 11px;">🔔</span></div>
-        <h2 style="font-size: 18px; font-weight: 700; margin-bottom: 6px;">Notice Hub ဝင်ရန်</h2>
-        <p style="font-size: 12px; color: var(--text-sub); margin-bottom: 16px;">Username နှင့် Password ဖြင့် ဝင်ရောက်ပါ</p>
-        <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 16px;">
-            <input type="text" id="loginUser" class="input-field" placeholder="Username">
-            <input type="password" id="loginPass" class="input-field" placeholder="Password">
+        <div class="cat-avatar" style="margin: 0 auto 14px auto; width: 60px; height: 60px; font-size: 30px;">🐱<span class="bell-badge" style="width: 20px; height: 20px; font-size: 12px;">🔔</span></div>
+        
+        <div id="normalLoginSection">
+            <h2 style="font-size: 20px; font-weight: 700; margin-bottom: 6px;">Notice Hub ဝင်ရန်</h2>
+            <p style="font-size: 13px; color: var(--text-sub); margin-bottom: 20px;">Username နှင့် Password ဖြင့် ဝင်ရောက်ပါ</p>
+            <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 16px;">
+                <input type="text" id="loginUser" class="input-field" placeholder="Username">
+                <div class="input-group">
+                    <input type="password" id="loginPass" class="input-field" placeholder="Password" style="padding-right: 45px;">
+                    <button type="button" class="password-toggle" onclick="togglePasswordVisibility('loginPass', 'eyeIcon')"><i id="eyeIcon" class="fa-solid fa-eye"></i></button>
+                </div>
+            </div>
+            <button class="btn-submit" style="width: 100%; margin-bottom: 12px;" onclick="handleLogin()">ဝင်ရောက်မည်</button>
+            <button type="button" style="background: none; border: none; color: var(--primary); font-size: 12px; font-weight: 600; cursor: pointer;" onclick="switchLoginMode('changePass')">🔑 Password အသစ်ပြောင်းမည် (First Time)</button>
         </div>
-        <button class="btn-submit" onclick="handleLogin()">ဝင်ရောက်မည်</button>
+
+        <div id="changePassSection" style="display: none;">
+            <h2 style="font-size: 18px; font-weight: 700; margin-bottom: 6px;">Password အသစ်သတ်မှတ်ရန်</h2>
+            <p style="font-size: 12px; color: var(--text-sub); margin-bottom: 16px;">Admin ပေးထားသော Temporary Password ဖြင့် Password အသစ် ပြောင်းလဲပါ</p>
+            <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; text-align: left;">
+                <input type="text" id="cpUser" class="input-field" placeholder="Username">
+                <input type="password" id="cpOldPass" class="input-field" placeholder="Password အဟောင်း (Temporary)">
+                <input type="password" id="cpNewPass" class="input-field" placeholder="Password အသစ်">
+                <input type="password" id="cpConfirmPass" class="input-field" placeholder="Password အသစ်ကို အတည်ပြုရန် (Confirm)">
+            </div>
+            <button class="btn-submit" style="width: 100%; margin-bottom: 10px;" onclick="handleChangePassword()">Password ပြောင်းမည်</button>
+            <button type="button" style="background: none; border: none; color: var(--text-sub); font-size: 12px; cursor: pointer;" onclick="switchLoginMode('login')"><i class="fa-solid fa-arrow-left"></i> အဝင်စာမျက်နှာသို့ ပြန်သွားရန်</button>
+        </div>
     </div>
 </div>
 
@@ -340,12 +604,24 @@
             <div class="brand-info">
                 <div class="cat-avatar">🐱<span class="bell-badge">🔔</span></div>
                 <div>
-                    <div style="font-size: 16px; font-weight: 700;">Notice Hub</div>
-                    <div style="font-size: 11px; opacity: 0.9;">ကြိုဆိုပါတယ်၊ <span id="welcomeUserText" style="font-weight: 700;">User</span></div>
+                    <div style="font-size: 18px; font-weight: 700;">Notice Hub</div>
+                    <div style="font-size: 12px; opacity: 0.9;">ကြိုဆိုပါတယ်၊ <span id="welcomeUserText" style="font-weight: 700;">User</span></div>
                 </div>
             </div>
             <div class="settings-bar">
+                <button class="icon-btn" onclick="toggleTheme()"><i class="fa-solid fa-moon"></i></button>
+                <button class="icon-btn" onclick="toggleThemeDropdown(event)"><i class="fa-solid fa-palette"></i></button>
                 <button class="icon-btn" onclick="handleLogout()"><i class="fa-solid fa-right-from-bracket"></i></button>
+                <div id="themeDropdown" class="theme-dropdown" onclick="event.stopPropagation()">
+                    <div style="font-size: 12px; font-weight: 700; margin-bottom: 4px;">အရောင် အပြင်အဆင်</div>
+                    <div class="color-bubbles">
+                        <div class="color-bubble" style="background: #4f46e5;" onclick="setAccent('indigo')"></div>
+                        <div class="color-bubble" style="background: #059669;" onclick="setAccent('emerald')"></div>
+                        <div class="color-bubble" style="background: #e11d48;" onclick="setAccent('rose')"></div>
+                        <div class="color-bubble" style="background: #d97706;" onclick="setAccent('amber')"></div>
+                        <div class="color-bubble" style="background: #7c3aed;" onclick="setAccent('purple')"></div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -363,7 +639,8 @@
                 <h3 style="margin-bottom: 14px; font-weight: 700; color: var(--primary); font-size: 16px;"><i class="fa-solid fa-circle-plus"></i> အသိပေးစာအသစ် ထည့်သွင်းရန်</h3>
                 <div style="margin-bottom: 12px;">
                     <label style="font-size: 12px; font-weight: 700; display: block; margin-bottom: 4px;">မည်သည့်အဖွဲ့အတွက်လဲ</label>
-                    <select id="targetTeam" class="input-field"></select>
+                    <select id="targetTeam" class="input-field">
+                    </select>
                 </div>
                 <div style="margin-bottom: 12px;">
                     <label style="font-size: 12px; font-weight: 700; display: block; margin-bottom: 4px;">ခေါင်းစဉ်</label>
@@ -375,10 +652,29 @@
                         <button type="button" class="tool-btn" onclick="formatDoc('bold')"><b>B</b></button>
                         <button type="button" class="tool-btn" onclick="formatDoc('italic')"><i>I</i></button>
                         <button type="button" class="tool-btn" onclick="formatDoc('underline')"><u>U</u></button>
+                        <label class="image-upload-btn"><i class="fa-regular fa-image"></i> ပုံထည့်ရန်<input type="file" accept="image/*" style="display: none;" onchange="insertImageToEditor(event)"></label>
                     </div>
                     <div id="editor" class="editor-content" contenteditable="true"></div>
                 </div>
-                <button class="btn-submit" onclick="postAnnouncement()">အသိပေးစာ လွှင့်တင်မည်</button>
+                <button class="btn-submit" style="width: 100%;" onclick="postAnnouncement()">အသိပေးစာ လွှင့်တင်မည်</button>
+            </div>
+
+            <div class="form-card">
+                <h3 style="margin-bottom: 14px; font-weight: 700; color: var(--primary); font-size: 16px;"><i class="fa-solid fa-users-gear"></i> ဝန်ထမ်းအကောင့်များ စီမံခန့်ခွဲရန်</h3>
+                <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 14px;">
+                    <input type="text" id="newUsername" class="input-field" placeholder="Username အသစ်">
+                    <input type="password" id="newPassword" class="input-field" placeholder="Temporary Password">
+                    <select id="newTeam" class="input-field">
+                        <option value="GKK777">GKK777</option>
+                        <option value="GKK99">GKK99</option>
+                    </select>
+                    <label style="font-size: 12px; display: flex; align-items: center; gap: 8px;"><input type="checkbox" id="newIsAdmin" style="width: 15px; height: 15px;"> Admin ပေးထားမည်</label>
+                    <button class="btn-submit" style="width: 100%;" onclick="createNewUser()">အကောင့်အသစ် ဖန်တီးမည်</button>
+                </div>
+                <div style="border-top: 1px solid var(--border); padding-top: 12px;">
+                    <div style="font-size: 12px; font-weight: 700; margin-bottom: 6px;">လက်ရှိ အကောင့်များ စာရင်း</div>
+                    <div id="usersTableContainer" style="max-height: 180px; overflow-y: auto;"></div>
+                </div>
             </div>
         </div>
     </div>

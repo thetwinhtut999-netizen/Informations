@@ -5,89 +5,107 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Informations🔔🔔 - Enterprise Portal</title>
     
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Padauk:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Padauk:wght@400;700&family=Pyidaungsu&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        :root[data-accent="indigo"] { --primary: #4f46e5; --primary-light: #e0e7ff; --gradient: linear-gradient(135deg, #312e81 0%, #4f46e5 50%, #0284c7 100%); }
-        :root[data-accent="emerald"] { --primary: #059669; --primary-light: #d1fae5; --gradient: linear-gradient(135deg, #064e3b 0%, #059669 50%, #0d9488 100%); }
-        :root[data-accent="rose"] { --primary: #e11d48; --primary-light: #ffe4e6; --gradient: linear-gradient(135deg, #881337 0%, #e11d48 50%, #c026d3 100%); }
-        :root[data-accent="amber"] { --primary: #d97706; --primary-light: #fef3c7; --gradient: linear-gradient(135deg, #78350f 0%, #d97706 50%, #ea580c 100%); }
-        :root[data-accent="purple"] { --primary: #7c3aed; --primary-light: #f3e8ff; --gradient: linear-gradient(135deg, #4c1d95 0%, #7c3aed 50%, #db2777 100%); }
+        :root[data-accent="indigo"] { --primary: #4f46e5; --primary-light: rgba(79, 70, 229, 0.15); --gradient: linear-gradient(135deg, #312e81 0%, #4f46e5 50%, #0284c7 100%); }
+        :root[data-accent="emerald"] { --primary: #059669; --primary-light: rgba(5, 150, 105, 0.15); --gradient: linear-gradient(135deg, #064e3b 0%, #059669 50%, #0d9488 100%); }
+        :root[data-accent="rose"] { --primary: #e11d48; --primary-light: rgba(225, 29, 72, 0.15); --gradient: linear-gradient(135deg, #881337 0%, #e11d48 50%, #c026d3 100%); }
+        :root[data-accent="amber"] { --primary: #d97706; --primary-light: rgba(217, 119, 6, 0.15); --gradient: linear-gradient(135deg, #78350f 0%, #d97706 50%, #ea580c 100%); }
+        :root[data-accent="purple"] { --primary: #7c3aed; --primary-light: rgba(124, 58, 237, 0.15); --gradient: linear-gradient(135deg, #4c1d95 0%, #7c3aed 50%, #db2777 100%); }
 
         :root[data-theme="light"] {
-            --bg: #f8fafc; --surface: #ffffff; --text-main: #0f172a; --text-sub: #64748b; --border: #e2e8f0; --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+            --bg-gradient: linear-gradient(135deg, #e0e7ff 0%, #f3e8ff 50%, #e0f2fe 100%);
+            --surface: rgba(255, 255, 255, 0.75);
+            --surface-solid: #ffffff;
+            --text-main: #0f172a;
+            --text-sub: #64748b;
+            --border: rgba(255, 255, 255, 0.6);
+            --border-solid: #e2e8f0;
+            --shadow: 0 10px 30px 0 rgba(31, 38, 135, 0.1);
+            --glass-backdrop: blur(16px);
         }
         :root[data-theme="dark"] {
-            --bg: #0f172a; --surface: #1e293b; --text-main: #f8fafc; --text-sub: #94a3b8; --border: #334155; --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+            --bg-gradient: linear-gradient(135deg, #0f172a 100%, #1e1b4b 50%, #020617 0%);
+            --surface: rgba(30, 41, 59, 0.65);
+            --surface-solid: #1e293b;
+            --text-main: #f8fafc;
+            --text-sub: #94a3b8;
+            --border: rgba(255, 255, 255, 0.08);
+            --border-solid: #334155;
+            --shadow: 0 10px 30px 0 rgba(0, 0, 0, 0.37);
+            --glass-backdrop: blur(16px);
         }
 
         * { box-sizing: border-box; font-family: 'Padauk', 'Plus Jakarta Sans', sans-serif; margin: 0; padding: 0; }
-        body { background-color: var(--bg); color: var(--text-main); display: flex; justify-content: center; min-height: 100vh; overflow-x: hidden; }
+        body { background: var(--bg-gradient); background-attachment: fixed; color: var(--text-main); display: flex; justify-content: center; min-height: 100vh; overflow-x: hidden; }
 
-        .app-shell { width: 100%; max-width: 680px; background: var(--bg); min-height: 100vh; display: flex; flex-direction: column; box-shadow: var(--shadow); position: relative; overflow-x: hidden; }
-        .login-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: var(--bg); display: flex; justify-content: center; align-items: center; z-index: 3000; padding: 20px; }
-        .login-card { background: var(--surface); border: 1px solid var(--border); border-radius: 24px; width: 100%; max-width: 420px; padding: 32px; box-shadow: var(--shadow); text-align: center; }
+        .app-shell { width: 100%; max-width: 680px; background: transparent; min-height: 100vh; display: flex; flex-direction: column; position: relative; overflow-x: hidden; }
+        
+        .login-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 23, 42, 0.5); backdrop-filter: blur(20px); display: flex; justify-content: center; align-items: center; z-index: 3000; padding: 20px; }
+        .login-card { background: var(--surface); backdrop-filter: var(--glass-backdrop); border: 1px solid var(--border); border-radius: 24px; width: 100%; max-width: 420px; padding: 32px; box-shadow: var(--shadow); text-align: center; }
 
-        .hero-header { background: var(--gradient); color: white; padding: 24px 20px; }
+        .hero-header { background: var(--gradient); color: white; padding: 24px 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
         .brand-container { display: flex; justify-content: space-between; align-items: center; }
         .brand-info { display: flex; align-items: center; gap: 14px; }
-        .cat-avatar { width: 50px; height: 50px; background: rgba(255,255,255,0.2); border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 26px; border: 2px solid rgba(255,215,0,0.8); position: relative; }
+        .cat-avatar { width: 50px; height: 50px; background: rgba(255,255,255,0.2); border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 26px; border: 2px solid rgba(255,215,0,0.8); position: relative; backdrop-filter: blur(5px); }
         .cat-avatar .bell-badge { position: absolute; bottom: -4px; right: -4px; background: #f59e0b; color: #fff; font-size: 11px; width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 2px solid #fff; }
 
         .settings-bar { display: flex; gap: 8px; align-items: center; position: relative; }
-        .icon-btn { background: rgba(255,255,255,0.2); border: none; color: white; width: 36px; height: 36px; border-radius: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .icon-btn { background: rgba(255,255,255,0.2); border: none; color: white; width: 36px; height: 36px; border-radius: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(5px); }
 
-        .theme-dropdown { position: absolute; top: 45px; right: 0; background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 12px; box-shadow: var(--shadow); display: none; z-index: 500; width: 210px; text-align: left; }
+        .theme-dropdown { position: absolute; top: 45px; right: 0; background: var(--surface); backdrop-filter: var(--glass-backdrop); border: 1px solid var(--border); border-radius: 14px; padding: 12px; box-shadow: var(--shadow); display: none; z-index: 500; width: 210px; text-align: left; }
         .theme-dropdown.active { display: block; }
         .color-bubbles { display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
         .color-bubble { width: 26px; height: 26px; border-radius: 50%; cursor: pointer; border: 2px solid var(--border); }
 
-        .tab-bar { display: flex; gap: 8px; padding: 14px 20px 6px 20px; background: var(--surface); border-bottom: 1px solid var(--border); }
-        .tab-btn { flex: 1; padding: 10px; background: var(--bg); border: 1px solid var(--border); border-radius: 12px; font-weight: 600; font-size: 13px; color: var(--text-sub); cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
-        .tab-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
+        .tab-bar { display: flex; gap: 8px; padding: 14px 20px 6px 20px; background: var(--surface); backdrop-filter: var(--glass-backdrop); border-bottom: 1px solid var(--border); }
+        .tab-btn { flex: 1; padding: 10px; background: var(--surface); backdrop-filter: blur(5px); border: 1px solid var(--border); border-radius: 12px; font-weight: 600; font-size: 13px; color: var(--text-sub); cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.2s; }
+        .tab-btn.active { background: var(--primary); color: white; border-color: var(--primary); box-shadow: 0 4px 15px var(--primary-light); }
         .badge { background-color: #ef4444; color: white; font-size: 10px; font-weight: bold; padding: 2px 6px; border-radius: 20px; }
 
         .main-content { padding: 20px; flex: 1; }
         .tab-content { display: none; }
         .tab-content.active { display: block; }
 
-        .notice-card-modern { background: var(--surface); border-radius: 16px; padding: 18px; margin-bottom: 12px; box-shadow: var(--shadow); border: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; cursor: pointer; position: relative; }
-        .notice-card-modern.unread::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 5px; background-color: var(--primary); }
+        .notice-card-modern { background: var(--surface); backdrop-filter: var(--glass-backdrop); border-radius: 16px; padding: 18px; margin-bottom: 12px; box-shadow: var(--shadow); border: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; cursor: pointer; position: relative; transition: transform 0.2s; }
+        .notice-card-modern:hover { transform: translateY(-2px); }
+        .notice-card-modern.unread::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 5px; background-color: var(--primary); border-top-left-radius: 16px; border-bottom-left-radius: 16px; }
 
-        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 23, 42, 0.7); display: none; justify-content: center; align-items: center; z-index: 9999; padding: 10px; }
+        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(12px); display: none; justify-content: center; align-items: center; z-index: 9999; padding: 10px; }
         .modal-overlay.active { display: flex; }
         
-        .modal-card { background: var(--surface); border-radius: 20px; width: 100%; max-width: 500px; max-height: 90vh; display: flex; flex-direction: column; box-shadow: var(--shadow); border: 1px solid var(--border); overflow: hidden; }
+        .modal-card { background: var(--surface); backdrop-filter: var(--glass-backdrop); border-radius: 20px; width: 100%; max-width: 500px; max-height: 90vh; display: flex; flex-direction: column; box-shadow: var(--shadow); border: 1px solid var(--border); overflow: hidden; }
         .modal-header { padding: 14px 18px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
         .modal-body { padding: 16px; overflow-y: auto; flex: 1; word-break: break-word; overflow-x: hidden; }
         .modal-footer { padding: 12px 18px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; flex-shrink: 0; }
-        .modal-close { background: var(--bg); border: 1px solid var(--border); width: 32px; height: 32px; border-radius: 50%; cursor: pointer; color: var(--text-sub); display: flex; align-items: center; justify-content: center; }
+        .modal-close { background: var(--surface); border: 1px solid var(--border); width: 32px; height: 32px; border-radius: 50%; cursor: pointer; color: var(--text-sub); display: flex; align-items: center; justify-content: center; }
 
         .modal-body img, .editor-content img { max-width: 100% !important; height: auto !important; border-radius: 8px; display: block; margin: 8px auto; object-fit: contain; }
 
         .action-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 16px 0; }
-        .btn-action { padding: 10px 6px; border-radius: 12px; border: 1px solid var(--border); background: var(--surface); color: var(--text-main); font-size: 12px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px; }
+        .btn-action { padding: 10px 6px; border-radius: 12px; border: 1px solid var(--border); background: var(--surface); backdrop-filter: blur(5px); color: var(--text-main); font-size: 12px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px; }
         .btn-action.active-react { background: var(--primary-light); border-color: var(--primary); color: var(--primary); }
         
-        .staff-status-box { background: var(--bg); border: 1px solid var(--border); border-radius: 14px; padding: 12px; margin-bottom: 14px; }
+        .staff-status-box { background: var(--surface); backdrop-filter: blur(5px); border: 1px solid var(--border); border-radius: 14px; padding: 12px; margin-bottom: 14px; }
         details.emoji-group { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 8px 10px; margin-top: 6px; }
         details.emoji-group summary { cursor: pointer; font-weight: 600; font-size: 12px; display: flex; justify-content: space-between; align-items: center; }
         .staff-tag { display: inline-flex; align-items: center; background: var(--primary-light); color: var(--primary); border: 1px solid var(--border); padding: 2px 8px; border-radius: 20px; font-size: 11px; margin: 2px; font-weight: 600; }
 
-        .input-field, select.input-field { padding: 10px 14px; border: 1px solid var(--border); background: var(--surface); color: var(--text-main); border-radius: 12px; font-size: 13px; outline: none; width: 100%; }
+        .input-field, select.input-field { padding: 10px 14px; border: 1px solid var(--border-solid); background: var(--surface-solid); color: var(--text-main); border-radius: 12px; font-size: 13px; outline: none; width: 100%; }
         .input-group { position: relative; display: flex; align-items: center; width: 100%; }
         .password-toggle { position: absolute; right: 14px; background: none; border: none; color: var(--text-sub); cursor: pointer; }
 
-        .editor-toolbar { display: flex; gap: 6px; background: var(--bg); padding: 8px; border: 1px solid var(--border); border-bottom: none; border-top-left-radius: 12px; border-top-right-radius: 12px; }
-        .tool-btn { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 6px 10px; cursor: pointer; color: var(--text-main); }
-        .editor-content { min-height: 180px; max-height: 300px; background: var(--surface); border: 1px solid var(--border); border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; padding: 14px; font-size: 13px; outline: none; color: var(--text-main); overflow-y: auto; overflow-x: hidden; }
-        .image-upload-btn { background: var(--surface); border: 1px dashed var(--border); border-radius: 10px; padding: 8px 12px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; color: var(--primary); margin-top: 6px; }
+        .editor-toolbar { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; background: var(--surface-solid); padding: 8px; border: 1px solid var(--border-solid); border-bottom: none; border-top-left-radius: 12px; border-top-right-radius: 12px; }
+        .tool-btn { background: var(--surface-solid); border: 1px solid var(--border-solid); border-radius: 8px; padding: 6px 10px; cursor: pointer; color: var(--text-main); font-size: 12px; }
+        .editor-content { min-height: 180px; max-height: 300px; background: var(--surface-solid); border: 1px solid var(--border-solid); border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; padding: 14px; font-size: 13px; outline: none; color: var(--text-main); overflow-y: auto; overflow-x: hidden; }
+        .image-upload-btn { background: var(--surface-solid); border: 1px dashed var(--border-solid); border-radius: 10px; padding: 8px 12px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; color: var(--primary); margin-top: 6px; }
 
-        .btn-submit { background: var(--primary); color: white; border: none; padding: 10px 18px; border-radius: 12px; font-weight: 600; cursor: pointer; }
-        .form-card { background: var(--surface); border-radius: 20px; padding: 20px; box-shadow: var(--shadow); border: 1px solid var(--border); margin-bottom: 16px; }
+        .btn-submit { background: var(--primary); color: white; border: none; padding: 10px 18px; border-radius: 12px; font-weight: 600; cursor: pointer; box-shadow: 0 4px 15px var(--primary-light); }
+        .form-card { background: var(--surface); backdrop-filter: var(--glass-backdrop); border-radius: 20px; padding: 20px; box-shadow: var(--shadow); border: 1px solid var(--border); margin-bottom: 16px; }
         .user-table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 10px; }
-        .user-table th, .user-table td { padding: 8px; border-bottom: 1px solid var(--border); text-align: left; }
+        .user-table th, .user-table td { padding: 8px; border-bottom: 1px solid var(--border-solid); text-align: left; }
     </style>
 
     <script type="module">
@@ -475,6 +493,24 @@
           });
       }
 
+      window.openNoticeModal = function(id) {
+          const data = noticesData[id];
+          if(!data) return;
+
+          if(!readNoticeIds.includes(id)) {
+              readNoticeIds.push(id);
+              localStorage.setItem('readNotices', JSON.stringify(readNoticeIds));
+              loadNotices(currentUserTeam);
+          }
+
+          renderModalBody(id);
+          document.getElementById('noticeModal').classList.add('active');
+      };
+
+      window.closeNoticeModal = function() {
+          document.getElementById('noticeModal').classList.remove('active');
+      };
+
       function renderModalBody(id) {
           const data = noticesData[id];
           if(!data) return;
@@ -486,7 +522,7 @@
                   if(c.replies && c.replies.length > 0) {
                       c.replies.forEach(r => {
                           repliesHtml += `
-                              <div style="background:var(--bg); border-left:2px solid var(--primary); padding:6px 10px; border-radius:6px; margin-top:6px; font-size:11px; word-break: break-word;">
+                              <div style="background:var(--surface); border-left:2px solid var(--primary); padding:6px 10px; border-radius:6px; margin-top:6px; font-size:11px; word-break: break-word;">
                                   <span style="font-weight:700; color:var(--primary);">${r.userName}:</span> ${r.text}
                               </div>
                           `;
@@ -539,7 +575,7 @@
               adminActionsHtml = `
                   <div style="display:flex; gap:8px; margin-bottom:12px;">
                       <button class="btn-action" style="background:var(--primary-light); color:var(--primary);" onclick="openEditModal('${id}')"><i class="fa-solid fa-pen-to-square"></i> ပြင်ရန် (Edit)</button>
-                      <button class="btn-action" style="background:#fee2e2; color:#ef4444;" onclick="deleteNotice('${id}')"><i class="fa-solid fa-trash"></i> ဖျက်ရန် (Delete)</button>
+                      <button class="btn-action" style="background:rgba(239, 68, 68, 0.15); color:#ef4444;" onclick="deleteNotice('${id}')"><i class="fa-solid fa-trash"></i> ဖျက်ရန် (Delete)</button>
                   </div>
               `;
           }
@@ -554,43 +590,64 @@
                   <button class="btn-action ${myReaction === '✔️' ? 'active-react' : ''}" onclick="submitReaction('${id}', '✔️')">✔️ သိရှိပါပြီ</button>
               </div>
               <div class="staff-status-box"><div style="font-size:12px; font-weight:700; color:var(--text-sub); margin-bottom:6px;">တုံ့ပြန်ထားသူများ (${totalCount})</div>${groupedHtml}</div>
-              <div style="background:var(--bg); border-radius:14px; padding:12px; border:1px solid var(--border);">
-                  <div style="margin-bottom:8px;">${commentsHtml || '<div style="color:var(--text-sub); font-size:12px; text-align:center;">မှတ်ချက် မရှိသေးပါ</div>'}</div>
+              <div class="staff-status-box">
+                  <div style="font-size:12px; font-weight:700; margin-bottom:8px; color:var(--text-sub);">မှတ်ချက်များ (Comments)</div>
+                  <div style="max-height:160px; overflow-y:auto; margin-bottom:8px;">${commentsHtml || '<div style="font-size:11px; color:var(--text-sub);">မှတ်ချက် မရှိသေးပါ။</div>'}</div>
                   <div style="display:flex; gap:6px;">
-                      <textarea id="comment-${id}" class="input-field" placeholder="မှတ်ချက် အကန့်အသတ်မရှိ ရေးရန်..." style="resize:vertical; min-height:42px;"></textarea>
-                      <button class="btn-submit" style="width:45px; height:42px; padding:0; flex-shrink:0;" onclick="sendComment('${id}')"><i class="fa-solid fa-paper-plane"></i></button>
+                      <input type="text" id="newCommentInput-${id}" class="input-field" placeholder="မှတ်ချက် ရေးရန်..." style="font-size:12px; padding:8px 12px; background:var(--surface-solid);">
+                      <button class="btn-submit" style="padding:8px 14px; font-size:12px;" onclick="sendComment('${id}')">ပို့ရန်</button>
                   </div>
               </div>
           `;
       }
 
-      window.toggleReplyInput = function(cIndex) {
-          const box = document.getElementById(`reply-box-${cIndex}`);
-          if(box) {
-              box.style.display = box.style.display === 'none' ? 'flex' : 'none';
+      window.submitReaction = async function(id, emoji) {
+          try {
+              const ref = doc(db, "announcements", id);
+              const snap = await getDoc(ref);
+              if(snap.exists()) {
+                  const d = snap.data();
+                  let reactions = d.reactions || {};
+                  if(reactions[currentLoggedInUser] === emoji) {
+                      delete reactions[currentLoggedInUser];
+                  } else {
+                      reactions[currentLoggedInUser] = emoji;
+                  }
+                  await updateDoc(ref, { reactions: reactions });
+                  noticesData[id].reactions = reactions;
+                  renderModalBody(id);
+              }
+          } catch(e) {
+              alert("Error: " + e.message);
           }
       };
 
       window.sendComment = async function(id) {
-          const input = document.getElementById(`comment-${id}`);
+          const input = document.getElementById(`newCommentInput-${id}`);
           const text = input.value.trim();
           if(!text) return;
 
-          const data = noticesData[id];
-          const comments = data.comments || [];
-          comments.push({
-              userName: currentLoggedInUser,
-              text: text,
-              replies: [],
-              createdAt: Date.now()
-          });
-
           try {
-              await updateDoc(doc(db, "announcements", id), { comments: comments });
-              input.value = '';
-              renderModalBody(id);
+              const ref = doc(db, "announcements", id);
+              const snap = await getDoc(ref);
+              if(snap.exists()) {
+                  const d = snap.data();
+                  let comments = d.comments || [];
+                  comments.push({ userName: currentLoggedInUser, text: text, replies: [] });
+                  await updateDoc(ref, { comments: comments });
+                  noticesData[id].comments = comments;
+                  input.value = '';
+                  renderModalBody(id);
+              }
           } catch(e) {
-              alert("Error sending comment: " + e.message);
+              alert("Error: " + e.message);
+          }
+      };
+
+      window.toggleReplyInput = function(cIndex) {
+          const box = document.getElementById(`reply-box-${cIndex}`);
+          if(box) {
+              box.style.display = box.style.display === 'flex' ? 'none' : 'flex';
           }
       };
 
@@ -599,54 +656,21 @@
           const text = input.value.trim();
           if(!text) return;
 
-          const data = noticesData[id];
-          const comments = data.comments || [];
-          if(comments[cIndex]) {
-              if(!comments[cIndex].replies) comments[cIndex].replies = [];
-              comments[cIndex].replies.push({
-                  userName: currentLoggedInUser,
-                  text: text,
-                  createdAt: Date.now()
-              });
-
-              try {
-                  await updateDoc(doc(db, "announcements", id), { comments: comments });
-                  input.value = '';
-                  renderModalBody(id);
-              } catch(e) {
-                  alert("Error sending reply: " + e.message);
-              }
-          }
-      };
-
-      window.submitReaction = async function(id, emoji) {
-          const data = noticesData[id];
-          const reactions = data.reactions || {};
-          if(reactions[currentLoggedInUser] === emoji) {
-              delete reactions[currentLoggedInUser];
-          } else {
-              reactions[currentLoggedInUser] = emoji;
-          }
           try {
-              await updateDoc(doc(db, "announcements", id), { reactions: reactions });
-              renderModalBody(id);
+              const ref = doc(db, "announcements", id);
+              const snap = await getDoc(ref);
+              if(snap.exists()) {
+                  const d = snap.data();
+                  let comments = d.comments || [];
+                  if(!comments[cIndex].replies) comments[cIndex].replies = [];
+                  comments[cIndex].replies.push({ userName: currentLoggedInUser, text: text });
+                  await updateDoc(ref, { comments: comments });
+                  noticesData[id].comments = comments;
+                  renderModalBody(id);
+              }
           } catch(e) {
               alert("Error: " + e.message);
           }
-      };
-
-      window.openNoticeModal = function(id) {
-          if(!readNoticeIds.includes(id)) {
-              readNoticeIds.push(id);
-              localStorage.setItem('readNotices', JSON.stringify(readNoticeIds));
-          }
-          document.getElementById('noticeModal').dataset.activeId = id;
-          renderModalBody(id);
-          document.getElementById('noticeModal').classList.add('active');
-      };
-
-      window.closeNoticeModal = function() {
-          document.getElementById('noticeModal').classList.remove('active');
       };
 
       window.deleteNotice = async function(id) {
@@ -654,74 +678,134 @@
           try {
               await deleteDoc(doc(db, "announcements", id));
               closeNoticeModal();
-              alert("အသိပေးစာကို ဖျက်ပြီးပါပြီ။");
           } catch(e) {
-              alert("Error deleting: " + e.message);
+              alert("Error: " + e.message);
+          }
+      };
+
+      window.openEditModal = function(id) {
+          const data = noticesData[id];
+          if(!data) return;
+          closeNoticeModal();
+          document.getElementById('editNoticeId').value = id;
+          document.getElementById('editTitle').value = data.title;
+          document.getElementById('editEditor').innerHTML = data.content;
+          document.getElementById('editModal').classList.add('active');
+      };
+
+      window.closeEditModal = function() {
+          document.getElementById('editModal').classList.remove('active');
+      };
+
+      window.formatEditDoc = function(cmd, value = null) {
+          document.execCommand(cmd, false, value);
+      };
+
+      window.insertImageToEditEditor = function(event) {
+          const file = event.target.files[0];
+          if(!file) return;
+          const reader = new FileReader();
+          reader.onload = function(e) {
+              const imgHtml = `<br><img src="${e.target.result}" style="max-width:100%; height:auto; border-radius:8px; margin:8px auto; display:block;"><br>`;
+              document.execCommand('insertHTML', false, imgHtml);
+          };
+          reader.readAsDataURL(file);
+      };
+
+      window.updateAnnouncement = async function() {
+          const id = document.getElementById('editNoticeId').value;
+          const title = document.getElementById('editTitle').value;
+          const content = document.getElementById('editEditor').innerHTML;
+
+          if(!title || !content || content === '<br>') {
+              alert("ခေါင်းစဉ်နှင့် အကြောင်းအရာ ဖြည့်စွက်ပေးပါ။");
+              return;
+          }
+
+          try {
+              const ref = doc(db, "announcements", id);
+              await updateDoc(ref, { title: title, content: content });
+              alert("အသိပေးစာကို အောင်မြင်စွာ ပြင်ဆင်ပြီးပါပြီ။");
+              closeEditModal();
+          } catch(e) {
+              alert("Error: " + e.message);
           }
       };
     </script>
 </head>
 <body>
 
-    <div id="loginOverlay" class="login-overlay">
+    <!-- Login Overlay -->
+    <div class="login-overlay" id="loginOverlay">
         <div class="login-card">
-            <h2 style="margin-bottom: 8px; font-size: 20px;">Enterprise Portal</h2>
-            <p style="font-size: 12px; color: var(--text-sub); margin-bottom: 20px;">ကျေးဇူးပြု၍ Log In ဝင်ရောက်ပါ</p>
-            
+            <div style="font-size: 32px; margin-bottom: 10px;">🔔🔔</div>
+            <h2 style="font-size: 20px; font-weight: 700; margin-bottom: 6px;">Enterprise Portal</h2>
+            <p style="font-size: 13px; color: var(--text-sub); margin-bottom: 20px;">ကျေးဇူးပြု၍ Login ဝင်ရောက်ပေးပါရန်</p>
+
             <div id="normalLoginSection">
-                <div style="margin-bottom: 12px;">
-                    <input type="text" id="loginUser" class="input-field" placeholder="Username (ဥပမာ - aungaung)">
+                <div style="margin-bottom: 12px; text-align: left;">
+                    <label style="font-size: 12px; font-weight: 600; display: block; margin-bottom: 4px;">Username</label>
+                    <input type="text" id="loginUser" class="input-field" placeholder="Username ထည့်ပါ">
                 </div>
-                <div style="margin-bottom: 16px;" class="input-group">
-                    <input type="password" id="loginPass" class="input-field" placeholder="Password">
-                    <button type="button" class="password-toggle" onclick="togglePasswordVisibility('loginPass', 'loginIcon')">
-                        <i class="fa-solid fa-eye" id="loginIcon"></i>
-                    </button>
+                <div style="margin-bottom: 20px; text-align: left;">
+                    <label style="font-size: 12px; font-weight: 600; display: block; margin-bottom: 4px;">Password</label>
+                    <div class="input-group">
+                        <input type="password" id="loginPass" class="input-field" placeholder="Password ထည့်ပါ" style="padding-right: 40px;">
+                        <button type="button" class="password-toggle" onclick="togglePasswordVisibility('loginPass', 'loginEyeIcon')">
+                            <i class="fa-solid fa-eye" id="loginEyeIcon"></i>
+                        </button>
+                    </div>
                 </div>
-                <button class="btn-submit" style="width: 100%; margin-bottom: 10px;" onclick="handleLogin()">Log In</button>
-                <button type="button" style="background:none; border:none; color:var(--primary); font-size:12px; cursor:pointer;" onclick="switchLoginMode('changePass')">Password ပြောင်းရန်</button>
+                <button class="btn-submit" style="width: 100%; padding: 12px; margin-bottom: 12px;" onclick="handleLogin()">Login ဝင်မည်</button>
+                <button type="button" style="background: none; border: none; color: var(--primary); font-size: 12px; font-weight: 600; cursor: pointer;" onclick="switchLoginMode('changePass')">Password ပြောင်းရန်</button>
             </div>
 
-            <div id="changePassSection" style="display: none;">
-                <div style="margin-bottom: 10px;"><input type="text" id="cpUser" class="input-field" placeholder="Username"></div>
-                <div style="margin-bottom: 10px;" class="input-group">
-                    <input type="password" id="cpOldPass" class="input-field" placeholder="Password အဟောင်း">
-                    <button type="button" class="password-toggle" onclick="togglePasswordVisibility('cpOldPass', 'cpOldIcon')"><i class="fa-solid fa-eye" id="cpOldIcon"></i></button>
+            <!-- Change Password Section -->
+            <div id="changePassSection" style="display: none; text-align: left;">
+                <div style="margin-bottom: 10px;">
+                    <label style="font-size: 11px; font-weight: 600; display: block; margin-bottom: 2px;">Username</label>
+                    <input type="text" id="cpUser" class="input-field" placeholder="Username">
                 </div>
-                <div style="margin-bottom: 10px;" class="input-group">
-                    <input type="password" id="cpNewPass" class="input-field" placeholder="Password အသစ်">
-                    <button type="button" class="password-toggle" onclick="togglePasswordVisibility('cpNewPass', 'cpNewIcon')"><i class="fa-solid fa-eye" id="cpNewIcon"></i></button>
+                <div style="margin-bottom: 10px;">
+                    <label style="font-size: 11px; font-weight: 600; display: block; margin-bottom: 2px;">Password အဟောင်း</label>
+                    <input type="password" id="cpOldPass" class="input-field" placeholder="Old Password">
                 </div>
-                <div style="margin-bottom: 16px;" class="input-group">
-                    <input type="password" id="cpConfirmPass" class="input-field" placeholder="Password အသစ်ကို အတည်ပြုရန်">
-                    <button type="button" class="password-toggle" onclick="togglePasswordVisibility('cpConfirmPass', 'cpConfirmIcon')"><i class="fa-solid fa-eye" id="cpConfirmIcon"></i></button>
+                <div style="margin-bottom: 10px;">
+                    <label style="font-size: 11px; font-weight: 600; display: block; margin-bottom: 2px;">Password အသစ်</label>
+                    <input type="password" id="cpNewPass" class="input-field" placeholder="New Password (အနည်းဆုံး ၄ လုံး)">
                 </div>
-                <button class="btn-submit" style="width: 100%; margin-bottom: 10px;" onclick="handleChangePassword()">ပြောင်းလဲမည်</button>
-                <button type="button" style="background:none; border:none; color:var(--primary); font-size:12px; cursor:pointer;" onclick="switchLoginMode('login')">အဝင်စာမျက်နှာသို့ ပြန်သွားရန်</button>
+                <div style="margin-bottom: 16px;">
+                    <label style="font-size: 11px; font-weight: 600; display: block; margin-bottom: 2px;">Password အသစ် (ထပ်တူ)</label>
+                    <input type="password" id="cpConfirmPass" class="input-field" placeholder="Confirm New Password">
+                </div>
+                <button class="btn-submit" style="width: 100%; padding: 10px; margin-bottom: 8px;" onclick="handleChangePassword()">ပြောင်းလဲမည်</button>
+                <button type="button" style="background: none; border: none; color: var(--text-sub); font-size: 12px; cursor: pointer; width: 100%; text-align: center;" onclick="switchLoginMode('login')">← Login သို့ ပြန်သွားရန်</button>
             </div>
         </div>
     </div>
 
+    <!-- Main App Shell -->
     <div class="app-shell">
+        <!-- Header -->
         <div class="hero-header">
             <div class="brand-container">
                 <div class="brand-info">
                     <div class="cat-avatar">
                         🐱
-                        <span class="bell-badge" id="unreadBadge" style="display:none;">0</span>
+                        <div class="bell-badge" id="unreadBadge" style="display: none;">0</div>
                     </div>
                     <div>
-                        <h1 style="font-size: 18px; font-weight: 700;">Informations</h1>
-                        <p style="font-size: 12px; opacity: 0.9;" id="welcomeUserText">User</p>
+                        <div style="font-size: 11px; opacity: 0.9; font-weight: 600;">ENTERPRISE PORTAL</div>
+                        <div style="font-size: 18px; font-weight: 700;">Informations 🔔</div>
                     </div>
                 </div>
                 <div class="settings-bar">
-                    <button class="icon-btn" onclick="handleLogout()" title="Log Out"><i class="fa-solid fa-right-from-bracket"></i></button>
                     <button class="icon-btn" onclick="toggleThemeDropdown(event)"><i class="fa-solid fa-palette"></i></button>
-                    <button class="icon-btn" onclick="toggleTheme()"><i class="fa-solid fa-moon"></i></button>
-                    
                     <div class="theme-dropdown" id="themeDropdown">
-                        <div style="font-size: 11px; font-weight: 700; color: var(--text-sub); margin-bottom: 4px;">Accent Color</div>
+                        <div style="font-size: 11px; font-weight: 700; color: var(--text-sub); margin-bottom: 6px;">DISPLAY MODE</div>
+                        <button class="btn-action" style="width: 100%; justify-content: flex-start; margin-bottom: 10px;" onclick="toggleTheme()"><i class="fa-solid fa-circle-half-stroke"></i> Theme ပြောင်းရန်</button>
+                        
+                        <div style="font-size: 11px; font-weight: 700; color: var(--text-sub); margin-bottom: 4px;">ACCENT COLOR</div>
                         <div class="color-bubbles">
                             <div class="color-bubble" style="background: #4f46e5;" onclick="setAccent('indigo')"></div>
                             <div class="color-bubble" style="background: #059669;" onclick="setAccent('emerald')"></div>
@@ -730,81 +814,178 @@
                             <div class="color-bubble" style="background: #7c3aed;" onclick="setAccent('purple')"></div>
                         </div>
                     </div>
+                    <button class="icon-btn" onclick="handleLogout()" title="Logout"><i class="fa-solid fa-right-from-bracket"></i></button>
                 </div>
             </div>
         </div>
 
+        <!-- Tab Bar -->
         <div class="tab-bar">
             <button class="tab-btn active" id="tab-feed-btn" onclick="switchTab('feed')"><i class="fa-solid fa-bullhorn"></i> အသိပေးစာများ</button>
-            <button class="tab-btn admin-only" id="tab-create-btn" onclick="switchTab('create')" style="display:none;"><i class="fa-solid fa-plus-circle"></i> တင်ရန်</button>
-            <button class="tab-btn admin-only" id="tab-users-btn" onclick="switchTab('users')" style="display:none;"><i class="fa-solid fa-users-gear"></i> အကောင့်များ</button>
+            <button class="tab-btn admin-only" id="tab-post-btn" style="display: none;" onclick="switchTab('post')"><i class="fa-solid fa-pen-nib"></i> အသစ်တင်ရန်</button>
+            <button class="tab-btn admin-only" id="tab-admin-btn" style="display: none;" onclick="switchTab('admin')"><i class="fa-solid fa-users-gear"></i> စီမံခန့်ခွဲမှု</button>
         </div>
 
+        <!-- Content Area -->
         <div class="main-content">
+            <!-- Feed Tab -->
             <div class="tab-content active" id="tab-feed">
-                <div id="noticeMenuList"></div>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+                    <div style="font-weight: 700; font-size: 14px;">Recent Announcements</div>
+                    <div style="font-size: 11px; color: var(--text-sub);">User: <span id="welcomeUserText" style="font-weight: 700; color: var(--primary);"></span></div>
+                </div>
+                <div id="noticeMenuList">
+                    <!-- Dynamic Notices Loaded Here -->
+                </div>
             </div>
 
-            <div class="tab-content" id="tab-create">
+            <!-- Post Tab (Admin Only) -->
+            <div class="tab-content" id="tab-post">
                 <div class="form-card">
-                    <h3 style="font-size: 15px; margin-bottom: 14px;">အသိပေးစာ အသစ်ရေးရန်</h3>
+                    <h3 style="font-size: 15px; font-weight: 700; margin-bottom: 14px;"><i class="fa-solid fa-circle-plus"></i> အသိပေးစာအသစ် ရေးသားရန်</h3>
+                    
                     <div style="margin-bottom: 12px;">
-                        <input type="text" id="title" class="input-field" placeholder="ခေါင်းစဉ် (Title)...">
+                        <label style="font-size: 12px; font-weight: 600; display: block; margin-bottom: 4px;">ခေါင်းစဉ် (Title)</label>
+                        <input type="text" id="title" class="input-field" placeholder="ခေါင်းစဉ်ထည့်ပါ...">
                     </div>
+
                     <div style="margin-bottom: 12px;">
+                        <label style="font-size: 12px; font-weight: 600; display: block; margin-bottom: 4px;">မည်သည့်အဖွဲ့အတွက်လဲ</label>
                         <select id="targetTeam" class="input-field">
                             <option value="GKK777">GKK777 အဖွဲ့အတွက်</option>
                             <option value="GKK99">GKK99 အဖွဲ့အတွက်</option>
                         </select>
                     </div>
-                    <div style="margin-bottom: 12px;">
+
+                    <div style="margin-bottom: 14px;">
+                        <label style="font-size: 12px; font-weight: 600; display: block; margin-bottom: 4px;">အကြောင်းအရာနှင့် ဖောင့်ဒီဇိုင်း/အရောင် (Content)</label>
+                        
+                        <!-- Font Customization Toolbar -->
                         <div class="editor-toolbar">
-                            <button type="button" class="tool-btn" onclick="formatDoc('bold')"><i class="fa-solid fa-bold"></i></button>
-                            <button type="button" class="tool-btn" onclick="formatDoc('italic')"><i class="fa-solid fa-italic"></i></button>
-                            <button type="button" class="tool-btn" onclick="formatDoc('underline')"><i class="fa-solid fa-underline"></i></button>
-                            <button type="button" class="tool-btn" onclick="formatDoc('insertUnorderedList')"><i class="fa-solid fa-list-ul"></i></button>
+                            <button type="button" class="tool-btn" onclick="formatDoc('bold')" title="Bold"><i class="fa-solid fa-bold"></i></button>
+                            <button type="button" class="tool-btn" onclick="formatDoc('italic')" title="Italic"><i class="fa-solid fa-italic"></i></button>
+                            <button type="button" class="tool-btn" onclick="formatDoc('underline')" title="Underline"><i class="fa-solid fa-underline"></i></button>
+                            <button type="button" class="tool-btn" onclick="formatDoc('insertUnorderedList')" title="Bullet List"><i class="fa-solid fa-list-ul"></i></button>
+                            
+                            <!-- Font Family Selector -->
+                            <select class="tool-btn" style="background:var(--surface-solid); padding:4px;" onchange="formatDoc('fontName', this.value)">
+                                <option value="Padauk">Padauk (မြန်မာ)</option>
+                                <option value="Pyidaungsu">Pyidaungsu (မြန်မာ)</option>
+                                <option value="Plus Jakarta Sans">Jakarta Sans (English)</option>
+                                <option value="Arial">Arial</option>
+                            </select>
+
+                            <!-- Font Size Selector -->
+                            <select class="tool-btn" style="background:var(--surface-solid); padding:4px;" onchange="formatDoc('fontSize', this.value)">
+                                <option value="3">Normal Size</option>
+                                <option value="2">Small</option>
+                                <option value="4">Large</option>
+                                <option value="5">Extra Large</option>
+                            </select>
+
+                            <!-- Font Color Picker -->
+                            <div style="display:inline-flex; align-items:center; gap:4px; font-size:11px; padding:0 4px;">
+                                <i class="fa-solid fa-palette"></i>
+                                <input type="color" id="fontColorPicker" style="width:26px; height:24px; border:none; background:none; cursor:pointer;" onchange="formatDoc('foreColor', this.value)" title="Font Color">
+                            </div>
                         </div>
-                        <div id="editor" class="editor-content" contenteditable="true"></div>
+
+                        <div id="editor" class="editor-content" contenteditable="true" placeholder="အကြောင်းအရာ ရေးသားပါ..."></div>
+                        
                         <label class="image-upload-btn">
-                            <i class="fa-solid fa-image"></i> ပုံထည့်ရန်
+                            <i class="fa-solid fa-image"></i> ပုံထည့်မည်
                             <input type="file" accept="image/*" style="display: none;" onchange="insertImageToEditor(event)">
                         </label>
                     </div>
-                    <button class="btn-submit" onclick="postAnnouncement()">လွှင့်တင်မည်</button>
+
+                    <button class="btn-submit" style="width: 100%; padding: 12px;" onclick="postAnnouncement()">လွှင့်တင်မည် (Post)</button>
                 </div>
             </div>
 
-            <div class="tab-content" id="tab-users">
+            <!-- Admin Management Tab -->
+            <div class="tab-content" id="tab-admin">
                 <div class="form-card">
-                    <h3 style="font-size: 15px; margin-bottom: 14px;">Staff အကောင့်အသစ် ဖန်တီးရန်</h3>
-                    <div style="margin-bottom: 10px;"><input type="text" id="newUsername" class="input-field" placeholder="Username (အငယ်ကောင်ဖြင့်)"></div>
-                    <div style="margin-bottom: 10px;"><input type="password" id="newPassword" class="input-field" placeholder="Password"></div>
+                    <h3 style="font-size: 15px; font-weight: 700; margin-bottom: 14px;"><i class="fa-solid fa-user-plus"></i> ဝန်ထမ်းအကောင့်အသစ် ဖန်တီးရန်</h3>
                     <div style="margin-bottom: 10px;">
+                        <label style="font-size: 11px; font-weight: 600; display: block; margin-bottom: 2px;">Username</label>
+                        <input type="text" id="newUsername" class="input-field" placeholder="Username">
+                    </div>
+                    <div style="margin-bottom: 10px;">
+                        <label style="font-size: 11px; font-weight: 600; display: block; margin-bottom: 2px;">Password</label>
+                        <input type="password" id="newPassword" class="input-field" placeholder="Password">
+                    </div>
+                    <div style="margin-bottom: 10px;">
+                        <label style="font-size: 11px; font-weight: 600; display: block; margin-bottom: 2px;">Team</label>
                         <select id="newTeam" class="input-field">
                             <option value="GKK777">GKK777</option>
                             <option value="GKK99">GKK99</option>
                         </select>
                     </div>
-                    <div style="margin-bottom: 14px; display: flex; align-items: center; gap: 8px; font-size: 13px;">
-                        <input type="checkbox" id="newIsAdmin" style="width: 16px; height: 16px;"> Admin အဖြစ် သတ်မှတ်ရန်
+                    <div style="margin-bottom: 14px; display: flex; align-items: center; gap: 8px;">
+                        <input type="checkbox" id="newIsAdmin" style="width: 16px; height: 16px;">
+                        <label for="newIsAdmin" style="font-size: 12px; font-weight: 600;">Admin အဖြစ် သတ်မှတ်မည်</label>
                     </div>
-                    <button class="btn-submit" onclick="createNewUser()">အကောင့်ဖန်တီးမည်</button>
+                    <button class="btn-submit" style="width: 100%; padding: 10px;" onclick="createNewUser()">အကောင့်ဖန်တီးမည်</button>
                 </div>
+
                 <div class="form-card">
-                    <h3 style="font-size: 15px; margin-bottom: 10px;">ရှိပြီးသား အကောင့်များစာရင်း</h3>
-                    <div id="usersTableContainer"></div>
+                    <h3 style="font-size: 15px; font-weight: 700; margin-bottom: 10px;"><i class="fa-solid fa-list"></i> ရှိပြီးသား အကောင့်များစာရင်း</h3>
+                    <div id="usersTableContainer" style="overflow-x: auto;"></div>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- Notice Detail Modal -->
     <div class="modal-overlay" id="noticeModal">
         <div class="modal-card">
             <div class="modal-header">
-                <h3 id="modalTitleText" style="font-size: 16px; font-weight: 700;"></h3>
+                <div id="modalTitleText" style="font-weight: 700; font-size: 15px; padding-right: 10px;"></div>
                 <button class="modal-close" onclick="closeNoticeModal()"><i class="fa-solid fa-xmark"></i></button>
             </div>
-            <div class="modal-body" id="modalContentBody"></div>
+            <div class="modal-body" id="modalContentBody">
+                <!-- Content dynamically populated -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Notice Modal -->
+    <div class="modal-overlay" id="editModal">
+        <div class="modal-card">
+            <div class="modal-header">
+                <div style="font-weight: 700; font-size: 15px;"><i class="fa-solid fa-pen-to-square"></i> အသိပေးစာ ပြင်ဆင်ရန်</div>
+                <button class="modal-close" onclick="closeEditModal()"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="editNoticeId">
+                <div style="margin-bottom: 12px;">
+                    <label style="font-size: 12px; font-weight: 600; display: block; margin-bottom: 4px;">ခေါင်းစဉ်</label>
+                    <input type="text" id="editTitle" class="input-field">
+                </div>
+                <div style="margin-bottom: 14px;">
+                    <label style="font-size: 12px; font-weight: 600; display: block; margin-bottom: 4px;">အကြောင်းအရာ</label>
+                    
+                    <div class="editor-toolbar">
+                        <button type="button" class="tool-btn" onclick="formatEditDoc('bold')"><i class="fa-solid fa-bold"></i></button>
+                        <button type="button" class="tool-btn" onclick="formatEditDoc('italic')"><i class="fa-solid fa-italic"></i></button>
+                        <button type="button" class="tool-btn" onclick="formatEditDoc('underline')"><i class="fa-solid fa-underline"></i></button>
+                        <select class="tool-btn" style="background:var(--surface-solid); padding:4px;" onchange="formatEditDoc('fontName', this.value)">
+                            <option value="Padauk">Padauk</option>
+                            <option value="Pyidaungsu">Pyidaungsu</option>
+                            <option value="Plus Jakarta Sans">Jakarta Sans</option>
+                        </select>
+                        <input type="color" style="width:26px; height:24px; border:none; background:none; cursor:pointer;" onchange="formatEditDoc('foreColor', this.value)">
+                    </div>
+
+                    <div id="editEditor" class="editor-content" contenteditable="true"></div>
+                    
+                    <label class="image-upload-btn">
+                        <i class="fa-solid fa-image"></i> ပုံထည့်မည်
+                        <input type="file" accept="image/*" style="display: none;" onchange="insertImageToEditEditor(event)">
+                    </label>
+                </div>
+                <button class="btn-submit" style="width: 100%; padding: 12px;" onclick="updateAnnouncement()">ပြင်ဆင်မှု သိမ်းမည်</button>
+            </div>
         </div>
     </div>
 

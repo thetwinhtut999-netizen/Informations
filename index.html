@@ -63,7 +63,6 @@
         .tab-bar { display: flex; gap: 8px; padding: 14px 20px 6px 20px; background: var(--surface); backdrop-filter: var(--glass-backdrop); border-bottom: 1px solid var(--border); }
         .tab-btn { flex: 1; padding: 10px; background: var(--surface); backdrop-filter: blur(5px); border: 1px solid var(--border); border-radius: 12px; font-weight: 600; font-size: 13px; color: var(--text-sub); cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.2s; }
         .tab-btn.active { background: var(--primary); color: white; border-color: var(--primary); box-shadow: 0 4px 15px var(--primary-light); }
-        .badge { background-color: #ef4444; color: white; font-size: 10px; font-weight: bold; padding: 2px 6px; border-radius: 20px; }
 
         .main-content { padding: 20px; flex: 1; }
         .tab-content { display: none; }
@@ -131,7 +130,7 @@
       let currentUserTeam = 'GKK777'; 
       let currentLoggedInUser = '';
       let isUserAdmin = false;
-      let editingNoticeId = null; // ပြင်ဆင်နေသည့် ID
+      let editingNoticeId = null; 
 
       window.toggleTheme = function() {
           const html = document.documentElement;
@@ -173,6 +172,7 @@
       });
 
       async function checkUserPermissions(username) {
+          // Master Admin အကောင့်များအတွက် ချက်ချင်းခွင့်ပြုမည်
           if(username === 'thetwinhtut' || username === 'admin') {
               currentUserTeam = 'ALL';
               isUserAdmin = true;
@@ -202,6 +202,19 @@
                   }
 
                   loadNotices(currentUserTeam);
+              } else {
+                  // အကယ်၍ Firestore ထဲတွင် မရှိခဲ့လျှင်လည်း thetwinhtut ဖြစ်နေပါက အလိုအလျောက် Admin ပေးမည်
+                  if(username === 'thetwinhtut') {
+                      currentUserTeam = 'ALL';
+                      isUserAdmin = true;
+                      document.querySelectorAll('.admin-only').forEach(el => el.style.display = 'flex');
+                      document.getElementById('targetTeam').innerHTML = `
+                          <option value="GKK777">GKK777 အဖွဲ့အတွက်</option>
+                          <option value="GKK99">GKK99 အဖွဲ့အတွက်</option>
+                      `;
+                      loadUsersList();
+                      loadNotices('ALL');
+                  }
               }
           } catch(e) {
               console.error(e);
@@ -296,11 +309,6 @@
               return;
           }
 
-          if(newPass.length < 4) {
-              alert("Password အသစ်သည် အနည်းဆုံး ဂဏန်း (သို့) စာလုံး ၄ လုံး ပါရှိရပါမည်။");
-              return;
-          }
-
           try {
               const userRef = doc(db, "users", user);
               const userSnap = await getDoc(userRef);
@@ -308,11 +316,7 @@
                   const data = userSnap.data();
                   if(data.password === oldPass) {
                       await updateDoc(userRef, { password: newPass });
-                      alert("Password အသစ် ပြောင်းလဲခြင်း အောင်မြင်ပါသည်။ ကျေးဇူးပြု၍ Password အသစ်ဖြင့် ဝင်ရောက်ပါ။");
-                      document.getElementById('cpUser').value = '';
-                      document.getElementById('cpOldPass').value = '';
-                      document.getElementById('cpNewPass').value = '';
-                      document.getElementById('cpConfirmPass').value = '';
+                      alert("Password အသစ် ပြောင်းလဲခြင်း အောင်မြင်ပါသည်။");
                       switchLoginMode('login');
                   } else {
                       alert("Password အဟောင်း မှားယွင်းနေပါသည်။");
@@ -348,7 +352,7 @@
                   team: team,
                   createdAt: serverTimestamp()
               });
-              alert(`အကောင့်အသစ် (${username} - ${team}) ဖန်တီးပြီးပါပြီ။`);
+              alert(`အကောင့်အသစ် (${username}) ဖန်တီးပြီးပါပြီ။`);
               document.getElementById('newUsername').value = '';
               document.getElementById('newPassword').value = '';
               loadUsersList();
@@ -443,7 +447,6 @@
 
           try {
               if(editingNoticeId) {
-                  // Edit ပြုလုပ်ခြင်း
                   const docRef = doc(db, "announcements", editingNoticeId);
                   await updateDoc(docRef, {
                       title: title,
@@ -453,7 +456,6 @@
                   alert("အသိပေးစာကို အောင်မြင်စွာ ပြင်ဆင်ပြီးပါပြီ။");
                   editingNoticeId = null;
               } else {
-                  // အသစ်တင်ခြင်း
                   await addDoc(collection(db, "announcements"), {
                       title: title,
                       content: content,
@@ -602,7 +604,6 @@
               });
           }
 
-          // Admin ဖြစ်မှသာ ပြင်ဆင်ရန်/ဖျက်ရန် ခလုတ်များ ပေါ်မည်
           let adminActionButtons = '';
           if(isUserAdmin) {
               adminActionButtons = `
@@ -761,7 +762,6 @@
                 <button type="button" style="background:none; border:none; color:var(--primary); font-size:12px; font-weight:600; cursor:pointer;" onclick="switchLoginMode('changePass')">Password ပြောင်းရန်</button>
             </div>
 
-            <!-- Change Password Section -->
             <div id="changePassSection" style="display: none; text-align: left;">
                 <div style="margin-bottom: 10px;">
                     <label style="font-size: 12px; font-weight: 600; display: block; margin-bottom: 4px;">Username</label>
@@ -803,7 +803,6 @@
                     <button class="icon-btn" onclick="handleLogout()" title="Log Out"><i class="fa-solid fa-right-from-bracket"></i></button>
                     <button class="icon-btn" onclick="toggleThemeDropdown(event)"><i class="fa-solid fa-palette"></i></button>
                     
-                    <!-- Theme Dropdown -->
                     <div class="theme-dropdown" id="themeDropdown">
                         <div style="font-size: 11px; font-weight: 700; margin-bottom: 6px; color:var(--text-main);">Theme ပုံစံ</div>
                         <button class="btn-action" style="width:100%; margin-bottom: 8px;" onclick="toggleTheme()"><i class="fa-solid fa-circle-half-stroke"></i> Light / Dark ပြောင်းရန်</button>
@@ -857,19 +856,16 @@
                     <div style="margin-bottom: 12px;">
                         <label style="font-size: 12px; font-weight: 600; display: block; margin-bottom: 4px;">အကြောင်းအရာ (Font အရောင်နှင့် ပုံစံများ စိတ်ကြိုက်ပြင်နိုင်သည်)</label>
                         
-                        <!-- Rich Text Toolbar with Font Color & Size -->
                         <div class="editor-toolbar">
                             <button type="button" class="tool-btn" onclick="formatDoc('bold')" title="Bold"><i class="fa-solid fa-bold"></i></button>
                             <button type="button" class="tool-btn" onclick="formatDoc('italic')" title="Italic"><i class="fa-solid fa-italic"></i></button>
                             <button type="button" class="tool-btn" onclick="formatDoc('underline')" title="Underline"><i class="fa-solid fa-underline"></i></button>
                             
-                            <!-- Font Color Picker -->
                             <div style="display:inline-flex; align-items:center; gap:2px; background:var(--surface-solid); border:1px solid var(--border-solid); border-radius:8px; padding:2px 6px;">
                                 <i class="fa-solid fa-palette" style="font-size:11px; color:var(--text-sub);"></i>
                                 <input type="color" id="fontColorPicker" onchange="formatDoc('foreColor', this.value)" style="border:none; width:22px; height:22px; background:none; cursor:pointer;" title="စာသားအရောင် ရွေးရန်">
                             </div>
 
-                            <!-- Font Size Selector -->
                             <select class="tool-select" onchange="formatDoc('fontSize', this.value)" title="စာအရွယ်အစား">
                                 <option value="" disabled selected>အရွယ်အစား</option>
                                 <option value="2">သေးငယ် (Small)</option>
@@ -910,7 +906,7 @@
                     </div>
                     <div style="margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
                         <input type="checkbox" id="newIsAdmin" style="width: 16px; height: 16px;">
-                        <label for="newIsAdmin" style="font-size: 12px; font-weight: 600;">Admin ရာထူပေးမည်</label>
+                        <label for="newIsAdmin" style="font-size: 12px; font-weight: 600;">Admin ရာထူးပေးမည်</label>
                     </div>
                     <button class="btn-submit" onclick="createNewUser()">အကောင့် ဖန်တီးမည်</button>
                 </div>

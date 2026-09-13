@@ -172,7 +172,6 @@
       });
 
       async function checkUserPermissions(username) {
-          // Master Admin အကောင့်များအတွက် ချက်ချင်းခွင့်ပြုမည်
           if(username === 'thetwinhtut' || username === 'admin') {
               currentUserTeam = 'ALL';
               isUserAdmin = true;
@@ -203,7 +202,6 @@
 
                   loadNotices(currentUserTeam);
               } else {
-                  // အကယ်၍ Firestore ထဲတွင် မရှိခဲ့လျှင်လည်း thetwinhtut ဖြစ်နေပါက အလိုအလျောက် Admin ပေးမည်
                   if(username === 'thetwinhtut') {
                       currentUserTeam = 'ALL';
                       isUserAdmin = true;
@@ -863,7 +861,7 @@
                             
                             <div style="display:inline-flex; align-items:center; gap:2px; background:var(--surface-solid); border:1px solid var(--border-solid); border-radius:8px; padding:2px 6px;">
                                 <i class="fa-solid fa-palette" style="font-size:11px; color:var(--text-sub);"></i>
-                                <input type="color" id="fontColorPicker" onchange="formatDoc('foreColor', this.value)" style="border:none; width:22px; height:22px; background:none; cursor:pointer;" title="စာသားအရောင် ရွေးရန်">
+                                <input type="color" id="fontColorPicker" oninput="formatDoc('foreColor', this.value)" style="border:none; width:22px; height:22px; background:none; cursor:pointer;" title="စာသားအရောင် ရွေးရန်">
                             </div>
 
                             <select class="tool-select" onchange="formatDoc('fontSize', this.value)" title="စာအရွယ်အစား">

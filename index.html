@@ -60,6 +60,8 @@
         .color-bubbles { display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
         .color-bubble { width: 26px; height: 26px; border-radius: 50%; cursor: pointer; border: 2px solid var(--border); }
 
+        .daily-quote-card { background: var(--surface); backdrop-filter: var(--glass-backdrop); border: 1px solid var(--border); border-radius: 14px; padding: 14px 16px; margin: 16px 20px 0 20px; box-shadow: var(--shadow); display: flex; align-items: center; gap: 12px; }
+
         .tab-bar { display: flex; gap: 8px; padding: 14px 20px 6px 20px; background: var(--surface); backdrop-filter: var(--glass-backdrop); border-bottom: 1px solid var(--border); }
         .tab-btn { flex: 1; padding: 10px; background: var(--surface); backdrop-filter: blur(5px); border: 1px solid var(--border); border-radius: 12px; font-weight: 600; font-size: 13px; color: var(--text-sub); cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.2s; }
         .tab-btn.active { background: var(--primary); color: white; border-color: var(--primary); box-shadow: 0 4px 15px var(--primary-light); }
@@ -83,8 +85,8 @@
 
         .modal-body img, .editor-content img { max-width: 100% !important; height: auto !important; border-radius: 8px; display: block; margin: 8px auto; object-fit: contain; }
 
-        .action-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 16px 0; }
-        .btn-action { padding: 10px 6px; border-radius: 12px; border: 1px solid var(--border); background: var(--surface); backdrop-filter: blur(5px); color: var(--text-main); font-size: 12px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px; }
+        .action-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin: 16px 0; }
+        .btn-action { padding: 8px 4px; border-radius: 12px; border: 1px solid var(--border); background: var(--surface); backdrop-filter: blur(5px); color: var(--text-main); font-size: 11px; font-weight: 600; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; }
         .btn-action.active-react { background: var(--primary-light); border-color: var(--primary); color: var(--primary); }
         
         .staff-status-box { background: var(--surface); backdrop-filter: blur(5px); border: 1px solid var(--border); border-radius: 14px; padding: 12px; margin-bottom: 14px; }
@@ -132,6 +134,21 @@
       let isUserAdmin = false;
       let editingNoticeId = null; 
 
+      const motivationalQuotes = [
+          "✨ ယနေ့သည် သင့်အတွက် အကောင်းဆုံးအခွင့်အရေးများကို ဖန်တီးပေးမည့်နေ့ ဖြစ်ပါစေ။",
+          "🚀 ကြိုးစားမှုတိုင်းက အလကားမဖြစ်ပါဘူး၊ ရည်မှန်းချက်ဆီကို ဆက်လှမ်းပါ။",
+          "💪 အခက်အခဲဟူသမျှသည် ပိုမိုသန်မာလာစေရန် သင်ခန်းစာများသာ ဖြစ်ပါသည်။",
+          "🌟 အပြုံးလေးနဲ့ တစ်နေ့တာကို အကောင်းဆုံး ဖြတ်သန်းလိုက်ပါ။",
+          "🔥 မနက်ဖြန်ထက် ပိုကောင်းတဲ့ ဒီကနေ့ဖြစ်အောင် အကောင်းဆုံးကြိုးစားပါ။",
+          "🎯 လုပ်ချင်တာတွေကို အကောင်အထည်ဖော်ဖို့ အကောင်းဆုံးအချိန်က ဒီကနေ့ပါပဲ။"
+      ];
+
+      function loadDailyQuote() {
+          const randomIndex = Math.floor(Math.random() * motivationalQuotes.length);
+          const quoteEl = document.getElementById('dailyQuoteText');
+          if(quoteEl) quoteEl.textContent = motivationalQuotes[randomIndex];
+      }
+
       window.toggleTheme = function() {
           const html = document.documentElement;
           const current = html.getAttribute('data-theme');
@@ -161,6 +178,8 @@
           const savedAccent = localStorage.getItem('appAccent') || 'indigo';
           document.documentElement.setAttribute('data-theme', savedTheme);
           document.documentElement.setAttribute('data-accent', savedAccent);
+
+          loadDailyQuote();
 
           const loggedUser = localStorage.getItem('currentUser');
           if(loggedUser) {
@@ -576,7 +595,7 @@
           let totalCount = 0;
           let groupedHtml = '';
           const groupedReactions = {};
-          const emojiLabels = { '👍': 'ဖတ်ပြီးပြီ', '❤️': 'လက်ခံသည်', '✔️': 'သိရှိပါပြီ' };
+          const emojiLabels = { '👍': 'ဖတ်ပြီးပြီ', '❤️': 'လက်ခံသည်', '🔥': 'သဘောကျတယ်', '🚀': 'ထူးချွန်တယ်' };
           let myReaction = null;
 
           if(data.reactions) {
@@ -623,9 +642,10 @@
               </div>
 
               <div class="action-grid">
-                  <button class="btn-action ${myReaction === '👍' ? 'active-react' : ''}" onclick="sendReaction('${id}', '👍')">👍 ဖတ်ပြီးပြီ</button>
-                  <button class="btn-action ${myReaction === '❤️' ? 'active-react' : ''}" onclick="sendReaction('${id}', '❤️')">❤️ လက်ခံသည်</button>
-                  <button class="btn-action ${myReaction === '✔️' ? 'active-react' : ''}" onclick="sendReaction('${id}', '✔️')">✔️ သိရှိပါပြီ</button>
+                  <button class="btn-action ${myReaction === '👍' ? 'active-react' : ''}" onclick="sendReaction('${id}', '👍')"><span style="font-size:16px;">👍</span> ဖတ်ပြီးပြီ</button>
+                  <button class="btn-action ${myReaction === '❤️' ? 'active-react' : ''}" onclick="sendReaction('${id}', '❤️')"><span style="font-size:16px;">❤️</span> လက်ခံသည်</button>
+                  <button class="btn-action ${myReaction === '🔥' ? 'active-react' : ''}" onclick="sendReaction('${id}', '🔥')"><span style="font-size:16px;">🔥</span> သဘောကျ</button>
+                  <button class="btn-action ${myReaction === '🚀' ? 'active-react' : ''}" onclick="sendReaction('${id}', '🚀')"><span style="font-size:16px;">🚀</span> ထူးချွန်</button>
               </div>
 
               <div style="margin-top:16px; border-top:1px solid var(--border); padding-top:12px;">
@@ -803,7 +823,7 @@
                     
                     <div class="theme-dropdown" id="themeDropdown">
                         <div style="font-size: 11px; font-weight: 700; margin-bottom: 6px; color:var(--text-main);">Theme ပုံစံ</div>
-                        <button class="btn-action" style="width:100%; margin-bottom: 8px;" onclick="toggleTheme()"><i class="fa-solid fa-circle-half-stroke"></i> Light / Dark ပြောင်းရန်</button>
+                        <button class="btn-action" style="width:100%; margin-bottom: 8px; flex-direction:row;" onclick="toggleTheme()"><i class="fa-solid fa-circle-half-stroke"></i> Light / Dark ပြောင်းရန်</button>
                         <div style="font-size: 11px; font-weight: 700; margin-bottom: 4px; color:var(--text-main);">အရောင် ရွေးချယ်ရန်</div>
                         <div class="color-bubbles">
                             <div class="color-bubble" style="background: #4f46e5;" onclick="setAccent('indigo')"></div>
@@ -814,6 +834,14 @@
                         </div>
                     </div>
                 </div>
+            </div>
+        </div>
+
+        <!-- Daily Quote Card -->
+        <div class="daily-quote-card">
+            <i class="fa-solid fa-quote-left" style="font-size: 20px; color: var(--primary);"></i>
+            <div style="font-size: 12px; font-weight: 600; line-height: 1.5; color: var(--text-main);" id="dailyQuoteText">
+                ခဏစောင့်ပါ... နေ့စဉ်တွေးခေါ်စရာများကို တင်ဆောင်နေပါသည်။
             </div>
         </div>
 

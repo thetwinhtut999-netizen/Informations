@@ -173,7 +173,7 @@
 
       async function checkUserPermissions(username) {
           // Master Admin အကောင့်များအတွက် ချက်ချင်းခွင့်ပြုမည်
-          if(username === 'thetwinhtut' || username === 'thetwinhtut') {
+          if(username === 'thetwinhtut' || username === 'admin') {
               currentUserTeam = 'ALL';
               isUserAdmin = true;
               document.querySelectorAll('.admin-only').forEach(el => el.style.display = 'flex');

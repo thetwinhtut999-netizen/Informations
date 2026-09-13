@@ -82,22 +82,17 @@
         /* Dynamic Vibe Styles (5 Unique Styles) */
         .dynamic-vibe-container { margin: 16px 20px 0 20px; }
         
-        /* Style 1: Neon Glowing Banner (Motivation) */
         .vibe-style-1 { background: linear-gradient(135deg, #1e1b4b, #312e81); color: #fff; border-radius: 16px; padding: 16px; box-shadow: 0 0 20px rgba(79, 70, 229, 0.4); border: 1px solid rgba(255,215,0,0.3); position: relative; overflow: hidden; }
         .vibe-style-1::before { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: radial-gradient(circle, rgba(255,215,0,0.1) 0%, transparent 70%); pointer-events: none; }
 
-        /* Style 2: Floating Love Note / Envelope (Love) */
         .vibe-style-2 { background: var(--surface); backdrop-filter: var(--glass-backdrop); border: 2px dashed var(--primary); border-radius: 20px; padding: 16px; box-shadow: var(--shadow); position: relative; }
         .vibe-style-2::after { content: '💌'; position: absolute; top: 10px; right: 14px; font-size: 20px; opacity: 0.8; }
 
-        /* Style 3: Comic Speech Bubble (Comedy) */
         .vibe-style-3 { background: var(--surface-solid); border: 2px solid var(--text-main); border-radius: 16px; padding: 14px 18px; box-shadow: 4px 4px 0px var(--primary); position: relative; }
         .vibe-style-3::before { content: ''; position: absolute; bottom: -10px; left: 24px; border-width: 10px 10px 0; border-style: solid; border-color: var(--surface-solid) transparent; display: block; width: 0; }
 
-        /* Style 4: Terminal / Cyberpunk Glitch Box (Banter) */
         .vibe-style-4 { background: #0f172a; color: #38bdf8; font-family: monospace; border-radius: 12px; padding: 14px; border-left: 4px solid #38bdf8; box-shadow: var(--shadow); }
 
-        /* Style 5: Nature Leaf Capsule (Health) */
         .vibe-style-5 { background: linear-gradient(135deg, rgba(5,150,105,0.15), rgba(13,148,136,0.2)); border: 1px solid #059669; border-radius: 30px; padding: 14px 20px; box-shadow: var(--shadow); display: flex; align-items: center; gap: 12px; }
 
         .tab-bar { display: flex; gap: 8px; padding: 14px 20px 6px 20px; background: var(--surface); backdrop-filter: var(--glass-backdrop); border-bottom: 1px solid var(--border); }
@@ -146,6 +141,12 @@
         .form-card { background: var(--surface); backdrop-filter: var(--glass-backdrop); border-radius: 20px; padding: 20px; box-shadow: var(--shadow); border: 1px solid var(--border); margin-bottom: 16px; }
         .user-table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 10px; }
         .user-table th, .user-table td { padding: 8px; border-bottom: 1px solid var(--border-solid); text-align: left; }
+
+        /* Top 5 Leaderboard Custom Style */
+        .ranking-item { display: flex; align-items: center; justify-content: space-between; padding: 10px 12px; margin-bottom: 8px; background: var(--surface-solid); border: 1px solid var(--border-solid); border-radius: 12px; font-size: 13px; }
+        .ranking-item.rank-1 { border-color: #f59e0b; background: rgba(245, 158, 11, 0.08); }
+        .ranking-item.rank-2 { border-color: #94a3b8; background: rgba(148, 163, 184, 0.08); }
+        .ranking-item.rank-3 { border-color: #d97706; background: rgba(217, 119, 6, 0.08); }
     </style>
 
     <script type="module">

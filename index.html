@@ -39,9 +39,25 @@
         }
 
         * { box-sizing: border-box; font-family: 'Padauk', 'Plus Jakarta Sans', sans-serif; margin: 0; padding: 0; }
-        body { background: var(--bg-gradient); background-attachment: fixed; color: var(--text-main); display: flex; justify-content: center; min-height: 100vh; overflow-x: hidden; }
+        body { background: var(--bg-gradient); background-attachment: fixed; color: var(--text-main); display: flex; justify-content: center; min-height: 100vh; overflow-x: hidden; position: relative; }
 
-        .app-shell { width: 100%; max-width: 680px; background: transparent; min-height: 100vh; display: flex; flex-direction: column; position: relative; overflow-x: hidden; }
+        /* Weather Effects Overlay Container */
+        #weather-fx-layer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; overflow: hidden; }
+
+        /* Weather Animations CSS */
+        .raindrop { position: absolute; background: linear-gradient(transparent, rgba(255,255,255,0.8)); width: 1px; height: 20px; opacity: 0.7; animation: fall linear infinite; }
+        @keyframes fall { 0% { transform: translateY(-20px); } 100% { transform: translateY(105vh); } }
+
+        .sun-ray { position: absolute; top: -50px; right: -50px; width: 150px; height: 150px; background: radial-gradient(circle, rgba(255,215,0,0.4) 0%, transparent 70%); border-radius: 50%; animation: pulse-sun 4s ease-in-out infinite; }
+        @keyframes pulse-sun { 0%, 100% { transform: scale(1); opacity: 0.6; } 50% { transform: scale(1.2); opacity: 0.9; } }
+
+        .lightning-flash { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.8); opacity: 0; pointer-events: none; z-index: 2; }
+        @keyframes flashAnim { 0% { opacity: 0; } 10% { opacity: 1; } 20% { opacity: 0; } 30% { opacity: 0.8; } 40% { opacity: 0; } 100% { opacity: 0; } }
+
+        .music-note { position: absolute; font-size: 16px; color: var(--primary); opacity: 0.7; animation: floatNote 4s linear infinite; }
+        @keyframes floatNote { 0% { transform: translateY(100vh) scale(0.8); opacity: 0; } 50% { opacity: 1; } 100% { transform: translateY(-20px) scale(1.2); opacity: 0; } }
+
+        .app-shell { width: 100%; max-width: 680px; background: transparent; min-height: 100vh; display: flex; flex-direction: column; position: relative; z-index: 10; overflow-x: hidden; }
         
         .login-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 23, 42, 0.5); backdrop-filter: blur(20px); display: flex; justify-content: center; align-items: center; z-index: 3000; padding: 20px; }
         .login-card { background: var(--surface); backdrop-filter: var(--glass-backdrop); border: 1px solid var(--border); border-radius: 24px; width: 100%; max-width: 420px; padding: 32px; box-shadow: var(--shadow); text-align: center; }
@@ -149,6 +165,88 @@
           if(quoteEl) quoteEl.textContent = motivationalQuotes[randomIndex];
       }
 
+      // Geolocation Weather Effects Integration
+      async function initWeatherEffect() {
+          const fxLayer = document.getElementById('weather-fx-layer');
+          if(!fxLayer) return;
+
+          // Default Effect: Clear / Music Notes (ရာသီဥတုသာယာလျှင်)
+          let weatherType = 'clear'; 
+
+          if (navigator.geolocation) {
+              navigator.geolocation.getCurrentPosition(async (position) => {
+                  const lat = position.coords.latitude;
+                  const lon = position.coords.longitude;
+                  try {
+                      // Free Open-Meteo API to fetch real weather info without key
+                      const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`);
+                      const data = await res.json();
+                      const code = data.current_weather.weathercode;
+                      
+                      // WMO Weather interpretation codes
+                      if ([51,53,55,61,63,65,80,81,82].includes(code)) {
+                          weatherType = 'rain';
+                      } else if ([95,96,99].includes(code)) {
+                          weatherType = 'thunderstorm';
+                      } else if ([0, 1].includes(code)) {
+                          weatherType = 'sunny';
+                      } else {
+                          weatherType = 'clear';
+                      }
+                      renderWeatherFX(weatherType, fxLayer);
+                  } catch (e) {
+                      renderWeatherFX('clear', fxLayer);
+                  }
+              }, () => {
+                  renderWeatherFX('clear', fxLayer);
+              });
+          } else {
+              renderWeatherFX('clear', fxLayer);
+          }
+      }
+
+      function renderWeatherFX(type, container) {
+          container.innerHTML = '';
+          if (type === 'rain') {
+              for (let i = 0; i < 40; i++) {
+                  const drop = document.createElement('div');
+                  drop.className = 'raindrop';
+                  drop.style.left = `${Math.random() * 100}%`;
+                  drop.style.animationDuration = `${0.5 + Math.random() * 0.5}s`;
+                  drop.style.animationDelay = `${Math.random() * 2}s`;
+                  container.appendChild(drop);
+              }
+          } else if (type === 'thunderstorm') {
+              for (let i = 0; i < 30; i++) {
+                  const drop = document.createElement('div');
+                  drop.className = 'raindrop';
+                  drop.style.left = `${Math.random() * 100}%`;
+                  drop.style.animationDuration = `${0.3 + Math.random() * 0.3}s`;
+                  container.appendChild(drop);
+              }
+              const flash = document.createElement('div');
+              flash.className = 'lightning-flash';
+              flash.style.animation = 'flashAnim 5s infinite';
+              container.appendChild(flash);
+          } else if (type === 'sunny') {
+              const sun = document.createElement('div');
+              sun.className = 'sun-ray';
+              container.appendChild(sun);
+          } else {
+              // Weather Clear: သံစဉ်ပုံလေးများ (Music Notes)
+              const notes = ['♪', '♫', '♬', '♩'];
+              for (let i = 0; i < 15; i++) {
+                  const note = document.createElement('div');
+                  note.className = 'music-note';
+                  note.textContent = notes[Math.floor(Math.random() * notes.length)];
+                  note.style.left = `${Math.random() * 100}%`;
+                  note.style.animationDuration = `${3 + Math.random() * 3}s`;
+                  note.style.animationDelay = `${Math.random() * 3}s`;
+                  container.appendChild(note);
+              }
+          }
+      }
+
       window.toggleTheme = function() {
           const html = document.documentElement;
           const current = html.getAttribute('data-theme');
@@ -180,6 +278,7 @@
           document.documentElement.setAttribute('data-accent', savedAccent);
 
           loadDailyQuote();
+          initWeatherEffect();
 
           const loggedUser = localStorage.getItem('currentUser');
           if(loggedUser) {
@@ -754,6 +853,9 @@
     </script>
 </head>
 <body>
+
+    <!-- Weather Background Effects Layer -->
+    <div id="weather-fx-layer"></div>
 
     <!-- Login Overlay -->
     <div class="login-overlay" id="loginOverlay">

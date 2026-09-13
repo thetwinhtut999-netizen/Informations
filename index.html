@@ -98,7 +98,8 @@
         .password-toggle { position: absolute; right: 14px; background: none; border: none; color: var(--text-sub); cursor: pointer; }
 
         .editor-toolbar { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; background: var(--surface-solid); padding: 8px; border: 1px solid var(--border-solid); border-bottom: none; border-top-left-radius: 12px; border-top-right-radius: 12px; }
-        .tool-btn { background: var(--surface-solid); border: 1px solid var(--border-solid); border-radius: 8px; padding: 6px 10px; cursor: pointer; color: var(--text-main); font-size: 12px; }
+        .tool-btn { background: var(--surface-solid); border: 1px solid var(--border-solid); border-radius: 8px; padding: 6px 10px; cursor: pointer; color: var(--text-main); font-size: 12px; display: inline-flex; align-items: center; gap: 4px; }
+        .tool-select { background: var(--surface-solid); border: 1px solid var(--border-solid); border-radius: 8px; padding: 5px 8px; font-size: 12px; color: var(--text-main); outline: none; }
         .editor-content { min-height: 180px; max-height: 300px; background: var(--surface-solid); border: 1px solid var(--border-solid); border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; padding: 14px; font-size: 13px; outline: none; color: var(--text-main); overflow-y: auto; overflow-x: hidden; }
         .image-upload-btn { background: var(--surface-solid); border: 1px dashed var(--border-solid); border-radius: 10px; padding: 8px 12px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; color: var(--primary); margin-top: 6px; }
 
@@ -129,6 +130,8 @@
       let readNoticeIds = JSON.parse(localStorage.getItem('readNotices') || '[]');
       let currentUserTeam = 'GKK777'; 
       let currentLoggedInUser = '';
+      let isUserAdmin = false;
+      let editingNoticeId = null; // ပြင်ဆင်နေသည့် ID
 
       window.toggleTheme = function() {
           const html = document.documentElement;
@@ -172,6 +175,7 @@
       async function checkUserPermissions(username) {
           if(username === 'thetwinhtut' || username === 'admin') {
               currentUserTeam = 'ALL';
+              isUserAdmin = true;
               document.querySelectorAll('.admin-only').forEach(el => el.style.display = 'flex');
               document.getElementById('targetTeam').innerHTML = `
                   <option value="GKK777">GKK777 အဖွဲ့အတွက်</option>
@@ -190,6 +194,7 @@
                   currentUserTeam = data.team || 'GKK777';
 
                   if(data.isAdmin) {
+                      isUserAdmin = true;
                       document.querySelectorAll('.admin-only').forEach(el => el.style.display = 'flex');
                       loadUsersList();
                       const targetTeamSelect = document.getElementById('targetTeam');
@@ -239,6 +244,7 @@
           if(user === 'thetwinhtut' && pass === '521999') {
               localStorage.setItem('currentUser', 'thetwinhtut');
               currentLoggedInUser = 'thetwinhtut';
+              isUserAdmin = true;
               document.getElementById('loginOverlay').style.display = 'none';
               document.getElementById('welcomeUserText').textContent = 'thetwinhtut';
               currentUserTeam = 'ALL';
@@ -400,6 +406,13 @@
           document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
           document.getElementById(`tab-${tabName}-btn`).classList.add('active');
           document.getElementById(`tab-${tabName}`).classList.add('active');
+
+          if(tabName === 'create' && !editingNoticeId) {
+              document.getElementById('createEditTitleText').innerHTML = `<i class="fa-solid fa-circle-plus"></i> အသိပေးချက်အသစ် ရေးသားရန်`;
+              document.getElementById('submitBtnText').textContent = 'လွှင့်တင်မည်';
+              document.getElementById('title').value = '';
+              document.getElementById('editor').innerHTML = '';
+          }
       };
 
       window.formatDoc = function(cmd, value = null) {
@@ -429,18 +442,33 @@
           }
 
           try {
-              await addDoc(collection(db, "announcements"), {
-                  title: title,
-                  content: content,
-                  targetTeam: finalTeam,
-                  createdAt: serverTimestamp(),
-                  reactions: {},
-                  comments: []
-              });
+              if(editingNoticeId) {
+                  // Edit ပြုလုပ်ခြင်း
+                  const docRef = doc(db, "announcements", editingNoticeId);
+                  await updateDoc(docRef, {
+                      title: title,
+                      content: content,
+                      targetTeam: finalTeam
+                  });
+                  alert("အသိပေးစာကို အောင်မြင်စွာ ပြင်ဆင်ပြီးပါပြီ။");
+                  editingNoticeId = null;
+              } else {
+                  // အသစ်တင်ခြင်း
+                  await addDoc(collection(db, "announcements"), {
+                      title: title,
+                      content: content,
+                      targetTeam: finalTeam,
+                      createdAt: serverTimestamp(),
+                      reactions: {},
+                      comments: []
+                  });
+                  alert(`အသိပေးစာကို (${finalTeam}) အတွက် လွှင့်တင်ပြီးပါပြီ။`);
+              }
 
               document.getElementById('title').value = '';
               document.getElementById('editor').innerHTML = '';
-              alert(`အသိပေးစာကို (${finalTeam}) အတွက် လွှင့်တင်ပြီးပါပြီ။`);
+              document.getElementById('createEditTitleText').innerHTML = `<i class="fa-solid fa-circle-plus"></i> အသိပေးချက်အသစ် ရေးသားရန်`;
+              document.getElementById('submitBtnText').textContent = 'လွှင့်တင်မည်';
               switchTab('feed');
           } catch(e) {
               alert("Error: " + e.message);
@@ -574,7 +602,19 @@
               });
           }
 
+          // Admin ဖြစ်မှသာ ပြင်ဆင်ရန်/ဖျက်ရန် ခလုတ်များ ပေါ်မည်
+          let adminActionButtons = '';
+          if(isUserAdmin) {
+              adminActionButtons = `
+                  <div style="display:flex; gap:8px; margin-bottom:14px; border-bottom:1px solid var(--border); padding-bottom:10px;">
+                      <button class="btn-action" style="flex:1; color:var(--primary);" onclick="editNotice('${id}')"><i class="fa-solid fa-pen-to-square"></i> ပြင်ဆင်မည်</button>
+                      <button class="btn-action" style="flex:1; color:#ef4444;" onclick="deleteNotice('${id}')"><i class="fa-solid fa-trash"></i> ဖျက်မည်</button>
+                  </div>
+              `;
+          }
+
           document.getElementById('modalContentArea').innerHTML = `
+              ${adminActionButtons}
               <div style="font-size:18px; font-weight:700; margin-bottom:10px;">${data.title}</div>
               <div style="font-size:13px; line-height:1.6; margin-bottom:16px;">${data.content}</div>
               
@@ -600,6 +640,33 @@
               </div>
           `;
       }
+
+      window.editNotice = function(id) {
+          const data = noticesData[id];
+          if(!data) return;
+
+          editingNoticeId = id;
+          document.getElementById('title').value = data.title;
+          document.getElementById('editor').innerHTML = data.content;
+          document.getElementById('targetTeam').value = data.targetTeam || 'GKK777';
+
+          document.getElementById('createEditTitleText').innerHTML = `<i class="fa-solid fa-pen-to-square"></i> အသိပေးချက် ပြင်ဆင်ရန်`;
+          document.getElementById('submitBtnText').textContent = 'ပြင်ဆင်မှု သိမ်းမည်';
+
+          closeNoticeModal();
+          switchTab('create');
+      };
+
+      window.deleteNotice = async function(id) {
+          if(!confirm("ဤအသိပေးချက်ကို ဖျက်ရန် သေချာပါသလား?")) return;
+          try {
+              await deleteDoc(doc(db, "announcements", id));
+              closeNoticeModal();
+              alert("အသိပေးချက်ကို ဖျက်ပြီးပါပြီ။");
+          } catch(e) {
+              alert("Error: " + e.message);
+          }
+      };
 
       window.sendReaction = async function(id, emoji) {
           if(!currentLoggedInUser) return;
@@ -776,7 +843,7 @@
             <!-- Create Notice Tab (Admin Only) -->
             <div class="tab-content" id="tab-create">
                 <div class="form-card">
-                    <h3 style="font-size: 15px; font-weight: 700; margin-bottom: 12px;"><i class="fa-solid fa-circle-plus"></i> အသိပေးချက်အသစ် ရေးသားရန်</h3>
+                    <h3 id="createEditTitleText" style="font-size: 15px; font-weight: 700; margin-bottom: 12px;"><i class="fa-solid fa-circle-plus"></i> အသိပေးချက်အသစ် ရေးသားရန်</h3>
                     <div style="margin-bottom: 12px;">
                         <label style="font-size: 12px; font-weight: 600; display: block; margin-bottom: 4px;">ခေါင်းစဉ်</label>
                         <input type="text" id="title" class="input-field" placeholder="ခေါင်းစဉ် ရေးပါ...">
@@ -788,20 +855,40 @@
                         </select>
                     </div>
                     <div style="margin-bottom: 12px;">
-                        <label style="font-size: 12px; font-weight: 600; display: block; margin-bottom: 4px;">အကြောင်းအရာ</label>
+                        <label style="font-size: 12px; font-weight: 600; display: block; margin-bottom: 4px;">အကြောင်းအရာ (Font အရောင်နှင့် ပုံစံများ စိတ်ကြိုက်ပြင်နိုင်သည်)</label>
+                        
+                        <!-- Rich Text Toolbar with Font Color & Size -->
                         <div class="editor-toolbar">
-                            <button class="tool-btn" onclick="formatDoc('bold')"><i class="fa-solid fa-bold"></i></button>
-                            <button class="tool-btn" onclick="formatDoc('italic')"><i class="fa-solid fa-italic"></i></button>
-                            <button class="tool-btn" onclick="formatDoc('underline')"><i class="fa-solid fa-underline"></i></button>
-                            <button class="tool-btn" onclick="formatDoc('insertUnorderedList')"><i class="fa-solid fa-list-ul"></i></button>
+                            <button type="button" class="tool-btn" onclick="formatDoc('bold')" title="Bold"><i class="fa-solid fa-bold"></i></button>
+                            <button type="button" class="tool-btn" onclick="formatDoc('italic')" title="Italic"><i class="fa-solid fa-italic"></i></button>
+                            <button type="button" class="tool-btn" onclick="formatDoc('underline')" title="Underline"><i class="fa-solid fa-underline"></i></button>
+                            
+                            <!-- Font Color Picker -->
+                            <div style="display:inline-flex; align-items:center; gap:2px; background:var(--surface-solid); border:1px solid var(--border-solid); border-radius:8px; padding:2px 6px;">
+                                <i class="fa-solid fa-palette" style="font-size:11px; color:var(--text-sub);"></i>
+                                <input type="color" id="fontColorPicker" onchange="formatDoc('foreColor', this.value)" style="border:none; width:22px; height:22px; background:none; cursor:pointer;" title="စာသားအရောင် ရွေးရန်">
+                            </div>
+
+                            <!-- Font Size Selector -->
+                            <select class="tool-select" onchange="formatDoc('fontSize', this.value)" title="စာအရွယ်အစား">
+                                <option value="" disabled selected>အရွယ်အစား</option>
+                                <option value="2">သေးငယ် (Small)</option>
+                                <option value="3">သာမန် (Normal)</option>
+                                <option value="4">အသင့်အတင့် (Medium)</option>
+                                <option value="5">ကြီး (Large)</option>
+                                <option value="6">အရမ်းကြီး (X-Large)</option>
+                            </select>
+
+                            <button type="button" class="tool-btn" onclick="formatDoc('insertUnorderedList')" title="Bullet List"><i class="fa-solid fa-list-ul"></i></button>
                         </div>
+
                         <div id="editor" class="editor-content" contenteditable="true"></div>
                         <label class="image-upload-btn">
                             <i class="fa-solid fa-image"></i> ပုံထည့်ရန်
                             <input type="file" accept="image/*" style="display:none;" onchange="insertImageToEditor(event)">
                         </label>
                     </div>
-                    <button class="btn-submit" onclick="postAnnouncement()">လွှင့်တင်မည်</button>
+                    <button class="btn-submit" id="submitBtnText" onclick="postAnnouncement()">လွှင့်တင်မည်</button>
                 </div>
             </div>
 

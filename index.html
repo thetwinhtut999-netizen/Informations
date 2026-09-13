@@ -1,1161 +1,1009 @@
 <!DOCTYPE html>
-<html lang="my" data-theme="light" data-accent="indigo">
+<html lang="en" class="dark">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Informations🔔🔔 - Enterprise Portal</title>
-    
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Padauk:wght@400;700&family=Pyidaungsu&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <style>
-        :root[data-accent="indigo"] { --primary: #4f46e5; --primary-light: rgba(79, 70, 229, 0.15); --gradient: linear-gradient(135deg, #312e81 0%, #4f46e5 50%, #0284c7 100%); }
-        :root[data-accent="emerald"] { --primary: #059669; --primary-light: rgba(5, 150, 105, 0.15); --gradient: linear-gradient(135deg, #064e3b 0%, #059669 50%, #0d9488 100%); }
-        :root[data-accent="rose"] { --primary: #e11d48; --primary-light: rgba(225, 29, 72, 0.15); --gradient: linear-gradient(135deg, #881337 0%, #e11d48 50%, #c026d3 100%); }
-        :root[data-accent="amber"] { --primary: #d97706; --primary-light: rgba(217, 119, 6, 0.15); --gradient: linear-gradient(135deg, #78350f 0%, #d97706 50%, #ea580c 100%); }
-        :root[data-accent="purple"] { --primary: #7c3aed; --primary-light: rgba(124, 58, 237, 0.15); --gradient: linear-gradient(135deg, #4c1d95 0%, #7c3aed 50%, #db2777 100%); }
-
-        :root[data-theme="light"] {
-            --bg-gradient: linear-gradient(135deg, #e0e7ff 0%, #f3e8ff 50%, #e0f2fe 100%);
-            --surface: rgba(255, 255, 255, 0.75);
-            --surface-solid: #ffffff;
-            --text-main: #0f172a;
-            --text-sub: #64748b;
-            --border: rgba(255, 255, 255, 0.6);
-            --border-solid: #e2e8f0;
-            --shadow: 0 10px 30px 0 rgba(31, 38, 135, 0.1);
-            --glass-backdrop: blur(16px);
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GKK Enterprise - Notice Portal</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: 'var(--brand-50)',
+                            100: 'var(--brand-100)',
+                            500: 'var(--brand-500)',
+                            600: 'var(--brand-600)',
+                            700: 'var(--brand-700)',
+                        }
+                    }
+                }
+            }
         }
-        :root[data-theme="dark"] {
-            --bg-gradient: linear-gradient(135deg, #0f172a 100%, #1e1b4b 50%, #020617 0%);
-            --surface: rgba(30, 41, 59, 0.65);
-            --surface-solid: #1e293b;
-            --text-main: #f8fafc;
-            --text-sub: #94a3b8;
-            --border: rgba(255, 255, 255, 0.08);
-            --border-solid: #334155;
-            --shadow: 0 10px 30px 0 rgba(0, 0, 0, 0.37);
-            --glass-backdrop: blur(16px);
-        }
-
-        * { box-sizing: border-box; font-family: 'Padauk', 'Plus Jakarta Sans', sans-serif; margin: 0; padding: 0; }
-        body { background: var(--bg-gradient); background-attachment: fixed; color: var(--text-main); display: flex; justify-content: center; min-height: 100vh; overflow-x: hidden; position: relative; }
-
-        /* Weather Effects Overlay Container */
-        #weather-fx-layer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; overflow: hidden; }
-
-        /* Weather Animations CSS */
-        .raindrop { position: absolute; background: linear-gradient(transparent, rgba(255,255,255,0.8)); width: 1px; height: 20px; opacity: 0.7; animation: fall linear infinite; }
-        @keyframes fall { 0% { transform: translateY(-20px); } 100% { transform: translateY(105vh); } }
-
-        .sun-ray { position: absolute; top: -50px; right: -50px; width: 150px; height: 150px; background: radial-gradient(circle, rgba(255,215,0,0.4) 0%, transparent 70%); border-radius: 50%; animation: pulse-sun 4s ease-in-out infinite; }
-        @keyframes pulse-sun { 0%, 100% { transform: scale(1); opacity: 0.6; } 50% { transform: scale(1.2); opacity: 0.9; } }
-
-        .lightning-flash { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.8); opacity: 0; pointer-events: none; z-index: 2; }
-        @keyframes flashAnim { 0% { opacity: 0; } 10% { opacity: 1; } 20% { opacity: 0; } 30% { opacity: 0.8; } 40% { opacity: 0; } 100% { opacity: 0; } }
-
-        .music-note { position: absolute; font-size: 16px; color: var(--primary); opacity: 0.7; animation: floatNote 4s linear infinite; }
-        @keyframes floatNote { 0% { transform: translateY(100vh) scale(0.8); opacity: 0; } 50% { opacity: 1; } 100% { transform: translateY(-20px) scale(1.2); opacity: 0; } }
-
-        /* Live Notification Toast */
-        #notification-toast { position: fixed; top: 20px; right: 20px; background: var(--surface); backdrop-filter: var(--glass-backdrop); border: 1px solid var(--primary); border-left: 5px solid var(--primary); padding: 12px 18px; border-radius: 14px; box-shadow: var(--shadow); z-index: 4000; display: flex; align-items: center; gap: 12px; transform: translateX(120%); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); max-width: 320px; }
-        #notification-toast.show { transform: translateX(0); }
-
-        .app-shell { width: 100%; max-width: 680px; background: transparent; min-height: 100vh; display: flex; flex-direction: column; position: relative; z-index: 10; overflow-x: hidden; }
-        
-        .login-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 23, 42, 0.5); backdrop-filter: blur(20px); display: flex; justify-content: center; align-items: center; z-index: 3000; padding: 20px; }
-        .login-card { background: var(--surface); backdrop-filter: var(--glass-backdrop); border: 1px solid var(--border); border-radius: 24px; width: 100%; max-width: 420px; padding: 32px; box-shadow: var(--shadow); text-align: center; }
-
-        .hero-header { background: var(--gradient); color: white; padding: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
-        .brand-container { display: flex; justify-content: space-between; align-items: center; }
-        .brand-info { display: flex; align-items: center; gap: 14px; }
-        .cat-avatar { width: 50px; height: 50px; background: rgba(255,255,255,0.2); border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 26px; border: 2px solid rgba(255,215,0,0.8); position: relative; backdrop-filter: blur(5px); }
-        .cat-avatar .bell-badge { position: absolute; bottom: -4px; right: -4px; background: #f59e0b; color: #fff; font-size: 11px; width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 2px solid #fff; }
-
-        /* Myanmar Clock Widget */
-        .mm-clock-box { background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(8px); border: 1px solid rgba(255, 255, 255, 0.3); border-radius: 12px; padding: 8px 14px; margin-top: 12px; display: flex; justify-content: space-between; align-items: center; font-size: 12px; font-weight: 600; }
-
-        .settings-bar { display: flex; gap: 8px; align-items: center; position: relative; }
-        .icon-btn { background: rgba(255,255,255,0.2); border: none; color: white; width: 36px; height: 36px; border-radius: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(5px); }
-
-        .theme-dropdown { position: absolute; top: 45px; right: 0; background: var(--surface); backdrop-filter: var(--glass-backdrop); border: 1px solid var(--border); border-radius: 14px; padding: 12px; box-shadow: var(--shadow); display: none; z-index: 500; width: 210px; text-align: left; }
-        .theme-dropdown.active { display: block; }
-        .color-bubbles { display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
-        .color-bubble { width: 26px; height: 26px; border-radius: 50%; cursor: pointer; border: 2px solid var(--border); }
-
-        .daily-quote-card { background: var(--surface); backdrop-filter: var(--glass-backdrop); border: 1px solid var(--border); border-radius: 14px; padding: 14px 16px; margin: 16px 20px 0 20px; box-shadow: var(--shadow); display: flex; align-items: center; gap: 12px; }
-
-        .tab-bar { display: flex; gap: 8px; padding: 14px 20px 6px 20px; background: var(--surface); backdrop-filter: var(--glass-backdrop); border-bottom: 1px solid var(--border); }
-        .tab-btn { flex: 1; padding: 10px; background: var(--surface); backdrop-filter: blur(5px); border: 1px solid var(--border); border-radius: 12px; font-weight: 600; font-size: 13px; color: var(--text-sub); cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.2s; }
-        .tab-btn.active { background: var(--primary); color: white; border-color: var(--primary); box-shadow: 0 4px 15px var(--primary-light); }
-
-        .main-content { padding: 20px; flex: 1; }
-        .tab-content { display: none; }
-        .tab-content.active { display: block; }
-
-        .notice-card-modern { background: var(--surface); backdrop-filter: var(--glass-backdrop); border-radius: 16px; padding: 18px; margin-bottom: 12px; box-shadow: var(--shadow); border: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; cursor: pointer; position: relative; transition: transform 0.2s; }
-        .notice-card-modern:hover { transform: translateY(-2px); }
-        .notice-card-modern.unread::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 5px; background-color: var(--primary); border-top-left-radius: 16px; border-bottom-left-radius: 16px; }
-
-        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(12px); display: none; justify-content: center; align-items: center; z-index: 9999; padding: 10px; }
-        .modal-overlay.active { display: flex; }
-        
-        .modal-card { background: var(--surface); backdrop-filter: var(--glass-backdrop); border-radius: 20px; width: 100%; max-width: 500px; max-height: 90vh; display: flex; flex-direction: column; box-shadow: var(--shadow); border: 1px solid var(--border); overflow: hidden; }
-        .modal-header { padding: 14px 18px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
-        .modal-body { padding: 16px; overflow-y: auto; flex: 1; word-break: break-word; overflow-x: hidden; }
-        .modal-footer { padding: 12px 18px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; flex-shrink: 0; }
-        .modal-close { background: var(--surface); border: 1px solid var(--border); width: 32px; height: 32px; border-radius: 50%; cursor: pointer; color: var(--text-sub); display: flex; align-items: center; justify-content: center; }
-
-        .modal-body img, .editor-content img { max-width: 100% !important; height: auto !important; border-radius: 8px; display: block; margin: 8px auto; object-fit: contain; }
-
-        .action-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin: 16px 0; }
-        .btn-action { padding: 8px 4px; border-radius: 12px; border: 1px solid var(--border); background: var(--surface); backdrop-filter: blur(5px); color: var(--text-main); font-size: 11px; font-weight: 600; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; }
-        .btn-action.active-react { background: var(--primary-light); border-color: var(--primary); color: var(--primary); }
-        
-        .staff-status-box { background: var(--surface); backdrop-filter: blur(5px); border: 1px solid var(--border); border-radius: 14px; padding: 12px; margin-bottom: 14px; }
-        details.emoji-group { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 8px 10px; margin-top: 6px; }
-        details.emoji-group summary { cursor: pointer; font-weight: 600; font-size: 12px; display: flex; justify-content: space-between; align-items: center; }
-        .staff-tag { display: inline-flex; align-items: center; background: var(--primary-light); color: var(--primary); border: 1px solid var(--border); padding: 2px 8px; border-radius: 20px; font-size: 11px; margin: 2px; font-weight: 600; }
-
-        .input-field, select.input-field { padding: 10px 14px; border: 1px solid var(--border-solid); background: var(--surface-solid); color: var(--text-main); border-radius: 12px; font-size: 13px; outline: none; width: 100%; }
-        .input-group { position: relative; display: flex; align-items: center; width: 100%; }
-        .password-toggle { position: absolute; right: 14px; background: none; border: none; color: var(--text-sub); cursor: pointer; }
-
-        .editor-toolbar { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; background: var(--surface-solid); padding: 8px; border: 1px solid var(--border-solid); border-bottom: none; border-top-left-radius: 12px; border-top-right-radius: 12px; }
-        .tool-btn { background: var(--surface-solid); border: 1px solid var(--border-solid); border-radius: 8px; padding: 6px 10px; cursor: pointer; color: var(--text-main); font-size: 12px; display: inline-flex; align-items: center; gap: 4px; }
-        .tool-select { background: var(--surface-solid); border: 1px solid var(--border-solid); border-radius: 8px; padding: 5px 8px; font-size: 12px; color: var(--text-main); outline: none; }
-        .editor-content { min-height: 180px; max-height: 300px; background: var(--surface-solid); border: 1px solid var(--border-solid); border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; padding: 14px; font-size: 13px; outline: none; color: var(--text-main); overflow-y: auto; overflow-x: hidden; }
-        .image-upload-btn { background: var(--surface-solid); border: 1px dashed var(--border-solid); border-radius: 10px; padding: 8px 12px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; color: var(--primary); margin-top: 6px; }
-
-        .btn-submit { background: var(--primary); color: white; border: none; padding: 10px 18px; border-radius: 12px; font-weight: 600; cursor: pointer; box-shadow: 0 4px 15px var(--primary-light); }
-        .form-card { background: var(--surface); backdrop-filter: var(--glass-backdrop); border-radius: 20px; padding: 20px; box-shadow: var(--shadow); border: 1px solid var(--border); margin-bottom: 16px; }
-        .user-table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 10px; }
-        .user-table th, .user-table td { padding: 8px; border-bottom: 1px solid var(--border-solid); text-align: left; }
-    </style>
-
-    <script type="module">
-      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-      import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, serverTimestamp, doc, updateDoc, setDoc, getDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-
-      const firebaseConfig = {
-        apiKey: "AIzaSyAI5hJOp52rLWJf6LkCE9xEve2YwS5bf1Y",
-        authDomain: "company-notice-app-ea512.firebaseapp.com",
-        projectId: "company-notice-app-ea512",
-        storageBucket: "company-notice-app-ea512.firebasestorage.app",
-        messagingSenderId: "876175516131",
-        appId: "1:876175516131:web:aba275499133507f97c0d6",
-        measurementId: "G-1GWN701LRP"
-      };
-
-      const app = initializeApp(firebaseConfig);
-      const db = getFirestore(app);
-
-      let noticesData = {};
-      let readNoticeIds = JSON.parse(localStorage.getItem('readNotices') || '[]');
-      let currentUserTeam = 'GKK777'; 
-      let currentLoggedInUser = '';
-      let isUserAdmin = false;
-      let editingNoticeId = null; 
-      let isInitialLoad = true; 
-
-      const motivationalQuotes = [
-          "✨ ယနေ့သည် သင့်အတွက် အကောင်းဆုံးအခွင့်အရေးများကို ဖန်တီးပေးမည့်နေ့ ဖြစ်ပါစေ။",
-          "🚀 ကြိုးစားမှုတိုင်းက အလကားမဖြစ်ပါဘူး၊ ရည်မှန်းချက်ဆီကို ဆက်လှမ်းပါ။",
-          "💪 အခက်အခဲဟူသမျှသည် ပိုမိုသန်မာလာစေရန် သင်ခန်းစာများသာ ဖြစ်ပါသည်။",
-          "🌟 အပြုံးလေးနဲ့ တစ်နေ့တာကို အကောင်းဆုံး ဖြတ်သန်းလိုက်ပါ။",
-          "🔥 မနက်ဖြန်ထက် ပိုကောင်းတဲ့ ဒီကနေ့ဖြစ်အောင် အကောင်းဆုံးကြိုးစားပါ။",
-          "🎯 လုပ်ချင်တာတွေကို အကောင်အထည်ဖော်ဖို့ အကောင်းဆုံးအချိန်က ဒီကနေ့ပါပဲ။"
-      ];
-
-      function loadDailyQuote() {
-          const randomIndex = Math.floor(Math.random() * motivationalQuotes.length);
-          const quoteEl = document.getElementById('dailyQuoteText');
-          if(quoteEl) quoteEl.textContent = motivationalQuotes[randomIndex];
-      }
-
-      // Myanmar Clock Live Update (UTC+6:30)
-      function startMyanmarClock() {
-          function updateClock() {
-              const now = new Date();
-              // Convert to Myanmar Standard Time (+6:30)
-              const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
-              const mmTime = new Date(utc + (3600000 * 6.5));
-              
-              let hours = mmTime.getHours();
-              const minutes = String(mmTime.getMinutes()).padStart(2, '0');
-              const seconds = String(mmTime.getSeconds()).padStart(2, '0');
-              const ampm = hours >= 12 ? 'ညနေ / ည' : 'နံနက် / နေ့';
-              hours = hours % 12;
-              hours = hours ? hours : 12; // the hour '0' should be '12'
-              const strHours = String(hours).padStart(2, '0');
-
-              const days = ['တနင်္ဂနွေ', 'တနင်္လာ', 'အင်္ဂါ', 'ဗုဒ္ဓဟူး', 'ကြာသပတေး', 'သောကြာ', 'စနေ'];
-              const dayName = days[mmTime.getDay()];
-              const dateNum = mmTime.getDate();
-              const months = ['ဇန်နဝါရီ', 'ဖေဖော်ဝါရီ', 'မတ်', 'ဧပြီ', 'မေ', 'ဇွန်', 'ဇူလိုင်', 'သြဂုတ်', 'စက်တင်ဘာ', 'အောက်တိုဘာ', 'နိုဝင်ဘာ', 'ဒီဇင်ဘာ'];
-              const monthName = months[mmTime.getMonth()];
-              const year = mmTime.getFullYear();
-
-              const clockEl = document.getElementById('mmClockDisplay');
-              const dateEl = document.getElementById('mmDateDisplay');
-              if(clockEl) clockEl.textContent = `${strHours}:${minutes}:${seconds} ${ampm}`;
-              if(dateEl) dateEl.textContent = `${dayName}၊ ${dateNum} ${monthName} ${year}`;
-          }
-          updateClock();
-          setInterval(updateClock, 1000);
-      }
-
-      // Notification Audio & Toast Popup Alert
-      function playNotificationSound() {
-          try {
-              const ctx = new (window.AudioContext || window.webkitAudioContext)();
-              const osc = ctx.createOscillator();
-              const gain = ctx.createGain();
-              osc.type = 'sine';
-              osc.frequency.setValueAtTime(587.33, ctx.currentTime); // D5 note
-              osc.frequency.exponentialRampToValueAtTime(880, ctx.currentTime + 0.15); // A5 note
-              gain.gain.setValueAtTime(0.15, ctx.currentTime);
-              gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.4);
-              osc.connect(gain);
-              gain.connect(ctx.destination);
-              osc.start();
-              osc.stop(ctx.currentTime + 0.4);
-          } catch(e) {}
-      }
-
-      function showNotificationToast(titleText) {
-          const toast = document.getElementById('notification-toast');
-          const titleElem = document.getElementById('toastNoticeTitle');
-          if(!toast || !titleElem) return;
-          
-          titleElem.textContent = titleText;
-          toast.classList.add('show');
-          playNotificationSound();
-
-          setTimeout(() => {
-              toast.classList.remove('show');
-          }, 4000);
-      }
-
-      // Geolocation Weather Effects Integration
-      async function initWeatherEffect() {
-          const fxLayer = document.getElementById('weather-fx-layer');
-          if(!fxLayer) return;
-
-          let weatherType = 'clear'; 
-
-          if (navigator.geolocation) {
-              navigator.geolocation.getCurrentPosition(async (position) => {
-                  const lat = position.coords.latitude;
-                  const lon = position.coords.longitude;
-                  try {
-                      const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`);
-                      const data = await res.json();
-                      const code = data.current_weather.weathercode;
-                      
-                      if ([51,53,55,61,63,65,80,81,82].includes(code)) {
-                          weatherType = 'rain';
-                      } else if ([95,96,99].includes(code)) {
-                          weatherType = 'thunderstorm';
-                      } else if ([0, 1].includes(code)) {
-                          weatherType = 'sunny';
-                      } else {
-                          weatherType = 'clear';
-                      }
-                      renderWeatherFX(weatherType, fxLayer);
-                  } catch (e) {
-                      renderWeatherFX('clear', fxLayer);
-                  }
-              }, () => {
-                  renderWeatherFX('clear', fxLayer);
-              });
-          } else {
-              renderWeatherFX('clear', fxLayer);
-          }
-      }
-
-      function renderWeatherFX(type, container) {
-          container.innerHTML = '';
-          if (type === 'rain') {
-              for (let i = 0; i < 40; i++) {
-                  const drop = document.createElement('div');
-                  drop.className = 'raindrop';
-                  drop.style.left = `${Math.random() * 100}%`;
-                  drop.style.animationDuration = `${0.5 + Math.random() * 0.5}s`;
-                  drop.style.animationDelay = `${Math.random() * 2}s`;
-                  container.appendChild(drop);
-              }
-          } else if (type === 'thunderstorm') {
-              for (let i = 0; i < 30; i++) {
-                  const drop = document.createElement('div');
-                  drop.className = 'raindrop';
-                  drop.style.left = `${Math.random() * 100}%`;
-                  drop.style.animationDuration = `${0.3 + Math.random() * 0.3}s`;
-                  container.appendChild(drop);
-              }
-              const flash = document.createElement('div');
-              flash.className = 'lightning-flash';
-              flash.style.animation = 'flashAnim 5s infinite';
-              container.appendChild(flash);
-          } else if (type === 'sunny') {
-              const sun = document.createElement('div');
-              sun.className = 'sun-ray';
-              container.appendChild(sun);
-          } else {
-              const notes = ['♪', '♫', '♬', '♩'];
-              for (let i = 0; i < 15; i++) {
-                  const note = document.createElement('div');
-                  note.className = 'music-note';
-                  note.textContent = notes[Math.floor(Math.random() * notes.length)];
-                  note.style.left = `${Math.random() * 100}%`;
-                  note.style.animationDuration = `${3 + Math.random() * 3}s`;
-                  note.style.animationDelay = `${Math.random() * 3}s`;
-                  container.appendChild(note);
-              }
-          }
-      }
-
-      window.toggleTheme = function() {
-          const html = document.documentElement;
-          const current = html.getAttribute('data-theme');
-          const next = current === 'dark' ? 'light' : 'dark';
-          html.setAttribute('data-theme', next);
-          localStorage.setItem('appTheme', next);
-      };
-
-      window.setAccent = function(color) {
-          document.documentElement.setAttribute('data-accent', color);
-          localStorage.setItem('appAccent', color);
-          document.getElementById('themeDropdown').classList.remove('active');
-      };
-
-      window.toggleThemeDropdown = function(e) {
-          e.stopPropagation();
-          document.getElementById('themeDropdown').classList.toggle('active');
-      };
-
-      window.addEventListener('click', () => {
-          const dropdown = document.getElementById('themeDropdown');
-          if(dropdown) dropdown.classList.remove('active');
-      });
-
-      window.addEventListener('DOMContentLoaded', () => {
-          const savedTheme = localStorage.getItem('appTheme') || 'light';
-          const savedAccent = localStorage.getItem('appAccent') || 'indigo';
-          document.documentElement.setAttribute('data-theme', savedTheme);
-          document.documentElement.setAttribute('data-accent', savedAccent);
-
-          loadDailyQuote();
-          initWeatherEffect();
-          startMyanmarClock();
-
-          const loggedUser = localStorage.getItem('currentUser');
-          if(loggedUser) {
-              currentLoggedInUser = loggedUser;
-              document.getElementById('loginOverlay').style.display = 'none';
-              document.getElementById('welcomeUserText').textContent = loggedUser;
-              checkUserPermissions(loggedUser);
-          }
-      });
-
-      async function checkUserPermissions(username) {
-          if(username === 'thetwinhtut' || username === 'admin') {
-              currentUserTeam = 'ALL';
-              isUserAdmin = true;
-              document.querySelectorAll('.admin-only').forEach(el => el.style.display = 'flex');
-              document.getElementById('targetTeam').innerHTML = `
-                  <option value="GKK777">GKK777 အဖွဲ့အတွက်</option>
-                  <option value="GKK99">GKK99 အဖွဲ့အတွက်</option>
-              `;
-              loadUsersList();
-              loadNotices('ALL');
-              return;
-          }
-
-          try {
-              const docRef = doc(db, "users", username);
-              const snap = await getDoc(docRef);
-              if(snap.exists()) {
-                  const data = snap.data();
-                  currentUserTeam = data.team || 'GKK777';
-
-                  if(data.isAdmin) {
-                      isUserAdmin = true;
-                      document.querySelectorAll('.admin-only').forEach(el => el.style.display = 'flex');
-                      loadUsersList();
-                      const targetTeamSelect = document.getElementById('targetTeam');
-                      targetTeamSelect.innerHTML = `<option value="${currentUserTeam}">${currentUserTeam} အဖွဲ့အတွက် (သင့်အဖွဲ့)</option>`;
-                  }
-
-                  loadNotices(currentUserTeam);
-              } else {
-                  if(username === 'thetwinhtut') {
-                      currentUserTeam = 'ALL';
-                      isUserAdmin = true;
-                      document.querySelectorAll('.admin-only').forEach(el => el.style.display = 'flex');
-                      document.getElementById('targetTeam').innerHTML = `
-                          <option value="GKK777">GKK777 အဖွဲ့အတွက်</option>
-                          <option value="GKK99">GKK99 အဖွဲ့အတွက်</option>
-                      `;
-                      loadUsersList();
-                      loadNotices('ALL');
-                  }
-              }
-          } catch(e) {
-              console.error(e);
-          }
-      }
-
-      window.togglePasswordVisibility = function(fieldId, iconId) {
-          const field = document.getElementById(fieldId);
-          const icon = document.getElementById(iconId);
-          if(field.type === 'password') {
-              field.type = 'text';
-              icon.classList.remove('fa-eye');
-              icon.classList.add('fa-eye-slash');
-          } else {
-              field.type = 'password';
-              icon.classList.remove('fa-eye-slash');
-              icon.classList.add('fa-eye');
-          }
-      };
-
-      window.switchLoginMode = function(mode) {
-          if(mode === 'changePass') {
-              document.getElementById('normalLoginSection').style.display = 'none';
-              document.getElementById('changePassSection').style.display = 'block';
-          } else {
-              document.getElementById('normalLoginSection').style.display = 'block';
-              document.getElementById('changePassSection').style.display = 'none';
-          }
-      };
-
-      window.handleLogin = async function() {
-          const user = document.getElementById('loginUser').value.trim().toLowerCase();
-          const pass = document.getElementById('loginPass').value.trim();
-
-          if(!user || !pass) {
-              alert("Username နှင့် Password ထည့်သွင်းပေးပါ။");
-              return;
-          }
-
-          if(user === 'thetwinhtut' && pass === '521999') {
-              localStorage.setItem('currentUser', 'thetwinhtut');
-              currentLoggedInUser = 'thetwinhtut';
-              isUserAdmin = true;
-              document.getElementById('loginOverlay').style.display = 'none';
-              document.getElementById('welcomeUserText').textContent = 'thetwinhtut';
-              currentUserTeam = 'ALL';
-              document.querySelectorAll('.admin-only').forEach(el => el.style.display = 'flex');
-              document.getElementById('targetTeam').innerHTML = `
-                  <option value="GKK777">GKK777 အဖွဲ့အတွက်</option>
-                  <option value="GKK99">GKK99 အဖွဲ့အတွက်</option>
-              `;
-              loadUsersList();
-              loadNotices('ALL');
-              return;
-          }
-
-          try {
-              const userRef = doc(db, "users", user);
-              const userSnap = await getDoc(userRef);
-              if(userSnap.exists()) {
-                  const data = userSnap.data();
-                  if(data.password === pass) {
-                      localStorage.setItem('currentUser', user);
-                      currentLoggedInUser = user;
-                      document.getElementById('loginOverlay').style.display = 'none';
-                      document.getElementById('welcomeUserText').textContent = user;
-                      checkUserPermissions(user);
-                  } else {
-                      alert("Password မှားယွင်းနေပါသည်။");
-                  }
-              } else {
-                  alert("Log In ဝင်ရောက်နေသော Username မရှိပါ။");
-              }
-          } catch(e) {
-              alert("Login Error: " + e.message);
-          }
-      };
-
-      window.handleChangePassword = async function() {
-          const user = document.getElementById('cpUser').value.trim().toLowerCase();
-          const oldPass = document.getElementById('cpOldPass').value.trim();
-          const newPass = document.getElementById('cpNewPass').value.trim();
-          const confirmPass = document.getElementById('cpConfirmPass').value.trim();
-
-          if(!user || !oldPass || !newPass || !confirmPass) {
-              alert("အချက်အလက်များကို အပြည့်အစုံ ဖြည့်စွက်ပေးပါ။");
-              return;
-          }
-
-          if(newPass !== confirmPass) {
-              alert("Password အသစ်နှစ်ခု ကိုက်ညီမှု မရှိပါ။ ပြန်လည်စစ်ဆေးပါ။");
-              return;
-          }
-
-          try {
-              const userRef = doc(db, "users", user);
-              const userSnap = await getDoc(userRef);
-              if(userSnap.exists()) {
-                  const data = userSnap.data();
-                  if(data.password === oldPass) {
-                      await updateDoc(userRef, { password: newPass });
-                      alert("Password အသစ် ပြောင်းလဲခြင်း အောင်မြင်ပါသည်။");
-                      switchLoginMode('login');
-                  } else {
-                      alert("Password အဟောင်း မှားယွင်းနေပါသည်။");
-                  }
-              } else {
-                  alert("මෙම Username မရှိပါ။");
-              }
-          } catch(e) {
-              alert("Error: " + e.message);
-          }
-      };
-
-      window.handleLogout = function() {
-          localStorage.removeItem('currentUser');
-          location.reload();
-      };
-
-      window.createNewUser = async function() {
-          const username = document.getElementById('newUsername').value.trim().toLowerCase();
-          const password = document.getElementById('newPassword').value.trim();
-          const isAdmin = document.getElementById('newIsAdmin').checked;
-          const team = document.getElementById('newTeam').value;
-
-          if(!username || !password) {
-              alert("Username နှင့် Password ဖြည့်ပါ။");
-              return;
-          }
-
-          try {
-              await setDoc(doc(db, "users", username), {
-                  password: password,
-                  isAdmin: isAdmin,
-                  team: team,
-                  createdAt: serverTimestamp()
-              });
-              alert(`အကောင့်အသစ် (${username}) ဖန်တီးပြီးပါပြီ။`);
-              document.getElementById('newUsername').value = '';
-              document.getElementById('newPassword').value = '';
-              loadUsersList();
-          } catch(e) {
-              alert("Error: " + e.message);
-          }
-      };
-
-      window.resetUserPassword = async function(username) {
-          const newPass = prompt(`(${username}) အတွက် Password အသစ် ရိုက်ထည့်ပါ:`);
-          if(!newPass) return;
-          try {
-              await updateDoc(doc(db, "users", username), { password: newPass });
-              alert(`Password ပြောင်းလဲပြီးပါပြီ။`);
-          } catch(e) {
-              alert("Error: " + e.message);
-          }
-      };
-
-      window.deleteUserAccount = async function(username) {
-          if(!confirm(`(${username}) အကောင့်ကို ဖျက်ရန် သေချာပါသလား?`)) return;
-          try {
-              await deleteDoc(doc(db, "users", username));
-              loadUsersList();
-          } catch(e) {
-              alert("Error: " + e.message);
-          }
-      };
-
-      async function loadUsersList() {
-          const container = document.getElementById('usersTableContainer');
-          if(!container) return;
-          onSnapshot(collection(db, "users"), (snapshot) => {
-              let html = `<table class="user-table"><tr><th>User</th><th>Team</th><th>Role</th><th>Actions</th></tr>`;
-              snapshot.forEach(docSnap => {
-                  const d = docSnap.data();
-                  const u = docSnap.id;
-                  html += `<tr>
-                      <td><b>${u}</b></td>
-                      <td><span style="font-size:10px; background:var(--primary-light); color:var(--primary); padding:2px 6px; border-radius:6px;">${d.team || 'GKK777'}</span></td>
-                      <td>${d.isAdmin ? 'Admin' : 'Staff'}</td>
-                      <td>
-                          <button class="btn-action" style="padding:2px 6px; font-size:10px; display:inline-flex;" onclick="resetUserPassword('${u}')">Pass</button>
-                          <button class="btn-action" style="padding:2px 6px; font-size:10px; display:inline-flex; color:#ef4444;" onclick="deleteUserAccount('${u}')">Del</button>
-                      </td>
-                  </tr>`;
-              });
-              html += `</table>`;
-              container.innerHTML = html;
-          });
-      }
-
-      window.switchTab = function(tabName) {
-          document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-          document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-          document.getElementById(`tab-${tabName}-btn`).classList.add('active');
-          document.getElementById(`tab-${tabName}`).classList.add('active');
-
-          if(tabName === 'create' && !editingNoticeId) {
-              document.getElementById('createEditTitleText').innerHTML = `<i class="fa-solid fa-circle-plus"></i> အသိပေးချက်အသစ် ရေးသားရန်`;
-              document.getElementById('submitBtnText').textContent = 'လွှင့်တင်မည်';
-              document.getElementById('title').value = '';
-              document.getElementById('editor').innerHTML = '';
-          }
-      };
-
-      window.formatDoc = function(cmd, value = null) {
-          document.execCommand(cmd, false, value);
-      };
-
-      window.insertImageToEditor = function(event) {
-          const file = event.target.files[0];
-          if(!file) return;
-          const reader = new FileReader();
-          reader.onload = function(e) {
-              const imgHtml = `<br><img src="${e.target.result}" style="max-width:100%; height:auto; border-radius:8px; margin:8px auto; display:block;"><br>`;
-              document.execCommand('insertHTML', false, imgHtml);
-          };
-          reader.readAsDataURL(file);
-      };
-
-      window.postAnnouncement = async function() {
-          const title = document.getElementById('title').value;
-          const content = document.getElementById('editor').innerHTML;
-          const selectedTeam = document.getElementById('targetTeam').value;
-          const finalTeam = (currentUserTeam === 'ALL') ? selectedTeam : currentUserTeam;
-
-          if(!title || !content || content === '<br>') {
-              alert("ခေါင်းစဉ်နှင့် အကြောင်းအရာ ဖြည့်စွက်ပေးပါ။");
-              return;
-          }
-
-          try {
-              if(editingNoticeId) {
-                  const docRef = doc(db, "announcements", editingNoticeId);
-                  await updateDoc(docRef, {
-                      title: title,
-                      content: content,
-                      targetTeam: finalTeam
-                  });
-                  alert("အသိပေးစာကို အောင်မြင်စွာ ပြင်ဆင်ပြီးပါပြီ။");
-                  editingNoticeId = null;
-              } else {
-                  await addDoc(collection(db, "announcements"), {
-                      title: title,
-                      content: content,
-                      targetTeam: finalTeam,
-                      createdAt: serverTimestamp(),
-                      reactions: {},
-                      comments: []
-                  });
-                  alert(`အသိပေးစာကို (${finalTeam}) အတွက် လွှင့်တင်ပြီးပါပြီ။`);
-              }
-
-              document.getElementById('title').value = '';
-              document.getElementById('editor').innerHTML = '';
-              document.getElementById('createEditTitleText').innerHTML = `<i class="fa-solid fa-circle-plus"></i> အသိပေးချက်အသစ် ရေးသားရန်`;
-              document.getElementById('submitBtnText').textContent = 'လွှင့်တင်မည်';
-              switchTab('feed');
-          } catch(e) {
-              alert("Error: " + e.message);
-          }
-      };
-
-      function loadNotices(userTeam) {
-          const q = query(collection(db, "announcements"), orderBy("createdAt", "desc"));
-          onSnapshot(q, (snapshot) => {
-              const list = document.getElementById('noticeMenuList');
-              list.innerHTML = '';
-              noticesData = {};
-              let unreadCount = 0;
-              let latestAddedDoc = null;
-
-              snapshot.docChanges().forEach((change) => {
-                  if (change.type === "added" && !isInitialLoad) {
-                      const data = change.doc.data();
-                      if (userTeam === 'ALL' || !data.targetTeam || data.targetTeam === userTeam) {
-                          showNotificationToast(data.title);
-                      }
-                  }
-              });
-
-              snapshot.forEach((docSnapshot) => {
-                  const data = docSnapshot.data();
-                  const id = docSnapshot.id;
-
-                  if(userTeam !== 'ALL' && data.targetTeam && data.targetTeam !== userTeam) {
-                      return;
-                  }
-
-                  noticesData[id] = data;
-                  const isUnread = !readNoticeIds.includes(id);
-                  if(isUnread) unreadCount++;
-
-                  const dateStr = data.createdAt ? new Date(data.createdAt.seconds * 1000).toLocaleDateString('my-MM') : 'မကြာမီက';
-
-                  list.innerHTML += `
-                      <div class="notice-card-modern ${isUnread ? 'unread' : ''}" onclick="openNoticeModal('${id}')">
-                          <div>
-                              <div style="font-weight: 700; font-size: 15px; margin-bottom: 4px; display:flex; align-items:center; gap:8px;">
-                                  ${isUnread ? '<span style="width:8px; height:8px; background:var(--primary); border-radius:50%;"></span>' : ''}
-                                  ${data.title} <span style="font-size:10px; background:var(--primary-light); color:var(--primary); padding:2px 6px; border-radius:4px;">${data.targetTeam || 'GKK777'}</span>
-                              </div>
-                              <div style="font-size: 12px; color: var(--text-sub);"><i class="fa-regular fa-clock"></i> ${dateStr}</div>
-                          </div>
-                          <i class="fa-solid fa-chevron-right" style="color:var(--text-sub); font-size:12px;"></i>
-                      </div>
-                  `;
-              });
-
-              isInitialLoad = false;
-
-              const badge = document.getElementById('unreadBadge');
-              if(unreadCount > 0) {
-                  badge.textContent = unreadCount;
-                  badge.style.display = 'inline-block';
-              } else {
-                  badge.style.display = 'none';
-              }
-          });
-      }
-
-      window.openNoticeModal = function(id) {
-          const data = noticesData[id];
-          if(!data) return;
-
-          if(!readNoticeIds.includes(id)) {
-              readNoticeIds.push(id);
-              localStorage.setItem('readNotices', JSON.stringify(readNoticeIds));
-              loadNotices(currentUserTeam);
-          }
-
-          renderModalBody(id);
-          document.getElementById('noticeModal').classList.add('active');
-      };
-
-      window.closeNoticeModal = function() {
-          document.getElementById('noticeModal').classList.remove('active');
-      };
-
-      function renderModalBody(id) {
-          const data = noticesData[id];
-          if(!data) return;
-
-          let commentsHtml = '';
-          if(data.comments && data.comments.length > 0) {
-              data.comments.forEach((c, cIndex) => {
-                  let repliesHtml = '';
-                  if(c.replies && c.replies.length > 0) {
-                      c.replies.forEach(r => {
-                          repliesHtml += `
-                              <div style="background:var(--surface); border-left:2px solid var(--primary); padding:6px 10px; border-radius:6px; margin-top:6px; font-size:11px; word-break: break-word;">
-                                  <span style="font-weight:700; color:var(--primary);">${r.userName}:</span> ${r.text}
-                              </div>
-                          `;
-                      });
-                  }
-
-                  commentsHtml += `
-                      <div style="background:var(--surface); border:1px solid var(--border); padding:10px 12px; border-radius:10px; margin-bottom:8px; font-size:12px; word-break: break-word;">
-                          <div><span style="font-weight:700; color:var(--primary);">${c.userName}:</span> ${c.text}</div>
-                          <div style="margin-top:6px; padding-left:12px;">
-                              ${repliesHtml}
-                              <div id="reply-box-${cIndex}" style="display:none; margin-top:6px; display:flex; gap:4px;">
-                                  <input type="text" id="reply-input-${id}-${cIndex}" class="input-field" placeholder="Reply ပြန်ရန်..." style="font-size:11px; padding:6px 10px;">
-                                  <button class="btn-submit" style="padding:6px 10px; font-size:11px;" onclick="sendReply('${id}', ${cIndex})">ပို့ရန်</button>
-                              </div>
-                              <button style="background:none; border:none; color:var(--primary); font-size:11px; font-weight:600; cursor:pointer; margin-top:4px; padding:0;" onclick="toggleReplyInput(${cIndex})"><i class="fa-solid fa-reply"></i> Reply</button>
-                          </div>
-                      </div>
-                  `;
-              });
-          }
-
-          let totalCount = 0;
-          let groupedHtml = '';
-          const groupedReactions = {};
-          const emojiLabels = { '👍': 'ဖတ်ပြီးပြီ', '❤️': 'လက်ခံသည်', '🔥': 'သဘောကျတယ်', '🚀': 'ထူးချွန်တယ်' };
-          let myReaction = null;
-
-          if(data.reactions) {
-              Object.entries(data.reactions).forEach(([user, emoji]) => {
-                  if(user === currentLoggedInUser) {
-                      myReaction = emoji;
-                  }
-                  if(!groupedReactions[emoji]) groupedReactions[emoji] = [];
-                  groupedReactions[emoji].push(user);
-                  totalCount++;
-              });
-          }
-
-          if(totalCount > 0) {
-              Object.entries(groupedReactions).forEach(([emoji, users]) => {
-                  let tags = users.map(u => `<span class="staff-tag">${u}</span>`).join('');
-                  groupedHtml += `
-                      <details class="emoji-group">
-                          <summary><span>${emoji} ${emojiLabels[emoji] || ''} (${users.length})</span> <i class="fa-solid fa-chevron-down"></i></summary>
-                          <div style="margin-top:6px; display:flex; flex-wrap:wrap;">${tags}</div>
-                      </details>
-                  `;
-              });
-          }
-
-          let adminActionButtons = '';
-          if(isUserAdmin) {
-              adminActionButtons = `
-                  <div style="display:flex; gap:8px; margin-bottom:14px; border-bottom:1px solid var(--border); padding-bottom:10px;">
-                      <button class="btn-action" style="flex:1; color:var(--primary);" onclick="editNotice('${id}')"><i class="fa-solid fa-pen-to-square"></i> ပြင်ဆင်မည်</button>
-                      <button class="btn-action" style="flex:1; color:#ef4444;" onclick="deleteNotice('${id}')"><i class="fa-solid fa-trash"></i> ဖျက်မည်</button>
-                  </div>
-              `;
-          }
-
-          document.getElementById('modalContentArea').innerHTML = `
-              ${adminActionButtons}
-              <div style="font-size:18px; font-weight:700; margin-bottom:10px;">${data.title}</div>
-              <div style="font-size:13px; line-height:1.6; margin-bottom:16px;">${data.content}</div>
-              
-              <div class="staff-status-box">
-                  <div style="font-size:12px; font-weight:700; margin-bottom:6px;">တုံ့ပြန်မှုများ (${totalCount})</div>
-                  ${groupedHtml || '<div style="font-size:12px; color:var(--text-sub);">သေးငယ်သော တုံ့ပြန်မှု မရှိသေးပါ။</div>'}
-              </div>
-
-              <div class="action-grid">
-                  <button class="btn-action ${myReaction === '👍' ? 'active-react' : ''}" onclick="sendReaction('${id}', '👍')"><span style="font-size:16px;">👍</span> ဖတ်ပြီးပြီ</button>
-                  <button class="btn-action ${myReaction === '❤️' ? 'active-react' : ''}" onclick="sendReaction('${id}', '❤️')"><span style="font-size:16px;">❤️</span> လက်ခံသည်</button>
-                  <button class="btn-action ${myReaction === '🔥' ? 'active-react' : ''}" onclick="sendReaction('${id}', '🔥')"><span style="font-size:16px;">🔥</span> သဘောကျ</button>
-                  <button class="btn-action ${myReaction === '🚀' ? 'active-react' : ''}" onclick="sendReaction('${id}', '🚀')"><span style="font-size:16px;">🚀</span> ထူးချွန်</button>
-              </div>
-
-              <div style="margin-top:16px; border-top:1px solid var(--border); padding-top:12px;">
-                  <div style="font-weight:700; font-size:13px; margin-bottom:8px;">မှတ်ချက်များ</div>
-                  <div id="commentsList">${commentsHtml || '<div style="font-size:12px; color:var(--text-sub);">မှတ်ချက် မရှိသေးပါ။</div>'}</div>
-                  
-                  <div style="display:flex; gap:6px; margin-top:10px;">
-                      <input type="text" id="commentInput-${id}" class="input-field" placeholder="မှတ်ချက် ရေးရန်..." style="font-size:12px;">
-                      <button class="btn-submit" style="padding:8px 14px; font-size:12px;" onclick="sendComment('${id}')">ပို့မည်</button>
-                  </div>
-              </div>
-          `;
-      }
-
-      window.editNotice = function(id) {
-          const data = noticesData[id];
-          if(!data) return;
-
-          editingNoticeId = id;
-          document.getElementById('title').value = data.title;
-          document.getElementById('editor').innerHTML = data.content;
-          document.getElementById('targetTeam').value = data.targetTeam || 'GKK777';
-
-          document.getElementById('createEditTitleText').innerHTML = `<i class="fa-solid fa-pen-to-square"></i> အသိပေးချက် ပြင်ဆင်ရန်`;
-          document.getElementById('submitBtnText').textContent = 'ပြင်ဆင်မှု သိမ်းမည်';
-
-          closeNoticeModal();
-          switchTab('create');
-      };
-
-      window.deleteNotice = async function(id) {
-          if(!confirm("ဤအသိပေးချက်ကို ဖျက်ရန် သေချာပါသလား?")) return;
-          try {
-              await deleteDoc(doc(db, "announcements", id));
-              closeNoticeModal();
-              alert("အသိပေးချက်ကို ဖျက်ပြီးပါပြီ။");
-          } catch(e) {
-              alert("Error: " + e.message);
-          }
-      };
-
-      window.sendReaction = async function(id, emoji) {
-          if(!currentLoggedInUser) return;
-          try {
-              const docRef = doc(db, "announcements", id);
-              const data = noticesData[id];
-              let reactions = data.reactions || {};
-              if(reactions[currentLoggedInUser] === emoji) {
-                  delete reactions[currentLoggedInUser];
-              } else {
-                  reactions[currentLoggedInUser] = emoji;
-              }
-              await updateDoc(docRef, { reactions: reactions });
-              noticesData[id].reactions = reactions;
-              renderModalBody(id);
-          } catch(e) {
-              alert("Error: " + e.message);
-          }
-      };
-
-      window.sendComment = async function(id) {
-          const input = document.getElementById(`commentInput-${id}`);
-          const text = input.value.trim();
-          if(!text || !currentLoggedInUser) return;
-
-          try {
-              const docRef = doc(db, "announcements", id);
-              const data = noticesData[id];
-              let comments = data.comments || [];
-              comments.push({ userName: currentLoggedInUser, text: text, replies: [] });
-              
-              await updateDoc(docRef, { comments: comments });
-              noticesData[id].comments = comments;
-              input.value = '';
-              renderModalBody(id);
-          } catch(e) {
-              alert("Error: " + e.message);
-          }
-      };
-
-      window.toggleReplyInput = function(cIndex) {
-          const box = document.getElementById(`reply-box-${cIndex}`);
-          box.style.display = box.style.display === 'none' ? 'flex' : 'none';
-      };
-
-      window.sendReply = async function(id, cIndex) {
-          const input = document.getElementById(`reply-input-${id}-${cIndex}`);
-          const text = input.value.trim();
-          if(!text || !currentLoggedInUser) return;
-
-          try {
-              const docRef = doc(db, "announcements", id);
-              const data = noticesData[id];
-              let comments = data.comments || [];
-              if(!comments[cIndex].replies) comments[cIndex].replies = [];
-              
-              comments[cIndex].replies.push({ userName: currentLoggedInUser, text: text });
-              await updateDoc(docRef, { comments: comments });
-              
-              noticesData[id].comments = comments;
-              renderModalBody(id);
-          } catch(e) {
-              alert("Error: " + e.message);
-          }
-      };
     </script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
+    <style>
+        :root {
+            --brand-50: #eff6ff;
+            --brand-100: #dbeafe;
+            --brand-500: #3b82f6;
+            --brand-600: #2563eb;
+            --brand-700: #1d4ed8;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        /* Weather background effects container */
+        #weather-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .content-layer {
+            position: relative;
+            z-index: 10;
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(0,0,0,0.05);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(0,0,0,0.2);
+            border-radius: 4px;
+        }
+        .dark ::-webkit-scrollbar-track {
+            background: rgba(255,255,255,0.05);
+        }
+        .dark ::-webkit-scrollbar-thumb {
+            background: rgba(255,255,255,0.2);
+        }
+    </style>
 </head>
-<body>
+<body class="bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 min-h-screen flex flex-col selection:bg-brand-500 selection:text-white">
 
-    <!-- Weather Background Effects Layer -->
-    <div id="weather-fx-layer"></div>
+    <canvas id="weather-canvas"></canvas>
 
-    <!-- Live Notification Toast Popup -->
-    <div id="notification-toast">
-        <i class="fa-solid fa-bell" style="font-size: 22px; color: var(--primary);"></i>
-        <div>
-            <div style="font-size: 11px; font-weight: 700; color: var(--primary);">အသိပေးချက်အသစ် ရောက်ရှိလာပါပြီ!</div>
-            <div id="toastNoticeTitle" style="font-size: 13px; font-weight: 600; color: var(--text-main); margin-top: 2px;"></div>
-        </div>
-    </div>
-
-    <!-- Login Overlay -->
-    <div class="login-overlay" id="loginOverlay">
-        <div class="login-card">
-            <div style="font-size: 24px; margin-bottom: 8px;"><i class="fa-solid fa-bell" style="color:var(--primary);"></i></div>
-            <h2 style="font-size: 20px; font-weight: 700; margin-bottom: 4px;">Informations Portal</h2>
-            <p style="font-size: 13px; color: var(--text-sub); margin-bottom: 20px;">ကျေးဇူးပြု၍ အကောင့်ဝင်ရောက်ပါ</p>
-            
-            <div id="normalLoginSection">
-                <div style="margin-bottom: 12px; text-align: left;">
-                    <label style="font-size: 12px; font-weight: 600; display: block; margin-bottom: 4px;">Username</label>
-                    <input type="text" id="loginUser" class="input-field" placeholder="Username ထည့်ပါ">
+    <div id="app" class="flex-1 flex flex-col content-layer">
+        
+        <!-- LOGIN SCREEN -->
+        <div id="login-screen" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md">
+            <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-2xl w-full max-w-md p-8 overflow-hidden relative">
+                <div class="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-brand-500 via-indigo-500 to-purple-500"></div>
+                <div class="text-center mb-8">
+                    <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-brand-50 dark:bg-brand-900/30 text-brand-600 dark:text-brand-400 text-2xl font-bold mb-4 shadow-inner">
+                        <i class="fa-solid fa-bullhorn"></i>
+                    </div>
+                    <h1 class="text-2xl font-bold tracking-tight">GKK Notice Portal</h1>
+                    <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Sign in to access GKK777 & GKK99 updates</p>
                 </div>
-                <div style="margin-bottom: 20px; text-align: left;">
-                    <label style="font-size: 12px; font-weight: 600; display: block; margin-bottom: 4px;">Password</label>
-                    <div class="input-group">
-                        <input type="password" id="loginPass" class="input-field" placeholder="Password ထည့်ပါ">
-                        <button type="button" class="password-toggle" onclick="togglePasswordVisibility('loginPass', 'loginPassIcon')">
-                            <i class="fa-solid fa-eye" id="loginPassIcon"></i>
+                
+                <form id="login-form" onsubmit="handleLogin(event)" class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">Email or Username</label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400"><i class="fa-solid fa-user"></i></span>
+                            <input type="text" id="login-username" required class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 focus:outline-none focus:ring-2 focus:ring-brand-500 text-sm" placeholder="Enter username or email">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">Password</label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400"><i class="fa-solid fa-lock"></i></span>
+                            <input type="password" id="login-password" required class="w-full pl-10 pr-10 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 focus:outline-none focus:ring-2 focus:ring-brand-500 text-sm" placeholder="••••••••">
+                            <button type="button" onclick="togglePasswordVisibility('login-password', this)" class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600"><i class="fa-solid fa-eye"></i></button>
+                        </div>
+                    </div>
+                    
+                    <div id="login-error" class="text-rose-500 text-xs hidden bg-rose-50 dark:bg-rose-950/50 p-2.5 rounded-lg border border-rose-200 dark:border-rose-900 flex items-center gap-2">
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+                        <span id="login-error-text">Invalid credentials</span>
+                    </div>
+
+                    <button type="submit" class="w-full py-3 px-4 bg-brand-600 hover:bg-brand-700 text-white font-medium rounded-xl shadow-lg shadow-brand-500/25 transition-all flex items-center justify-center gap-2">
+                        <span>Sign In</span>
+                        <i class="fa-solid fa-arrow-right-to-bracket"></i>
+                    </button>
+                </form>
+
+                <div class="mt-6 pt-6 border-t border-slate-100 dark:border-slate-800 text-center text-xs text-slate-500">
+                    Protected System • GKK777 & GKK99 Teams
+                </div>
+            </div>
+        </div>
+
+        <div id="main-dashboard" class="hidden flex-1 flex flex-col">
+            <!-- Top Navigation Bar -->
+            <header class="sticky top-0 z-40 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-xl bg-brand-600 text-white flex items-center justify-center font-bold text-lg shadow-md shadow-brand-500/30">
+                            <i class="fa-solid fa-bullhorn"></i>
+                        </div>
+                        <div>
+                            <span class="font-bold text-lg tracking-tight">GKK Portal</span>
+                            <span class="text-xs px-2 py-0.5 rounded-full bg-brand-100 dark:bg-brand-900/40 text-brand-600 dark:text-brand-400 font-medium ml-2 hidden sm:inline-block">Notice Hub</span>
+                        </div>
+                    </div>
+
+                    <!-- Center Clock & Weather Indicator -->
+                    <div class="hidden md:flex items-center gap-4 bg-slate-100 dark:bg-slate-800/50 px-4 py-1.5 rounded-full border border-slate-200 dark:border-slate-700/50">
+                        <div class="flex items-center gap-2 text-xs font-medium">
+                            <i class="fa-regular fa-clock text-brand-500"></i>
+                            <span id="myanmar-clock">Loading time...</span>
+                        </div>
+                        <div class="h-3 w-px bg-slate-300 dark:bg-slate-700"></div>
+                        <div class="flex items-center gap-2 text-xs font-medium">
+                            <i id="weather-icon" class="fa-solid fa-cloud-sun text-amber-500"></i>
+                            <span id="weather-status">Yangon 30°C</span>
+                        </div>
+                    </div>
+
+                    <!-- Right Controls: Theme, Color Accent, User Menu -->
+                    <div class="flex items-center gap-2 sm:gap-3">
+                        <!-- Theme Toggle -->
+                        <button onclick="toggleDarkMode()" class="w-9 h-9 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition" title="Toggle Theme">
+                            <i id="theme-icon" class="fa-solid fa-moon"></i>
+                        </button>
+
+                        <!-- Color Accent Dropdown -->
+                        <div class="relative">
+                            <button onclick="toggleColorMenu()" class="w-9 h-9 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition" title="Change Color Accent">
+                                <i class="fa-solid fa-palette text-brand-500"></i>
+                            </button>
+                            <div id="color-menu" class="hidden absolute right-0 mt-2 w-48 bg-white dark:bg-slate-900 rounded-xl shadow-xl border border-slate-200 dark:border-slate-800 p-3 z-50">
+                                <div class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Accent Color</div>
+                                <div class="grid grid-cols-4 gap-2">
+                                    <button onclick="setAccentColor('#3b82f6', '#2563eb', '#1d4ed8')" class="w-8 h-8 rounded-lg bg-blue-500 hover:scale-110 transition"></button>
+                                    <button onclick="setAccentColor('#10b981', '#059669', '#047857')" class="w-8 h-8 rounded-lg bg-emerald-500 hover:scale-110 transition"></button>
+                                    <button onclick="setAccentColor('#8b5cf6', '#7c3aed', '#6d28d9')" class="w-8 h-8 rounded-lg bg-purple-500 hover:scale-110 transition"></button>
+                                    <button onclick="setAccentColor('#f59e0b', '#d97706', '#b45309')" class="w-8 h-8 rounded-lg bg-amber-500 hover:scale-110 transition"></button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Weather Effect Selector -->
+                        <select onchange="changeWeatherEffect(this.value)" class="hidden lg:block text-xs bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 font-medium focus:outline-none">
+                            <option value="rain">Rain Effect</option>
+                            <option value="snow">Snow Effect</option>
+                            <option value="sun">Sunny Rays</option>
+                            <option value="none">No Background Effect</option>
+                        </select>
+
+                        <!-- User Profile Dropdown / Logout -->
+                        <div class="flex items-center gap-2 pl-2 border-l border-slate-200 dark:border-slate-800">
+                            <div class="text-right hidden sm:block">
+                                <div id="current-user-name" class="text-xs font-bold leading-tight">Admin User</div>
+                                <div id="current-user-team" class="text-[10px] text-brand-600 dark:text-brand-400 font-semibold uppercase">GKK777</div>
+                            </div>
+                            <button onclick="openProfileModal()" class="w-9 h-9 rounded-xl bg-brand-100 dark:bg-brand-900/40 text-brand-600 dark:text-brand-400 flex items-center justify-center font-bold text-sm hover:opacity-80 transition" title="User Profile & Settings">
+                                <i class="fa-solid fa-user-gear"></i>
+                            </button>
+                            <button onclick="handleLogout()" class="w-9 h-9 rounded-xl border border-rose-200 dark:border-rose-900 bg-rose-50 dark:bg-rose-950/30 text-rose-600 dark:text-rose-400 flex items-center justify-center hover:bg-rose-100 transition" title="Sign Out">
+                                <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col gap-6">
+                
+                <!-- Navigation Tabs & Action Bar -->
+                <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+                    <!-- Tabs -->
+                    <div class="flex items-center gap-2 overflow-x-auto w-full sm:w-auto pb-2 sm:pb-0">
+                        <button onclick="switchTab('notices')" id="tab-btn-notices" class="px-4 py-2 rounded-xl text-sm font-medium transition bg-brand-600 text-white shadow-md shadow-brand-500/20 flex items-center gap-2">
+                            <i class="fa-solid fa-newspaper"></i>
+                            <span>Notices Feed</span>
+                        </button>
+                        <button onclick="switchTab('create')" id="tab-btn-create" class="hidden px-4 py-2 rounded-xl text-sm font-medium transition text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center gap-2">
+                            <i class="fa-solid fa-pen-nib"></i>
+                            <span>Post Notice</span>
+                        </button>
+                        <button onclick="switchTab('users')" id="tab-btn-users" class="hidden px-4 py-2 rounded-xl text-sm font-medium transition text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center gap-2">
+                            <i class="fa-solid fa-users-gear"></i>
+                            <span>User Management</span>
+                        </button>
+                    </div>
+
+                    <!-- Search & Filter Bar -->
+                    <div class="flex items-center gap-3 w-full sm:w-auto">
+                        <div class="relative flex-1 sm:w-64">
+                            <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400"><i class="fa-solid fa-magnifying-glass"></i></span>
+                            <input type="text" id="search-input" oninput="filterNotices()" placeholder="Search notices..." class="w-full pl-9 pr-4 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-xs focus:outline-none focus:ring-2 focus:ring-brand-500">
+                        </div>
+                        <select id="team-filter" onchange="filterNotices()" class="text-xs bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 font-medium focus:outline-none">
+                            <option value="all">All Teams</option>
+                            <option value="GKK777">GKK777 Team</option>
+                            <option value="GKK99">GKK99 Team</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- TAB CONTENT: NOTICES FEED -->
+                <div id="tab-content-notices" class="space-y-4">
+                    <div id="notices-loading" class="text-center py-12 text-slate-400">
+                        <i class="fa-solid fa-spinner fa-spin text-2xl mb-2"></i>
+                        <p class="text-sm">Loading notices from Firestore...</p>
+                    </div>
+                    <div id="notices-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <!-- Dynamic notice cards injected here -->
+                    </div>
+                    <div id="no-notices" class="hidden text-center py-16 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800">
+                        <div class="w-12 h-12 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-400 flex items-center justify-center mx-auto mb-3 text-lg">
+                            <i class="fa-solid fa-folder-open"></i>
+                        </div>
+                        <h3 class="font-semibold text-sm">No notices found</h3>
+                        <p class="text-xs text-slate-400 mt-1">Check back later for updates from GKK777 & GKK99 teams.</p>
+                    </div>
+                </div>
+
+                <!-- TAB CONTENT: CREATE NOTICE -->
+                <div id="tab-content-create" class="hidden bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-6 shadow-sm max-w-4xl mx-auto w-full">
+                    <div class="flex items-center justify-between mb-6 pb-4 border-b border-slate-100 dark:border-slate-800">
+                        <div>
+                            <h2 class="text-lg font-bold">Create New Notice</h2>
+                            <p class="text-xs text-slate-500">Publish announcements for GKK777 and GKK99 members</p>
+                        </div>
+                        <span id="poster-team-badge" class="text-xs font-semibold px-3 py-1 rounded-full bg-brand-100 text-brand-600 dark:bg-brand-900/40 dark:text-brand-400">GKK777 Admin</span>
+                    </div>
+
+                    <form id="notice-form" onsubmit="handleCreateNotice(event)" class="space-y-4">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Notice Title</label>
+                                <input type="text" id="notice-title" required class="w-full px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500" placeholder="Enter notice title...">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Target Team</label>
+                                <select id="notice-team" class="w-full px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500">
+                                    <option value="Both">Both Teams (GKK777 & GKK99)</option>
+                                    <option value="GKK777">GKK777 Team Only</option>
+                                    <option value="GKK99">GKK99 Team Only</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Rich Text Editor Toolbar -->
+                        <div>
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Notice Content</label>
+                            <div class="border border-slate-300 dark:border-slate-700 rounded-xl overflow-hidden bg-slate-50 dark:bg-slate-800">
+                                <div class="flex flex-wrap items-center gap-1 p-2 bg-slate-100 dark:bg-slate-800/80 border-b border-slate-300 dark:border-slate-700">
+                                    <button type="button" onclick="formatText('bold')" class="p-1.5 rounded hover:bg-slate-200 dark:hover:bg-slate-700 text-xs w-8 h-8 flex items-center justify-center font-bold" title="Bold"><i class="fa-solid fa-bold"></i></button>
+                                    <button type="button" onclick="formatText('italic')" class="p-1.5 rounded hover:bg-slate-200 dark:hover:bg-slate-700 text-xs w-8 h-8 flex items-center justify-center italic" title="Italic"><i class="fa-solid fa-italic"></i></button>
+                                    <button type="button" onclick="formatText('underline')" class="p-1.5 rounded hover:bg-slate-200 dark:hover:bg-slate-700 text-xs w-8 h-8 flex items-center justify-center underline" title="Underline"><i class="fa-solid fa-underline"></i></button>
+                                    <div class="h-4 w-px bg-slate-300 dark:bg-slate-700 mx-1"></div>
+                                    <button type="button" onclick="formatText('insertUnorderedList')" class="p-1.5 rounded hover:bg-slate-200 dark:hover:bg-slate-700 text-xs w-8 h-8 flex items-center justify-center" title="Bullet List"><i class="fa-solid fa-list-ul"></i></button>
+                                    <button type="button" onclick="formatText('insertOrderedList')" class="p-1.5 rounded hover:bg-slate-200 dark:hover:bg-slate-700 text-xs w-8 h-8 flex items-center justify-center" title="Numbered List"><i class="fa-solid fa-list-ol"></i></button>
+                                </div>
+                                <div id="notice-editor" contenteditable="true" class="w-full p-4 min-h-[200px] max-h-[400px] overflow-y-auto focus:outline-none text-sm leading-relaxed" placeholder="Type notice content here..."></div>
+                            </div>
+                        </div>
+
+                        <!-- Image Attachment URL -->
+                        <div>
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Attachment Image URL (Optional)</label>
+                            <input type="url" id="notice-image" class="w-full px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500" placeholder="https://example.com/image.jpg">
+                        </div>
+
+                        <div class="flex justify-end gap-3 pt-4 border-t border-slate-100 dark:border-slate-800">
+                            <button type="button" onclick="switchTab('notices')" class="px-5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 text-sm font-medium hover:bg-slate-100 dark:hover:bg-slate-800 transition">Cancel</button>
+                            <button type="submit" class="px-6 py-2.5 bg-brand-600 hover:bg-brand-700 text-white font-medium rounded-xl shadow-lg shadow-brand-500/25 transition flex items-center gap-2 text-sm">
+                                <i class="fa-solid fa-paper-plane"></i>
+                                <span>Publish Notice</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <div id="tab-content-users" class="hidden bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-6 shadow-sm">
+                    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6 pb-4 border-b border-slate-100 dark:border-slate-800">
+                        <div>
+                            <h2 class="text-lg font-bold">User Management</h2>
+                            <p class="text-xs text-slate-500">Manage portal access for GKK777 & GKK99 members</p>
+                        </div>
+                        <button onclick="openUserModal()" class="px-4 py-2.5 bg-brand-600 hover:bg-brand-700 text-white text-xs font-semibold rounded-xl shadow-md transition flex items-center gap-2">
+                            <i class="fa-solid fa-user-plus"></i>
+                            <span>Add New User</span>
+                        </button>
+                    </div>
+
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="border-b border-slate-200 dark:border-slate-800 text-xs font-semibold uppercase text-slate-400">
+                                    <th class="py-3 px-4">User</th>
+                                    <th class="py-3 px-4">Role</th>
+                                    <th class="py-3 px-4">Team</th>
+                                    <th class="py-3 px-4">Status</th>
+                                    <th class="py-3 px-4 text-right">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="users-table-body" class="divide-y divide-slate-100 dark:divide-slate-800/60 text-sm">
+                                <!-- Users injected dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </main>
+        </div>
+
+        <div id="viewer-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md">
+            <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-2xl w-full max-w-3xl max-h-[90vh] flex flex-col overflow-hidden relative">
+                <!-- Modal Header -->
+                <div class="p-5 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
+                    <div>
+                        <span id="modal-notice-team" class="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full bg-brand-100 text-brand-600 dark:bg-brand-900/40 dark:text-brand-400 mb-1 inline-block">GKK777</span>
+                        <h2 id="modal-notice-title" class="text-xl font-bold">Notice Title</h2>
+                        <div class="text-xs text-slate-400 mt-0.5"><span id="modal-notice-author">Author</span> • <span id="modal-notice-date">Date</span></div>
+                    </div>
+                    <button onclick="closeViewerModal()" class="w-9 h-9 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center hover:bg-slate-200 transition"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+
+                <!-- Modal Body -->
+                <div class="p-6 overflow-y-auto flex-1 space-y-4">
+                    <div id="modal-notice-image-container" class="hidden mb-4 rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700 max-h-80">
+                        <img id="modal-notice-image" src="" alt="Notice Attachment" class="w-full object-cover">
+                    </div>
+                    <div id="modal-notice-content" class="text-sm leading-relaxed prose dark:prose-invert max-w-none">
+                        <!-- Content goes here -->
+                    </div>
+                </div>
+
+                <!-- Modal Footer with Reactions -->
+                <div class="p-4 border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/50 flex flex-col sm:flex-row items-center justify-between gap-4">
+                    <div class="text-xs font-semibold text-slate-500">Reactions:</div>
+                    <div class="flex items-center gap-2 flex-wrap">
+                        <button onclick="reactNotice('like')" class="px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-xs font-medium hover:scale-105 transition flex items-center gap-1.5">
+                            <span>👍</span> <span id="count-like">0</span>
+                        </button>
+                        <button onclick="reactNotice('heart')" class="px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-xs font-medium hover:scale-105 transition flex items-center gap-1.5">
+                            <span>❤️</span> <span id="count-heart">0</span>
+                        </button>
+                        <button onclick="reactNotice('fire')" class="px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-xs font-medium hover:scale-105 transition flex items-center gap-1.5">
+                            <span>🔥</span> <span id="count-fire">0</span>
+                        </button>
+                        <button onclick="reactNotice('clap')" class="px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-xs font-medium hover:scale-105 transition flex items-center gap-1.5">
+                            <span>👏</span> <span id="count-clap">0</span>
+                        </button>
+                        <button onclick="reactNotice('wow')" class="px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-xs font-medium hover:scale-105 transition flex items-center gap-1.5">
+                            <span>😲</span> <span id="count-wow">0</span>
                         </button>
                     </div>
                 </div>
-                <button class="btn-submit" style="width: 100%; margin-bottom: 10px;" onclick="handleLogin()">Login ဝင်မည်</button>
-                <button type="button" style="background:none; border:none; color:var(--primary); font-size:12px; font-weight:600; cursor:pointer;" onclick="switchLoginMode('changePass')">Password ပြောင်းရန်</button>
-            </div>
-
-            <div id="changePassSection" style="display: none; text-align: left;">
-                <div style="margin-bottom: 10px;">
-                    <label style="font-size: 12px; font-weight: 600; display: block; margin-bottom: 4px;">Username</label>
-                    <input type="text" id="cpUser" class="input-field" placeholder="Username">
-                </div>
-                <div style="margin-bottom: 10px;">
-                    <label style="font-size: 12px; font-weight: 600; display: block; margin-bottom: 4px;">Password အဟောင်း</label>
-                    <input type="password" id="cpOldPass" class="input-field" placeholder="Old Password">
-                </div>
-                <div style="margin-bottom: 10px;">
-                    <label style="font-size: 12px; font-weight: 600; display: block; margin-bottom: 4px;">Password အသစ်</label>
-                    <input type="password" id="cpNewPass" class="input-field" placeholder="New Password">
-                </div>
-                <div style="margin-bottom: 16px;">
-                    <label style="font-size: 12px; font-weight: 600; display: block; margin-bottom: 4px;">Password အသစ် (အတည်ပြုရန်)</label>
-                    <input type="password" id="cpConfirmPass" class="input-field" placeholder="Confirm Password">
-                </div>
-                <button class="btn-submit" style="width: 100%; margin-bottom: 10px;" onclick="handleChangePassword()">Password ပြောင်းမည်</button>
-                <button type="button" style="background:none; border:none; color:var(--primary); font-size:12px; font-weight:600; cursor:pointer;" onclick="switchLoginMode('login')">← Login သို့ ပြန်သွားရန်</button>
             </div>
         </div>
-    </div>
 
-    <!-- Main App Shell -->
-    <div class="app-shell">
-        <div class="hero-header">
-            <div class="brand-container">
-                <div class="brand-info">
-                    <div class="cat-avatar">
-                        🐱
-                        <div class="bell-badge" id="unreadBadge" style="display:none;">0</div>
+        <div id="profile-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md">
+            <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-2xl w-full max-w-md p-6 relative">
+                <div class="flex items-center justify-between mb-4 pb-3 border-b border-slate-100 dark:border-slate-800">
+                    <h3 class="font-bold text-base">User Profile & Password</h3>
+                    <button onclick="closeProfileModal()" class="w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+                <form id="profile-form" onsubmit="handleUpdatePassword(event)" class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Username / Email</label>
+                        <input type="text" id="profile-username" disabled class="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 text-sm text-slate-500">
                     </div>
                     <div>
-                        <h1 style="font-size: 18px; font-weight: 700;">Informations Portal</h1>
-                        <p style="font-size: 12px; opacity: 0.9;">အသုံးပြုသူ: <span id="welcomeUserText">-</span></p>
+                        <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">New Password</label>
+                        <input type="password" id="profile-new-password" required class="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500" placeholder="Enter new password">
                     </div>
-                </div>
-                <div class="settings-bar">
-                    <button class="icon-btn" onclick="handleLogout()" title="Log Out"><i class="fa-solid fa-right-from-bracket"></i></button>
-                    <button class="icon-btn" onclick="toggleThemeDropdown(event)"><i class="fa-solid fa-palette"></i></button>
-                    
-                    <div class="theme-dropdown" id="themeDropdown">
-                        <div style="font-size: 11px; font-weight: 700; margin-bottom: 6px; color:var(--text-main);">Theme ပုံစံ</div>
-                        <button class="btn-action" style="width:100%; margin-bottom: 8px; flex-direction:row;" onclick="toggleTheme()"><i class="fa-solid fa-circle-half-stroke"></i> Light / Dark ပြောင်းရန်</button>
-                        <div style="font-size: 11px; font-weight: 700; margin-bottom: 4px; color:var(--text-main);">အရောင် ရွေးချယ်ရန်</div>
-                        <div class="color-bubbles">
-                            <div class="color-bubble" style="background: #4f46e5;" onclick="setAccent('indigo')"></div>
-                            <div class="color-bubble" style="background: #059669;" onclick="setAccent('emerald')"></div>
-                            <div class="color-bubble" style="background: #e11d48;" onclick="setAccent('rose')"></div>
-                            <div class="color-bubble" style="background: #d97706;" onclick="setAccent('amber')"></div>
-                            <div class="color-bubble" style="background: #7c3aed;" onclick="setAccent('purple')"></div>
-                        </div>
+                    <div id="profile-success" class="hidden text-emerald-600 text-xs bg-emerald-50 dark:bg-emerald-950/50 p-2.5 rounded-lg border border-emerald-200">
+                        Password updated successfully!
                     </div>
-                </div>
-            </div>
-
-            <!-- Myanmar Clock Widget Box -->
-            <div class="mm-clock-box">
-                <div style="display: flex; align-items: center; gap: 6px;">
-                    <i class="fa-regular fa-clock" style="font-size: 14px;"></i>
-                    <span id="mmDateDisplay">မြန်မာစံတော်ချိန်...</span>
-                </div>
-                <div id="mmClockDisplay" style="font-family: monospace; font-size: 13px; font-weight: 700; background: rgba(0,0,0,0.2); padding: 2px 8px; border-radius: 6px;">--:--:--</div>
+                    <button type="submit" class="w-full py-2.5 bg-brand-600 hover:bg-brand-700 text-white font-medium rounded-xl text-sm transition">Update Password</button>
+                </form>
             </div>
         </div>
 
-        <!-- Daily Quote Card -->
-        <div class="daily-quote-card">
-            <i class="fa-solid fa-quote-left" style="font-size: 20px; color: var(--primary);"></i>
-            <div style="font-size: 12px; font-weight: 600; line-height: 1.5; color: var(--text-main);" id="dailyQuoteText">
-                ခဏစောင့်ပါ... နေ့စဉ်တွေးခေါ်စရာများကို တင်ဆောင်နေပါသည်။
-            </div>
-        </div>
-
-        <!-- Tab Bar -->
-        <div class="tab-bar">
-            <button class="tab-btn active" id="tab-feed-btn" onclick="switchTab('feed')">
-                <i class="fa-solid fa-bullhorn"></i> အသိပေးစာများ
-            </button>
-            <button class="tab-btn admin-only" id="tab-create-btn" onclick="switchTab('create')" style="display:none;">
-                <i class="fa-solid fa-pen-to-square"></i> တင်ရန်
-            </button>
-            <button class="tab-btn admin-only" id="tab-manage-btn" onclick="switchTab('manage')" style="display:none;">
-                <i class="fa-solid fa-users-gear"></i> အကောင့်များ
-            </button>
-        </div>
-
-        <!-- Main Content -->
-        <div class="main-content">
-            <!-- Feed Tab -->
-            <div class="tab-content active" id="tab-feed">
-                <div id="noticeMenuList"></div>
-            </div>
-
-            <!-- Create Notice Tab (Admin Only) -->
-            <div class="tab-content" id="tab-create">
-                <div class="form-card">
-                    <h3 id="createEditTitleText" style="font-size: 15px; font-weight: 700; margin-bottom: 12px;"><i class="fa-solid fa-circle-plus"></i> အသိပေးချက်အသစ် ရေးသားရန်</h3>
-                    <div style="margin-bottom: 12px;">
-                        <label style="font-size: 12px; font-weight: 600; display: block; margin-bottom: 4px;">ခေါင်းစဉ်</label>
-                        <input type="text" id="title" class="input-field" placeholder="ခေါင်းစဉ် ရေးပါ...">
+        <div id="user-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md">
+            <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-2xl w-full max-w-md p-6 relative">
+                <div class="flex items-center justify-between mb-4 pb-3 border-b border-slate-100 dark:border-slate-800">
+                    <h3 id="user-modal-title" class="font-bold text-base">Add New User</h3>
+                    <button onclick="closeUserModal()" class="w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+                <form id="user-form" onsubmit="handleSaveUser(event)" class="space-y-4">
+                    <input type="hidden" id="user-edit-id">
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Username / Email</label>
+                        <input type="text" id="modal-username" required class="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500" placeholder="username@gkk.com">
                     </div>
-                    <div style="margin-bottom: 12px;">
-                        <label style="font-size: 12px; font-weight: 600; display: block; margin-bottom: 4px;">မည်သည့်အဖွဲ့အတွက်လဲ</label>
-                        <select id="targetTeam" class="input-field">
-                            <option value="GKK777">GKK777 အဖွဲ့အတွက်</option>
-                        </select>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Password</label>
+                        <input type="password" id="modal-password" required class="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500" placeholder="••••••••">
                     </div>
-                    <div style="margin-bottom: 12px;">
-                        <label style="font-size: 12px; font-weight: 600; display: block; margin-bottom: 4px;">အကြောင်းအရာ (Font အရောင်နှင့် ပုံစံများ စိတ်ကြိုက်ပြင်နိုင်သည်)</label>
-                        
-                        <div class="editor-toolbar">
-                            <button type="button" class="tool-btn" onclick="formatDoc('bold')" title="Bold"><i class="fa-solid fa-bold"></i></button>
-                            <button type="button" class="tool-btn" onclick="formatDoc('italic')" title="Italic"><i class="fa-solid fa-italic"></i></button>
-                            <button type="button" class="tool-btn" onclick="formatDoc('underline')" title="Underline"><i class="fa-solid fa-underline"></i></button>
-                            
-                            <div style="display:inline-flex; align-items:center; gap:2px; background:var(--surface-solid); border:1px solid var(--border-solid); border-radius:8px; padding:2px 6px;">
-                                <i class="fa-solid fa-palette" style="font-size:11px; color:var(--text-sub);"></i>
-                                <input type="color" id="fontColorPicker" oninput="formatDoc('foreColor', this.value)" style="border:none; width:22px; height:22px; background:none; cursor:pointer;" title="စာသားအရောင် ရွေးရန်">
-                            </div>
-
-                            <select class="tool-select" onchange="formatDoc('fontSize', this.value)" title="စာအရွယ်အစား">
-                                <option value="" disabled selected>အရွယ်အစား</option>
-                                <option value="2">သေးငယ် (Small)</option>
-                                <option value="3">သာမန် (Normal)</option>
-                                <option value="4">အသင့်အတင့် (Medium)</option>
-                                <option value="5">ကြီး (Large)</option>
-                                <option value="6">အရမ်းကြီး (X-Large)</option>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Role</label>
+                            <select id="modal-role" class="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500">
+                                <option value="admin">Admin</option>
+                                <option value="staff">Staff</option>
                             </select>
-
-                            <button type="button" class="tool-btn" onclick="formatDoc('insertUnorderedList')" title="Bullet List"><i class="fa-solid fa-list-ul"></i></button>
                         </div>
-
-                        <div id="editor" class="editor-content" contenteditable="true"></div>
-                        <label class="image-upload-btn">
-                            <i class="fa-solid fa-image"></i> ပုံထည့်ရန်
-                            <input type="file" accept="image/*" style="display:none;" onchange="insertImageToEditor(event)">
-                        </label>
+                        <div>
+                            <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Team</label>
+                            <select id="modal-team" class="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500">
+                                <option value="GKK777">GKK777</option>
+                                <option value="GKK99">GKK99</option>
+                            </select>
+                        </div>
                     </div>
-                    <button class="btn-submit" id="submitBtnText" onclick="postAnnouncement()">လွှင့်တင်မည်</button>
-                </div>
-            </div>
-
-            <!-- Manage Users Tab (Admin Only) -->
-            <div class="tab-content" id="tab-manage">
-                <div class="form-card">
-                    <h3 style="font-size: 15px; font-weight: 700; margin-bottom: 12px;"><i class="fa-solid fa-user-plus"></i> ဝန်ထမ်းအကောင့်အသစ် ဖန်တီးရန်</h3>
-                    <div style="margin-bottom: 10px;">
-                        <input type="text" id="newUsername" class="input-field" placeholder="Username (စာလုံးအသေးဖြင့်)">
+                    <div class="flex justify-end gap-3 pt-3">
+                        <button type="button" onclick="closeUserModal()" class="px-4 py-2 rounded-xl border border-slate-300 dark:border-slate-700 text-xs font-medium">Cancel</button>
+                        <button type="submit" class="px-5 py-2 bg-brand-600 hover:bg-brand-700 text-white font-medium rounded-xl text-xs transition">Save User</button>
                     </div>
-                    <div style="margin-bottom: 10px;">
-                        <input type="password" id="newPassword" class="input-field" placeholder="Password">
-                    </div>
-                    <div style="margin-bottom: 10px;">
-                        <select id="newTeam" class="input-field">
-                            <option value="GKK777">GKK777</option>
-                            <option value="GKK99">GKK99</option>
-                        </select>
-                    </div>
-                    <div style="margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
-                        <input type="checkbox" id="newIsAdmin" style="width: 16px; height: 16px;">
-                        <label for="newIsAdmin" style="font-size: 12px; font-weight: 600;">Admin ရာထူးပေးမည်</label>
-                    </div>
-                    <button class="btn-submit" onclick="createNewUser()">အကောင့် ဖန်တီးမည်</button>
-                </div>
-
-                <div class="form-card">
-                    <h3 style="font-size: 15px; font-weight: 700; margin-bottom: 10px;"><i class="fa-solid fa-users"></i> ရှိပြီးသား အကောင့်များစာရင်း</h3>
-                    <div id="usersTableContainer"></div>
-                </div>
+                </form>
             </div>
         </div>
+
     </div>
 
-    <!-- Notice Detail Modal -->
-    <div class="modal-overlay" id="noticeModal">
-        <div class="modal-card">
-            <div class="modal-header">
-                <div style="font-weight: 700; font-size: 15px;">အသိပေးချက် အသေးစိတ်</div>
-                <button class="modal-close" onclick="closeNoticeModal()"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            <div class="modal-body" id="modalContentArea"></div>
-        </div>
-    </div>
+    <script>
+        // Firebase Configuration (Demo / Simulated persistent store with local fallback)
+        const firebaseConfig = {
+            apiKey: "AIzaSyDummyKeyForGKKPortal999777",
+            authDomain: "gkk-notice-portal.firebaseapp.com",
+            projectId: "gkk-notice-portal",
+            storageBucket: "gkk-notice-portal.appspot.com",
+            messagingSenderId: "1234567890",
+            appId: "1:1234567890:web:abcdef"
+        };
 
+        let db, auth;
+        try {
+            if (!firebase.apps.length) {
+                firebase.initializeApp(firebaseConfig);
+            }
+            db = firebase.firestore();
+            auth = firebase.auth();
+        } catch (e) {
+            console.warn("Firebase initialization warning, falling back to local simulation.", e);
+        }
+
+        // App state
+        let currentUser = JSON.parse(localStorage.getItem('gkk_current_user')) || null;
+        let noticesList = [];
+        let usersList = [];
+        let activeNoticeId = null;
+        let currentWeatherEffect = 'rain';
+        let weatherParticles = [];
+
+        // Initialize App on load
+        window.onload = function() {
+            initWeatherCanvas();
+            startMyanmarClock();
+            loadThemeSettings();
+            
+            if (currentUser) {
+                showDashboard();
+            } else {
+                hideDashboard();
+            }
+        };
+
+        function startMyanmarClock() {
+            function updateClock() {
+                const now = new Date();
+                // Myanmar Time Zone is UTC+6:30
+                const options = { timeZone: 'Asia/Yangon', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true, year: 'numeric', month: 'short', day: 'numeric' };
+                const timeString = new Intl.DateTimeFormat('en-US', options).format(now);
+                document.getElementById('myanmar-clock').innerText = timeString + ' (MMT)';
+            }
+            updateClock();
+            setInterval(updateClock, 1000);
+        }
+
+        function initWeatherCanvas() {
+            const canvas = document.getElementById('weather-canvas');
+            const ctx = canvas.getContext('2d');
+            let width = canvas.width = window.innerWidth;
+            let height = canvas.height = window.innerHeight;
+
+            window.addEventListener('resize', () => {
+                width = canvas.width = window.innerWidth;
+                height = canvas.height = window.innerHeight;
+            });
+
+            // Create particles
+            function resetParticles() {
+                weatherParticles = [];
+                const count = currentWeatherEffect === 'rain' ? 100 : (currentWeatherEffect === 'snow' ? 60 : 30);
+                for (let i = 0; i < count; i++) {
+                    weatherParticles.push({
+                        x: Math.random() * width,
+                        y: Math.random() * height,
+                        length: currentWeatherEffect === 'rain' ? Math.random() * 20 + 10 : Math.random() * 4 + 2,
+                        speed: currentWeatherEffect === 'rain' ? Math.random() * 10 + 8 : (currentWeatherEffect === 'snow' ? Math.random() * 2 + 1 : Math.random() * 0.5 + 0.2),
+                        opacity: Math.random() * 0.5 + 0.2,
+                        radius: currentWeatherEffect === 'snow' ? Math.random() * 4 + 2 : (currentWeatherEffect === 'sun' ? Math.random() * 40 + 20 : 1)
+                    });
+                }
+            }
+            resetParticles();
+
+            function animateWeather() {
+                ctx.clearRect(0, 0, width, height);
+                const isDark = document.documentElement.classList.contains('dark');
+
+                if (currentWeatherEffect === 'rain') {
+                    ctx.strokeStyle = isDark ? 'rgba(147, 197, 253, 0.25)' : 'rgba(59, 130, 246, 0.2)';
+                    ctx.lineWidth = 1.5;
+                    ctx.beginPath();
+                    weatherParticles.forEach(p => {
+                        ctx.moveTo(p.x, p.y);
+                        ctx.lineTo(p.x - 1, p.y + p.length);
+                        p.y += p.speed;
+                        p.x -= 0.2;
+                        if (p.y > height) { p.y = -20; p.x = Math.random() * width; }
+                    });
+                    ctx.stroke();
+                } else if (currentWeatherEffect === 'snow') {
+                    ctx.fillStyle = isDark ? 'rgba(255, 255, 255, 0.4)' : 'rgba(100, 116, 139, 0.3)';
+                    weatherParticles.forEach(p => {
+                        ctx.beginPath();
+                        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                        ctx.fill();
+                        p.y += p.speed;
+                        p.x += Math.sin(p.y / 30) * 0.5;
+                        if (p.y > height) { p.y = -10; p.x = Math.random() * width; }
+                    });
+                } else if (currentWeatherEffect === 'sun') {
+                    ctx.fillStyle = isDark ? 'rgba(251, 191, 36, 0.05)' : 'rgba(245, 158, 11, 0.04)';
+                    weatherParticles.forEach(p => {
+                        ctx.beginPath();
+                        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                        ctx.fill();
+                        p.y -= p.speed * 0.2;
+                        if (p.y < 0) { p.y = height + 20; p.x = Math.random() * width; }
+                    });
+                }
+                requestAnimationFrame(animateWeather);
+            }
+            animateWeather();
+        }
+
+        function changeWeatherEffect(type) {
+            currentWeatherEffect = type;
+            initWeatherCanvas();
+        }
+
+        function toggleDarkMode() {
+            const html = document.documentElement;
+            html.classList.toggle('dark');
+            const isDark = html.classList.contains('dark');
+            localStorage.setItem('gkk_theme', isDark ? 'dark' : 'light');
+            document.getElementById('theme-icon').className = isDark ? 'fa-solid fa-moon' : 'fa-solid fa-sun';
+        }
+
+        function loadThemeSettings() {
+            const savedTheme = localStorage.getItem('gkk_theme') || 'dark';
+            if (savedTheme === 'light') {
+                document.documentElement.classList.remove('dark');
+                document.getElementById('theme-icon').className = 'fa-solid fa-sun';
+            }
+            const savedColor = localStorage.getItem('gkk_brand_color');
+            if (savedColor) {
+                setAccentColor(savedColor.p500, savedColor.p600, savedColor.p700);
+            }
+        }
+
+        function toggleColorMenu() {
+            const menu = document.getElementById('color-menu');
+            menu.classList.toggle('hidden');
+        }
+
+        function setAccentColor(c500, c600, c700) {
+            document.documentElement.style.setProperty('--brand-500', c500);
+            document.documentElement.style.setProperty('--brand-600', c600);
+            document.documentElement.style.setProperty('--brand-700', c700);
+            localStorage.setItem('gkk_brand_color', JSON.stringify({p500: c500, p600: c600, p700: c700}));
+            document.getElementById('color-menu').classList.add('hidden');
+        }
+
+        function handleLogin(e) {
+            e.preventDefault();
+            const user = document.getElementById('login-username').value.trim();
+            const pass = document.getElementById('login-password').value.trim();
+
+            // Default admin accounts for GKK777 & GKK99 if not in storage
+            let storedUsers = JSON.parse(localStorage.getItem('gkk_users')) || [
+                { username: 'admin777', pass: 'gkk777admin', role: 'admin', team: 'GKK777' },
+                { username: 'admin99', pass: 'gkk99admin', role: 'admin', team: 'GKK99' },
+                { username: 'staff777', pass: 'staff123', role: 'staff', team: 'GKK777' },
+                { username: 'staff99', pass: 'staff123', role: 'staff', team: 'GKK99' }
+            ];
+            localStorage.setItem('gkk_users', JSON.stringify(storedUsers));
+
+            const found = storedUsers.find(u => u.username === user && u.pass === pass);
+            if (found) {
+                currentUser = found;
+                localStorage.setItem('gkk_current_user', JSON.stringify(currentUser));
+                document.getElementById('login-error').classList.add('hidden');
+                document.getElementById('login-form').reset();
+                showDashboard();
+            } else {
+                document.getElementById('login-error-text').innerText = 'Invalid username or password';
+                document.getElementById('login-error').classList.remove('hidden');
+            }
+        }
+
+        function handleLogout() {
+            currentUser = null;
+            localStorage.removeItem('gkk_current_user');
+            hideDashboard();
+        }
+
+        function showDashboard() {
+            document.getElementById('login-screen').classList.add('hidden');
+            document.getElementById('main-dashboard').classList.remove('hidden');
+            
+            document.getElementById('current-user-name').innerText = currentUser.username;
+            document.getElementById('current-user-team').innerText = currentUser.team;
+            document.getElementById('poster-team-badge').innerText = `${currentUser.team} ${currentUser.role === 'admin' ? 'Admin' : 'Staff'}`;
+
+            // Show/hide admin tabs
+            if (currentUser.role === 'admin') {
+                document.getElementById('tab-btn-create').classList.remove('hidden');
+                document.getElementById('tab-btn-users').classList.remove('hidden');
+            } else {
+                document.getElementById('tab-btn-create').classList.add('hidden');
+                document.getElementById('tab-btn-users').classList.add('hidden');
+            }
+
+            loadNotices();
+            loadUsers();
+        }
+
+        function hideDashboard() {
+            document.getElementById('login-screen').classList.remove('hidden');
+            document.getElementById('main-dashboard').classList.add('hidden');
+        }
+
+        function togglePasswordVisibility(id, btn) {
+            const input = document.getElementById(id);
+            if (input.type === 'password') {
+                input.type = 'text';
+                btn.innerHTML = '<i class="fa-solid fa-eye-slash"></i>';
+            } else {
+                input.type = 'password';
+                btn.innerHTML = '<i class="fa-solid fa-eye"></i>';
+            }
+        }
+
+        function switchTab(tabName) {
+            ['notices', 'create', 'users'].forEach(t => {
+                document.getElementById(`tab-content-${t}`).classList.add('hidden');
+                const btn = document.getElementById(`tab-btn-${t}`);
+                if (btn) {
+                    btn.className = "px-4 py-2 rounded-xl text-sm font-medium transition text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center gap-2";
+                }
+            });
+
+            document.getElementById(`tab-content-${tabName}`).classList.remove('hidden');
+            const activeBtn = document.getElementById(`tab-btn-${tabName}`);
+            if (activeBtn) {
+                activeBtn.className = "px-4 py-2 rounded-xl text-sm font-medium transition bg-brand-600 text-white shadow-md shadow-brand-500/20 flex items-center gap-2";
+            }
+        }
+
+        async function loadNotices() {
+            document.getElementById('notices-loading').classList.remove('hidden');
+            document.getElementById('notices-container').innerHTML = '';
+
+            let fetchedNotices = [];
+            if (db) {
+                try {
+                    const snapshot = await db.collection('gkk_notices').orderBy('createdAt', 'desc').get();
+                    snapshot.forEach(doc => {
+                        fetchedNotices.push({ id: doc.id, ...doc.data() });
+                    });
+                } catch (e) {
+                    console.warn("Firestore fetch error, fallback to localStorage", e);
+                }
+            }
+
+            if (fetchedNotices.length === 0) {
+                fetchedNotices = JSON.parse(localStorage.getItem('gkk_notices_fallback')) || [
+                    {
+                        id: 'notice-1',
+                        title: 'Welcome to GKK Enterprise Notice Portal',
+                        content: '<p>This is the official communication hub for <b>GKK777</b> and <b>GKK99</b> teams. Please review daily operations updates here.</p>',
+                        team: 'Both',
+                        author: 'admin777',
+                        date: '2026-09-13 10:00 AM',
+                        createdAt: Date.now(),
+                        image: '',
+                        reactions: { like: 12, heart: 8, fire: 5, clap: 3, wow: 2 }
+                    }
+                ];
+                localStorage.setItem('gkk_notices_fallback', JSON.stringify(fetchedNotices));
+            }
+
+            noticesList = fetchedNotices;
+            document.getElementById('notices-loading').classList.add('hidden');
+            renderNotices(noticesList);
+        }
+
+        function renderNotices(list) {
+            const container = document.getElementById('notices-container');
+            container.innerHTML = '';
+
+            const filtered = list.filter(n => {
+                if (currentUser.team !== 'GKK777' && currentUser.team !== 'GKK99' && currentUser.role !== 'admin') return true;
+                return n.team === 'Both' || n.team === currentUser.team;
+            });
+
+            if (filtered.length === 0) {
+                document.getElementById('no-notices').classList.remove('hidden');
+                return;
+            } else {
+                document.getElementById('no-notices').classList.add('hidden');
+            }
+
+            filtered.forEach(n => {
+                const card = document.createElement('div');
+                card.className = "bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-5 shadow-sm hover:shadow-md transition flex flex-col justify-between";
+                
+                let totalReactions = Object.values(n.reactions || {}).reduce((a, b) => a + b, 0);
+
+                card.innerHTML = `
+                    <div>
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full bg-brand-100 text-brand-600 dark:bg-brand-900/40 dark:text-brand-400">${n.team}</span>
+                            <span class="text-xs text-slate-400">${n.date}</span>
+                        </div>
+                        <h3 class="font-bold text-base mb-2 line-clamp-2">${n.title}</h3>
+                        <div class="text-xs text-slate-500 dark:text-slate-400 line-clamp-3 mb-4">${n.content.replace(/<[^>]*>?/gm, '')}</div>
+                    </div>
+                    <div class="pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
+                        <div class="text-xs text-slate-400">By <span class="font-medium text-slate-700 dark:text-slate-300">${n.author}</span></div>
+                        <button onclick="openViewerModal('${n.id}')" class="px-3 py-1.5 bg-brand-50 dark:bg-brand-900/30 text-brand-600 dark:text-brand-400 hover:bg-brand-100 text-xs font-semibold rounded-xl transition flex items-center gap-1.5">
+                            <span>View (${totalReactions})</span>
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </button>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function filterNotices() {
+            const query = document.getElementById('search-input').value.toLowerCase();
+            const teamFilter = document.getElementById('team-filter').value;
+
+            const filtered = noticesList.filter(n => {
+                const matchesQuery = n.title.toLowerCase().includes(query) || n.content.toLowerCase().includes(query);
+                const matchesTeam = teamFilter === 'all' || n.team === teamFilter || n.team === 'Both';
+                return matchesQuery && matchesTeam;
+            });
+            renderNotices(filtered);
+        }
+
+        // Rich Text Editor formatting helper
+        function formatText(command) {
+            document.execCommand(command, false, null);
+        }
+
+        async function handleCreateNotice(e) {
+            e.preventDefault();
+            const title = document.getElementById('notice-title').value.trim();
+            const team = document.getElementById('notice-team').value;
+            const content = document.getElementById('notice-editor').innerHTML.trim();
+            const image = document.getElementById('notice-image').value.trim();
+
+            if (!title || !content) return;
+
+            const newNotice = {
+                title,
+                team,
+                content,
+                image,
+                author: currentUser.username,
+                date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' }),
+                createdAt: Date.now(),
+                reactions: { like: 0, heart: 0, fire: 0, clap: 0, wow: 0 }
+            };
+
+            if (db) {
+                try {
+                    await db.collection('gkk_notices').add(newNotice);
+                } catch (err) {
+                    console.warn("Firestore write error", err);
+                }
+            }
+
+            noticesList.unshift(newNotice);
+            localStorage.setItem('gkk_notices_fallback', JSON.stringify(noticesList));
+
+            document.getElementById('notice-form').reset();
+            document.getElementById('notice-editor').innerHTML = '';
+            switchTab('notices');
+            loadNotices();
+        }
+
+        function openViewerModal(id) {
+            activeNoticeId = id;
+            const notice = noticesList.find(n => n.id === id || n.createdAt == id);
+            if (!notice) return;
+
+            document.getElementById('modal-notice-title').innerText = notice.title;
+            document.getElementById('modal-notice-team').innerText = notice.team;
+            document.getElementById('modal-notice-author').innerText = notice.author;
+            document.getElementById('modal-notice-date').innerText = notice.date;
+            document.getElementById('modal-notice-content').innerHTML = notice.content;
+
+            const imgContainer = document.getElementById('modal-notice-image-container');
+            const imgElement = document.getElementById('modal-notice-image');
+            if (notice.image) {
+                imgElement.src = notice.image;
+                imgContainer.classList.remove('hidden');
+            } else {
+                imgContainer.classList.add('hidden');
+            }
+
+            const reactions = notice.reactions || { like: 0, heart: 0, fire: 0, clap: 0, wow: 0 };
+            document.getElementById('count-like').innerText = reactions.like || 0;
+            document.getElementById('count-heart').innerText = reactions.heart || 0;
+            document.getElementById('count-fire').innerText = reactions.fire || 0;
+            document.getElementById('count-clap').innerText = reactions.clap || 0;
+            document.getElementById('count-wow').innerText = reactions.wow || 0;
+
+            document.getElementById('viewer-modal').classList.remove('hidden');
+        }
+
+        function closeViewerModal() {
+            document.getElementById('viewer-modal').classList.add('hidden');
+            activeNoticeId = null;
+        }
+
+        async function reactNotice(type) {
+            if (!activeNoticeId) return;
+            const notice = noticesList.find(n => n.id === activeNoticeId || n.createdAt == activeNoticeId);
+            if (!notice) return;
+
+            if (!notice.reactions) notice.reactions = { like: 0, heart: 0, fire: 0, clap: 0, wow: 0 };
+            notice.reactions[type] = (notice.reactions[type] || 0) + 1;
+
+            document.getElementById(`count-${type}`).innerText = notice.reactions[type];
+
+            if (db && notice.id && !notice.id.toString().startsWith('notice-')) {
+                try {
+                    await db.collection('gkk_notices').doc(notice.id).update({ reactions: notice.reactions });
+                } catch (e) {
+                    console.warn("Firestore reaction update error", e);
+                }
+            }
+            localStorage.setItem('gkk_notices_fallback', JSON.stringify(noticesList));
+        }
+
+        function loadUsers() {
+            let storedUsers = JSON.parse(localStorage.getItem('gkk_users')) || [];
+            usersList = storedUsers;
+            const tbody = document.getElementById('users-table-body');
+            tbody.innerHTML = '';
+
+            usersList.forEach((u, index) => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-50 dark:hover:bg-slate-800/40 transition";
+                tr.innerHTML = `
+                    <td class="py-3 px-4 font-medium flex items-center gap-2">
+                        <div class="w-8 h-8 rounded-lg bg-brand-100 dark:bg-brand-900/40 text-brand-600 dark:text-brand-400 flex items-center justify-center text-xs font-bold">
+                            ${u.username.substring(0, 2).toUpperCase()}
+                        </div>
+                        <span>${u.username}</span>
+                    </td>
+                    <td class="py-3 px-4"><span class="text-xs px-2 py-1 rounded-md bg-slate-100 dark:bg-slate-800 font-semibold uppercase">${u.role}</span></td>
+                    <td class="py-3 px-4"><span class="text-xs px-2 py-1 rounded-md bg-brand-50 dark:bg-brand-900/30 text-brand-600 dark:text-brand-400 font-semibold">${u.team}</span></td>
+                    <td class="py-3 px-4"><span class="text-xs text-emerald-600 font-semibold flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-emerald-500"></span> Active</span></td>
+                    <td class="py-3 px-4 text-right">
+                        <button onclick="editUser(${index})" class="p-1.5 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-500" title="Edit User"><i class="fa-solid fa-pen"></i></button>
+                        <button onclick="deleteUser(${index})" class="p-1.5 rounded-lg hover:bg-rose-100 text-rose-500 ml-1" title="Delete User"><i class="fa-solid fa-trash"></i></button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function openUserModal() {
+            document.getElementById('user-modal-title').innerText = 'Add New User';
+            document.getElementById('user-form').reset();
+            document.getElementById('user-edit-id').value = '';
+            document.getElementById('user-modal').classList.remove('hidden');
+        }
+
+        function closeUserModal() {
+            document.getElementById('user-modal').classList.add('hidden');
+        }
+
+        function editUser(index) {
+            const u = usersList[index];
+            document.getElementById('user-modal-title').innerText = 'Edit User';
+            document.getElementById('user-edit-id').value = index;
+            document.getElementById('modal-username').value = u.username;
+            document.getElementById('modal-password').value = u.pass;
+            document.getElementById('modal-role').value = u.role;
+            document.getElementById('modal-team').value = u.team;
+            document.getElementById('user-modal').classList.remove('hidden');
+        }
+
+        function handleSaveUser(e) {
+            e.preventDefault();
+            const editIndex = document.getElementById('user-edit-id').value;
+            const username = document.getElementById('modal-username').value.trim();
+            const pass = document.getElementById('modal-password').value.trim();
+            const role = document.getElementById('modal-role').value;
+            const team = document.getElementById('modal-team').value;
+
+            if (editIndex === '') {
+                // createNewUser implementation
+                const newUser = { username, pass, role, team };
+                usersList.push(newUser);
+            } else {
+                usersList[editIndex] = { username, pass, role, team };
+            }
+
+            localStorage.setItem('gkk_users', JSON.stringify(usersList));
+            closeUserModal();
+            loadUsers();
+        }
+
+        function deleteUser(index) {
+            if (confirm("Are you sure you want to delete this user?")) {
+                usersList.splice(index, 1);
+                localStorage.setItem('gkk_users', JSON.stringify(usersList));
+                loadUsers();
+            }
+        }
+
+        // Profile password change
+        function openProfileModal() {
+            document.getElementById('profile-username').value = currentUser.username;
+            document.getElementById('profile-new-password').value = '';
+            document.getElementById('profile-success').classList.add('hidden');
+            document.getElementById('profile-modal').classList.remove('hidden');
+        }
+
+        function closeProfileModal() {
+            document.getElementById('profile-modal').classList.add('hidden');
+        }
+
+        function handleUpdatePassword(e) {
+            e.preventDefault();
+            const newPass = document.getElementById('profile-new-password').value.trim();
+            if (!newPass) return;
+
+            let users = JSON.parse(localStorage.getItem('gkk_users')) || [];
+            const userObj = users.find(u => u.username === currentUser.username);
+            if (userObj) {
+                userObj.pass = newPass;
+                localStorage.setItem('gkk_users', JSON.stringify(users));
+                currentUser.pass = newPass;
+                localStorage.setItem('gkk_current_user', JSON.stringify(currentUser));
+                document.getElementById('profile-success').classList.remove('hidden');
+                setTimeout(() => closeProfileModal(), 1500);
+            }
+        }
+    </script>
 </body>
 </html>

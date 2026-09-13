@@ -170,7 +170,7 @@
       });
 
       async function checkUserPermissions(username) {
-          if(username === 'admin') {
+          if(username === 'thetwinhtut' || username === 'admin') {
               currentUserTeam = 'ALL';
               document.querySelectorAll('.admin-only').forEach(el => el.style.display = 'flex');
               document.getElementById('targetTeam').innerHTML = `
@@ -564,22 +564,23 @@
 
           if(totalCount > 0) {
               Object.entries(groupedReactions).forEach(([emoji, users]) => {
-                  groupedHtml += `<details class="emoji-group"><summary><span>${emoji} ${emojiLabels[emoji]} (${users.length})</span></summary>`;
-                  users.forEach(u => {
-                      groupedHtml += `<span class="staff-tag">${u}</span>`;
-                  });
-                  groupedHtml += `</details>`;
+                  let tags = users.map(u => `<span class="staff-tag">${u}</span>`).join('');
+                  groupedHtml += `
+                      <details class="emoji-group">
+                          <summary><span>${emoji} ${emojiLabels[emoji] || ''} (${users.length})</span> <i class="fa-solid fa-chevron-down"></i></summary>
+                          <div style="margin-top:6px; display:flex; flex-wrap:wrap;">${tags}</div>
+                      </details>
+                  `;
               });
           }
 
           document.getElementById('modalContentArea').innerHTML = `
-              <h2 style="margin-bottom: 8px; font-size:18px;">${data.title}</h2>
-              <div style="font-size: 11px; color: var(--text-sub); margin-bottom: 14px;">အဖွဲ့ - ${data.targetTeam || 'GKK777'}</div>
-              <div style="line-height: 1.6; font-size: 13px; margin-bottom: 20px;">${data.content}</div>
+              <div style="font-size:18px; font-weight:700; margin-bottom:10px;">${data.title}</div>
+              <div style="font-size:13px; line-height:1.6; margin-bottom:16px;">${data.content}</div>
               
               <div class="staff-status-box">
-                  <div style="font-size: 12px; font-weight: 700; margin-bottom: 6px;">တုံ့ပြန်မှု အခြေအနေ (${totalCount} ဦး)</div>
-                  ${groupedHtml || '<div style="font-size:11px; color:var(--text-sub);">သေးငယ်သော တုံ့ပြန်မှု မရှိသေးပါ။</div>'}
+                  <div style="font-size:12px; font-weight:700; margin-bottom:6px;">တုံ့ပြန်မှုများ (${totalCount})</div>
+                  ${groupedHtml || '<div style="font-size:12px; color:var(--text-sub);">သေးငယ်သော တုံ့ပြန်မှု မရှိသေးပါ။</div>'}
               </div>
 
               <div class="action-grid">
@@ -588,58 +589,52 @@
                   <button class="btn-action ${myReaction === '✔️' ? 'active-react' : ''}" onclick="sendReaction('${id}', '✔️')">✔️ သိရှိပါပြီ</button>
               </div>
 
-              <hr style="border:none; border-top:1px solid var(--border); margin:16px 0;">
-              
-              <div style="font-weight: 700; font-size: 14px; margin-bottom: 10px;">မှတ်ချက်များ (Comments)</div>
-              <div id="commentsList">${commentsHtml || '<div style="font-size:12px; color:var(--text-sub); margin-bottom:10px;">မှတ်ချက် မရှိသေးပါ။</div>'}</div>
-
-              <div style="display: flex; gap: 6px; margin-top: 10px;">
-                  <input type="text" id="commentInput-${id}" class="input-field" placeholder="မှတ်ချက် ရေးရန်..." style="font-size: 12px;">
-                  <button class="btn-submit" style="padding: 8px 14px; font-size: 12px;" onclick="sendComment('${id}')">ပို့ရန်</button>
+              <div style="margin-top:16px; border-top:1px solid var(--border); padding-top:12px;">
+                  <div style="font-weight:700; font-size:13px; margin-bottom:8px;">မှတ်ချက်များ</div>
+                  <div id="commentsList">${commentsHtml || '<div style="font-size:12px; color:var(--text-sub);">မှတ်ချက် မရှိသေးပါ။</div>'}</div>
+                  
+                  <div style="display:flex; gap:6px; margin-top:10px;">
+                      <input type="text" id="commentInput-${id}" class="input-field" placeholder="မှတ်ချက် ရေးရန်..." style="font-size:12px;">
+                      <button class="btn-submit" style="padding:8px 14px; font-size:12px;" onclick="sendComment('${id}')">ပို့မည်</button>
+                  </div>
               </div>
           `;
       }
 
-      window.sendReaction = async function(noticeId, emoji) {
+      window.sendReaction = async function(id, emoji) {
           if(!currentLoggedInUser) return;
           try {
-              const noticeRef = doc(db, "announcements", noticeId);
-              const snap = await getDoc(noticeRef);
-              if(snap.exists()) {
-                  const data = snap.data();
-                  const reactions = data.reactions || {};
+              const docRef = doc(db, "announcements", id);
+              const data = noticesData[id];
+              let reactions = data.reactions || {};
+              if(reactions[currentLoggedInUser] === emoji) {
+                  delete reactions[currentLoggedInUser];
+              } else {
                   reactions[currentLoggedInUser] = emoji;
-                  await updateDoc(noticeRef, { reactions: reactions });
-                  noticesData[noticeId].reactions = reactions;
-                  renderModalBody(noticeId);
               }
+              await updateDoc(docRef, { reactions: reactions });
+              noticesData[id].reactions = reactions;
+              renderModalBody(id);
           } catch(e) {
               alert("Error: " + e.message);
           }
       };
 
-      window.sendComment = async function(noticeId) {
-          const input = document.getElementById(`commentInput-${noticeId}`);
+      window.sendComment = async function(id) {
+          const input = document.getElementById(`commentInput-${id}`);
           const text = input.value.trim();
           if(!text || !currentLoggedInUser) return;
 
           try {
-              const noticeRef = doc(db, "announcements", noticeId);
-              const snap = await getDoc(noticeRef);
-              if(snap.exists()) {
-                  const data = snap.data();
-                  const comments = data.comments || [];
-                  comments.push({
-                      userName: currentLoggedInUser,
-                      text: text,
-                      createdAt: new Date().toISOString(),
-                      replies: []
-                  });
-                  await updateDoc(noticeRef, { comments: comments });
-                  noticesData[noticeId].comments = comments;
-                  input.value = '';
-                  renderModalBody(noticeId);
-              }
+              const docRef = doc(db, "announcements", id);
+              const data = noticesData[id];
+              let comments = data.comments || [];
+              comments.push({ userName: currentLoggedInUser, text: text, replies: [] });
+              
+              await updateDoc(docRef, { comments: comments });
+              noticesData[id].comments = comments;
+              input.value = '';
+              renderModalBody(id);
           } catch(e) {
               alert("Error: " + e.message);
           }
@@ -647,34 +642,25 @@
 
       window.toggleReplyInput = function(cIndex) {
           const box = document.getElementById(`reply-box-${cIndex}`);
-          if(box) {
-              box.style.display = box.style.display === 'flex' ? 'none' : 'flex';
-          }
+          box.style.display = box.style.display === 'none' ? 'flex' : 'none';
       };
 
-      window.sendReply = async function(noticeId, cIndex) {
-          const input = document.getElementById(`reply-input-${noticeId}-${cIndex}`);
+      window.sendReply = async function(id, cIndex) {
+          const input = document.getElementById(`reply-input-${id}-${cIndex}`);
           const text = input.value.trim();
           if(!text || !currentLoggedInUser) return;
 
           try {
-              const noticeRef = doc(db, "announcements", noticeId);
-              const snap = await getDoc(noticeRef);
-              if(snap.exists()) {
-                  const data = snap.data();
-                  const comments = data.comments || [];
-                  if(comments[cIndex]) {
-                      if(!comments[cIndex].replies) comments[cIndex].replies = [];
-                      comments[cIndex].replies.push({
-                          userName: currentLoggedInUser,
-                          text: text,
-                          createdAt: new Date().toISOString()
-                      });
-                      await updateDoc(noticeRef, { comments: comments });
-                      noticesData[noticeId].comments = comments;
-                      renderModalBody(noticeId);
-                  }
-              }
+              const docRef = doc(db, "announcements", id);
+              const data = noticesData[id];
+              let comments = data.comments || [];
+              if(!comments[cIndex].replies) comments[cIndex].replies = [];
+              
+              comments[cIndex].replies.push({ userName: currentLoggedInUser, text: text });
+              await updateDoc(docRef, { comments: comments });
+              
+              noticesData[id].comments = comments;
+              renderModalBody(id);
           } catch(e) {
               alert("Error: " + e.message);
           }
@@ -683,177 +669,178 @@
 </head>
 <body>
 
+    <!-- Login Overlay -->
     <div class="login-overlay" id="loginOverlay">
         <div class="login-card">
-            <h2 style="margin-bottom: 8px; font-size: 20px;">Enterprise Portal</h2>
-            <p style="font-size: 12px; color: var(--text-sub); margin-bottom: 20px;">ကျေးဇူးပြု၍ Login ဝင်ရောက်ပါ</p>
+            <div style="font-size: 24px; margin-bottom: 8px;"><i class="fa-solid fa-bell" style="color:var(--primary);"></i></div>
+            <h2 style="font-size: 20px; font-weight: 700; margin-bottom: 4px;">Informations Portal</h2>
+            <p style="font-size: 13px; color: var(--text-sub); margin-bottom: 20px;">ကျေးဇူးပြု၍ အကောင့်ဝင်ရောက်ပါ</p>
             
             <div id="normalLoginSection">
-                <div style="margin-bottom: 12px;">
-                    <input type="text" id="loginUser" class="input-field" placeholder="Username">
+                <div style="margin-bottom: 12px; text-align: left;">
+                    <label style="font-size: 12px; font-weight: 600; display: block; margin-bottom: 4px;">Username</label>
+                    <input type="text" id="loginUser" class="input-field" placeholder="Username ထည့်ပါ">
                 </div>
-                <div style="margin-bottom: 16px;">
+                <div style="margin-bottom: 20px; text-align: left;">
+                    <label style="font-size: 12px; font-weight: 600; display: block; margin-bottom: 4px;">Password</label>
                     <div class="input-group">
-                        <input type="password" id="loginPass" class="input-field" placeholder="Password" style="padding-right: 45px;">
-                        <button type="button" class="password-toggle" onclick="togglePasswordVisibility('loginPass', 'loginEyeIcon')">
-                            <i class="fa-solid fa-eye" id="loginEyeIcon"></i>
+                        <input type="password" id="loginPass" class="input-field" placeholder="Password ထည့်ပါ">
+                        <button type="button" class="password-toggle" onclick="togglePasswordVisibility('loginPass', 'loginPassIcon')">
+                            <i class="fa-solid fa-eye" id="loginPassIcon"></i>
                         </button>
                     </div>
                 </div>
-                <button class="btn-submit" style="width: 100%; margin-bottom: 12px;" onclick="handleLogin()">Login ဝင်မည်</button>
-                <button type="button" style="background: none; border: none; color: var(--primary); font-size: 12px; cursor: pointer; font-weight: 600;" onclick="switchLoginMode('changePass')">Password ပြောင်းရန်</button>
+                <button class="btn-submit" style="width: 100%; margin-bottom: 10px;" onclick="handleLogin()">Login ဝင်မည်</button>
+                <button type="button" style="background:none; border:none; color:var(--primary); font-size:12px; font-weight:600; cursor:pointer;" onclick="switchLoginMode('changePass')">Password ပြောင်းရန်</button>
             </div>
 
-            <div id="changePassSection" style="display: none;">
-                <div style="margin-bottom: 12px;">
+            <!-- Change Password Section -->
+            <div id="changePassSection" style="display: none; text-align: left;">
+                <div style="margin-bottom: 10px;">
+                    <label style="font-size: 12px; font-weight: 600; display: block; margin-bottom: 4px;">Username</label>
                     <input type="text" id="cpUser" class="input-field" placeholder="Username">
                 </div>
-                <div style="margin-bottom: 12px;">
-                    <div class="input-group">
-                        <input type="password" id="cpOldPass" class="input-field" placeholder="Password အဟောင်း" style="padding-right: 45px;">
-                        <button type="button" class="password-toggle" onclick="togglePasswordVisibility('cpOldPass', 'cpOldEye')">
-                            <i class="fa-solid fa-eye" id="cpOldEye"></i>
-                        </button>
-                    </div>
+                <div style="margin-bottom: 10px;">
+                    <label style="font-size: 12px; font-weight: 600; display: block; margin-bottom: 4px;">Password အဟောင်း</label>
+                    <input type="password" id="cpOldPass" class="input-field" placeholder="Old Password">
                 </div>
-                <div style="margin-bottom: 12px;">
-                    <div class="input-group">
-                        <input type="password" id="cpNewPass" class="input-field" placeholder="Password အသစ်" style="padding-right: 45px;">
-                        <button type="button" class="password-toggle" onclick="togglePasswordVisibility('cpNewPass', 'cpNewEye')">
-                            <i class="fa-solid fa-eye" id="cpNewEye"></i>
-                        </button>
-                    </div>
+                <div style="margin-bottom: 10px;">
+                    <label style="font-size: 12px; font-weight: 600; display: block; margin-bottom: 4px;">Password အသစ်</label>
+                    <input type="password" id="cpNewPass" class="input-field" placeholder="New Password">
                 </div>
                 <div style="margin-bottom: 16px;">
-                    <div class="input-group">
-                        <input type="password" id="cpConfirmPass" class="input-field" placeholder="Password အသစ် ထပ်ထည့်ရန်" style="padding-right: 45px;">
-                        <button type="button" class="password-toggle" onclick="togglePasswordVisibility('cpConfirmPass', 'cpConfirmEye')">
-                            <i class="fa-solid fa-eye" id="cpConfirmEye"></i>
-                        </button>
-                    </div>
+                    <label style="font-size: 12px; font-weight: 600; display: block; margin-bottom: 4px;">Password အသစ် (အတည်ပြုရန်)</label>
+                    <input type="password" id="cpConfirmPass" class="input-field" placeholder="Confirm Password">
                 </div>
-                <button class="btn-submit" style="width: 100%; margin-bottom: 12px;" onclick="handleChangePassword()">Password ပြောင်းမည်</button>
-                <button type="button" style="background: none; border: none; color: var(--primary); font-size: 12px; cursor: pointer; font-weight: 600;" onclick="switchLoginMode('login')">Login သို့ ပြန်သွားရန်</button>
+                <button class="btn-submit" style="width: 100%; margin-bottom: 10px;" onclick="handleChangePassword()">Password ပြောင်းမည်</button>
+                <button type="button" style="background:none; border:none; color:var(--primary); font-size:12px; font-weight:600; cursor:pointer;" onclick="switchLoginMode('login')">← Login သို့ ပြန်သွားရန်</button>
             </div>
         </div>
     </div>
 
+    <!-- Main App Shell -->
     <div class="app-shell">
-        <header class="hero-header">
+        <div class="hero-header">
             <div class="brand-container">
                 <div class="brand-info">
                     <div class="cat-avatar">
                         🐱
-                        <span class="bell-badge">!</span>
+                        <div class="bell-badge" id="unreadBadge" style="display:none;">0</div>
                     </div>
                     <div>
-                        <h1 style="font-size: 16px; font-weight: 700;">Informations Portal</h1>
-                        <p style="font-size: 11px; opacity: 0.8;">ကြိုဆိုပါတယ် - <span id="welcomeUserText">-</span></p>
+                        <h1 style="font-size: 18px; font-weight: 700;">Informations Portal</h1>
+                        <p style="font-size: 12px; opacity: 0.9;">အသုံးပြုသူ: <span id="welcomeUserText">-</span></p>
                     </div>
                 </div>
                 <div class="settings-bar">
-                    <button class="icon-btn" onclick="handleLogout()" title="Logout"><i class="fa-solid fa-right-from-bracket"></i></button>
+                    <button class="icon-btn" onclick="handleLogout()" title="Log Out"><i class="fa-solid fa-right-from-bracket"></i></button>
                     <button class="icon-btn" onclick="toggleThemeDropdown(event)"><i class="fa-solid fa-palette"></i></button>
+                    
+                    <!-- Theme Dropdown -->
                     <div class="theme-dropdown" id="themeDropdown">
-                        <div style="font-size: 11px; font-weight: 700; margin-bottom: 4px;">အပြင်အဆင် (Theme)</div>
-                        <button class="btn-action" style="width:100%; margin-bottom:8px;" onclick="toggleTheme()">Dark / Light ပြောင်းရန်</button>
-                        <div style="font-size: 11px; font-weight: 700; margin-bottom: 4px;">အရောင်စတိုင် (Accent)</div>
+                        <div style="font-size: 11px; font-weight: 700; margin-bottom: 6px; color:var(--text-main);">Theme ပုံစံ</div>
+                        <button class="btn-action" style="width:100%; margin-bottom: 8px;" onclick="toggleTheme()"><i class="fa-solid fa-circle-half-stroke"></i> Light / Dark ပြောင်းရန်</button>
+                        <div style="font-size: 11px; font-weight: 700; margin-bottom: 4px; color:var(--text-main);">အရောင် ရွေးချယ်ရန်</div>
                         <div class="color-bubbles">
-                            <div class="color-bubble" style="background:#4f46e5;" onclick="setAccent('indigo')"></div>
-                            <div class="color-bubble" style="background:#059669;" onclick="setAccent('emerald')"></div>
-                            <div class="color-bubble" style="background:#e11d48;" onclick="setAccent('rose')"></div>
-                            <div class="color-bubble" style="background:#d97706;" onclick="setAccent('amber')"></div>
-                            <div class="color-bubble" style="background:#7c3aed;" onclick="setAccent('purple')"></div>
+                            <div class="color-bubble" style="background: #4f46e5;" onclick="setAccent('indigo')"></div>
+                            <div class="color-bubble" style="background: #059669;" onclick="setAccent('emerald')"></div>
+                            <div class="color-bubble" style="background: #e11d48;" onclick="setAccent('rose')"></div>
+                            <div class="color-bubble" style="background: #d97706;" onclick="setAccent('amber')"></div>
+                            <div class="color-bubble" style="background: #7c3aed;" onclick="setAccent('purple')"></div>
                         </div>
                     </div>
                 </div>
             </div>
-        </header>
+        </div>
 
+        <!-- Tab Bar -->
         <div class="tab-bar">
             <button class="tab-btn active" id="tab-feed-btn" onclick="switchTab('feed')">
                 <i class="fa-solid fa-bullhorn"></i> အသိပေးစာများ
-                <span class="badge" id="unreadBadge" style="display:none;">0</span>
             </button>
             <button class="tab-btn admin-only" id="tab-create-btn" onclick="switchTab('create')" style="display:none;">
                 <i class="fa-solid fa-pen-to-square"></i> တင်ရန်
             </button>
-            <button class="tab-btn admin-only" id="tab-users-btn" onclick="switchTab('users')" style="display:none;">
+            <button class="tab-btn admin-only" id="tab-manage-btn" onclick="switchTab('manage')" style="display:none;">
                 <i class="fa-solid fa-users-gear"></i> အကောင့်များ
             </button>
         </div>
 
-        <main class="main-content">
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Feed Tab -->
             <div class="tab-content active" id="tab-feed">
                 <div id="noticeMenuList"></div>
             </div>
 
+            <!-- Create Notice Tab (Admin Only) -->
             <div class="tab-content" id="tab-create">
                 <div class="form-card">
-                    <h2 style="font-size: 15px; margin-bottom: 12px;">အသိပေးစာ အသစ်ဖန်တီးရန်</h2>
+                    <h3 style="font-size: 15px; font-weight: 700; margin-bottom: 12px;"><i class="fa-solid fa-circle-plus"></i> အသိပေးချက်အသစ် ရေးသားရန်</h3>
                     <div style="margin-bottom: 12px;">
                         <label style="font-size: 12px; font-weight: 600; display: block; margin-bottom: 4px;">ခေါင်းစဉ်</label>
-                        <input type="text" id="title" class="input-field" placeholder="ခေါင်းစဉ် ရိုက်ထည့်ပါ...">
+                        <input type="text" id="title" class="input-field" placeholder="ခေါင်းစဉ် ရေးပါ...">
                     </div>
                     <div style="margin-bottom: 12px;">
                         <label style="font-size: 12px; font-weight: 600; display: block; margin-bottom: 4px;">မည်သည့်အဖွဲ့အတွက်လဲ</label>
                         <select id="targetTeam" class="input-field">
                             <option value="GKK777">GKK777 အဖွဲ့အတွက်</option>
-                            <option value="GKK99">GKK99 အဖွဲ့အတွက်</option>
                         </select>
                     </div>
                     <div style="margin-bottom: 12px;">
                         <label style="font-size: 12px; font-weight: 600; display: block; margin-bottom: 4px;">အကြောင်းအရာ</label>
                         <div class="editor-toolbar">
-                            <button type="button" class="tool-btn" onclick="formatDoc('bold')"><i class="fa-solid fa-bold"></i></button>
-                            <button type="button" class="tool-btn" onclick="formatDoc('italic')"><i class="fa-solid fa-italic"></i></button>
-                            <button type="button" class="tool-btn" onclick="formatDoc('underline')"><i class="fa-solid fa-underline"></i></button>
-                            <button type="button" class="tool-btn" onclick="formatDoc('insertUnorderedList')"><i class="fa-solid fa-list-ul"></i></button>
+                            <button class="tool-btn" onclick="formatDoc('bold')"><i class="fa-solid fa-bold"></i></button>
+                            <button class="tool-btn" onclick="formatDoc('italic')"><i class="fa-solid fa-italic"></i></button>
+                            <button class="tool-btn" onclick="formatDoc('underline')"><i class="fa-solid fa-underline"></i></button>
+                            <button class="tool-btn" onclick="formatDoc('insertUnorderedList')"><i class="fa-solid fa-list-ul"></i></button>
                         </div>
                         <div id="editor" class="editor-content" contenteditable="true"></div>
                         <label class="image-upload-btn">
                             <i class="fa-solid fa-image"></i> ပုံထည့်ရန်
-                            <input type="file" accept="image/*" style="display: none;" onchange="insertImageToEditor(event)">
+                            <input type="file" accept="image/*" style="display:none;" onchange="insertImageToEditor(event)">
                         </label>
                     </div>
                     <button class="btn-submit" onclick="postAnnouncement()">လွှင့်တင်မည်</button>
                 </div>
             </div>
 
-            <div class="tab-content" id="tab-users">
+            <!-- Manage Users Tab (Admin Only) -->
+            <div class="tab-content" id="tab-manage">
                 <div class="form-card">
-                    <h2 style="font-size: 15px; margin-bottom: 12px;">ဝန်ထမ်းအကောင့် အသစ်ဖန်တီးရန်</h2>
+                    <h3 style="font-size: 15px; font-weight: 700; margin-bottom: 12px;"><i class="fa-solid fa-user-plus"></i> ဝန်ထမ်းအကောင့်အသစ် ဖန်တီးရန်</h3>
                     <div style="margin-bottom: 10px;">
-                        <input type="text" id="newUsername" class="input-field" placeholder="Username">
+                        <input type="text" id="newUsername" class="input-field" placeholder="Username (စာလုံးအသေးဖြင့်)">
                     </div>
                     <div style="margin-bottom: 10px;">
                         <input type="password" id="newPassword" class="input-field" placeholder="Password">
                     </div>
                     <div style="margin-bottom: 10px;">
                         <select id="newTeam" class="input-field">
-                            <option value="GKK777">GKK777 အဖွဲ့</option>
-                            <option value="GKK99">GKK99 အဖွဲ့</option>
+                            <option value="GKK777">GKK777</option>
+                            <option value="GKK99">GKK99</option>
                         </select>
                     </div>
-                    <div style="margin-bottom: 12px; display: flex; align-items: center; gap: 8px; font-size: 13px;">
-                        <input type="checkbox" id="newIsAdmin">
-                        <label for="newIsAdmin">Admin အခွင့်အရေး ပေးမည်</label>
+                    <div style="margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+                        <input type="checkbox" id="newIsAdmin" style="width: 16px; height: 16px;">
+                        <label for="newIsAdmin" style="font-size: 12px; font-weight: 600;">Admin ရာထူပေးမည်</label>
                     </div>
-                    <button class="btn-submit" onclick="createNewUser()">အကောင့်ဖန်တီးမည်</button>
+                    <button class="btn-submit" onclick="createNewUser()">အကောင့် ဖန်တီးမည်</button>
                 </div>
 
                 <div class="form-card">
-                    <h2 style="font-size: 15px; margin-bottom: 8px;">ရှိပြီးသား အကောင့်များစာရင်း</h2>
+                    <h3 style="font-size: 15px; font-weight: 700; margin-bottom: 10px;"><i class="fa-solid fa-users"></i> ရှိပြီးသား အကောင့်များစာရင်း</h3>
                     <div id="usersTableContainer"></div>
                 </div>
             </div>
-        </main>
+        </div>
     </div>
 
-    <div class="modal-overlay" id="noticeModal" onclick="closeNoticeModal()">
-        <div class="modal-card" onclick="event.stopPropagation()">
+    <!-- Notice Detail Modal -->
+    <div class="modal-overlay" id="noticeModal">
+        <div class="modal-card">
             <div class="modal-header">
-                <h3 style="font-size: 15px;">အသိပေးစာ အသေးစိတ်</h3>
+                <div style="font-weight: 700; font-size: 15px;">အသိပေးချက် အသေးစိတ်</div>
                 <button class="modal-close" onclick="closeNoticeModal()"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <div class="modal-body" id="modalContentArea"></div>

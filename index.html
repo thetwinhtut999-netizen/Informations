@@ -173,16 +173,81 @@
       let isUserAdmin = false;
       let editingNoticeId = null; 
       let isInitialLoad = true; 
-        // 5 Rotating Vibe Types with unique styles & contents
-const rotatingVibes = [
-    { 
-        styleClass: "vibe-style-1", 
-        icon: "fa-bolt", 
-        text: "IPhone 17 မှာ ဘာ Error မှ မရှိပေမယ့်လည်း Iphone 18 ထွက်လာတဲ့အခါမှာ အလဲထပ်ခံရတတ်ပါတယ်၊ ပြောချင်တာက အပြစ်ရှိမှ အပစ်ခံရတာမဟုတ်ပါဘူး အသစ်ရှိလာရင်လည်း အပစ်ခံရတတ်ပါတယ် 🥲🥲" 
-    }
-]; // <-- Array ပိတ်ကွင်း '];' ထည့်ရန် လိုအပ်ပါသည်
+      <script>
+        // Dynamic Vibe Styles (10 Unique Styles)
+        const rotatingVibes = [
+            { 
+                styleClass: "vibe-style-1", 
+                icon: "fa-bolt", 
+                category: "🔥 အားအင်သစ် (Motivation)", 
+                text: "ယနေ့သည် သင့်အတွက် အကောင်းဆုံးအခွင့်အရေးများကို ဖန်တီးပေးမည့်နေ့ ဖြစ်ပါစေ။ ကြိုးစားမှုတိုင်းက အလကားမဖြစ်ပါဘူး။" 
+            },
+            { 
+                styleClass: "vibe-style-2", 
+                icon: "fa-heart", 
+                category: "💖 ရင်ခုန်စရာ အချစ် (Love)", 
+                text: "ဘဝရဲ့ နူးညံ့တဲ့ အပိုင်းလေးတွေမှာ ကိုယ့်ကို နားလည်ပေးမယ့်သူနဲ့ အတူရှိရတာထက် ပျော်စရာကောင်းတာ မရှိပါဘူး။" 
+            },
+            { 
+                styleClass: "vibe-style-3", 
+                icon: "fa-face-laugh-squint", 
+                category: "😂 ရယ်စရာ ဟာသ (Comedy)", 
+                text: "အလုပ်ပင်ပန်းလာရင် တစ်ခါလောက် ကျယ်ကျယ်လောင်လောင် ရယ်လိုက်ပါ၊ စိတ်ဖိစီးမှုတွေ ချက်ချင်းပြေလျော့သွားပါလိမ့်မယ်။" 
+            },
+            { 
+                styleClass: "vibe-style-4", 
+                icon: "fa-masks-theater", 
+                category: "😜 ပျော်စရာ စနောက်ခြင်း (Banter)", 
+                text: "ဒီနေ့တော့ ရုံးမှာ ဘယ်သူ့ကို အရင်စနောက်ရမလဲ စဉ်းစားထားကြဦးနော်၊ ပျော်ပျော်ရွှင်ရွှင် ဖြတ်သန်းကြစို့။" 
+            },
+            { 
+                styleClass: "vibe-style-5", 
+                icon: "fa-leaf", 
+                category: "🥗 ကျန်းမာရေး ဗဟုသုတ (Health)", 
+                text: "ရေများများသောက်ပါ၊ အာဟာရပြည့်ဝအောင် စားသုံးပြီး ကိုယ်လက်လှုပ်ရှားမှုလေးတွေ လုပ်ပေးဖို့ မမေ့နဲ့နော်။" 
+            },
+            { 
+                styleClass: "vibe-style-6", 
+                icon: "fa-lightbulb", 
+                category: "💡 အတွေးအမြင်သစ် (Insight)", 
+                text: "ပြဿနာတိုင်းမှာ ဖြေရှင်းချက်ဆိုတာ ရှိပါတယ်။ အဓိကက စိတ်တည်ငြိမ်စွာနဲ့ အကောင်းဆုံးချဉ်းကပ်ဖို့ပါပဲ။" 
+            },
+            { 
+                styleClass: "vibe-style-7", 
+                icon: "fa-mug-hot", 
+                category: "☕ ကော်ဖီချိန် ခဏ (Breaktime)", 
+                text: "ခဏတာ အနားယူပြီး ကော်ဖီလေးတစ်ခွက်သောက်ရင်း စိတ်ကို ပြန်လည်ဆန်းသစ်လိုက်ကြရအောင်။" 
+            },
+            { 
+                styleClass: "vibe-style-8", 
+                icon: "fa-bullseye", 
+                category: "🎯 ရည်မှန်းချက် (Goal)", 
+                text: "ငယ်တဲ့ခြေလှမ်းလေးတွေကနေစပြီး ကြီးမားတဲ့ အောင်မြင်မှုတွေဆီကို အတူတူ လျှောက်လှမ်းကြပါစို့။" 
+            },
+            { 
+                styleClass: "vibe-style-9", 
+                icon: "fa-music", 
+                category: "🎵 တေးသံသာ (Vibes)", 
+                text: "စိတ်ကို ကြည်နူးစေမယ့် သီချင်းလေးတစ်ပုဒ် နားဆင်ရင်း ဒီနေ့တစ်နေ့တာကို ပျော်ရွှင်စွာ ဖြတ်သန်းလိုက်ပါ။" 
+            },
+            { 
+                styleClass: "vibe-style-10", 
+                icon: "fa-shield-cat", 
+                category: "🐱 တိုးတက်မှု (Team Spirit)", 
+                text: "ကျွန်ုပ်တို့ရဲ့ အဖွဲ့သားတွေအားလုံး တစ်ဦးကိုတစ်ဦး ကူညီဖေးမရင်း အောင်မြင်မှုအသစ်တွေ ထပ်မံဆွတ်ခူးကြပါစို့။" 
+            }
+        ];
 
-function loadDailyQuote() { ...
+        // Example: Render all 10 styles for testing
+        const container = document.getElementById('vibe-container');
+        rotatingVibes.forEach(vibe => {
+            const div = document.createElement('div');
+            div.className = vibe.styleClass;
+            div.innerHTML = `<i class="fa-solid ${vibe.icon}"></i> <strong>${vibe.category}</strong><p>${vibe.text}</p>`;
+            container.appendChild(div);
+        });
+    </script>
+</body>
       function loadDailyQuote() {
           const now = new Date();
           const start = new Date(now.getFullYear(), 0, 0);

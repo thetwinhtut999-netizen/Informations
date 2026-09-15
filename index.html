@@ -173,15 +173,16 @@
       let isUserAdmin = false;
       let editingNoticeId = null; 
       let isInitialLoad = true; 
-
-// 5 Rotating Vibe Types with unique styles & contents
+        // 5 Rotating Vibe Types with unique styles & contents
 const rotatingVibes = [
     { 
         styleClass: "vibe-style-1", 
         icon: "fa-bolt", 
         text: "IPhone 17 မှာ ဘာ Error မှ မရှိပေမယ့်လည်း Iphone 18 ထွက်လာတဲ့အခါမှာ အလဲထပ်ခံရတတ်ပါတယ်၊ ပြောချင်တာက အပြစ်ရှိမှ အပစ်ခံရတာမဟုတ်ပါဘူး အသစ်ရှိလာရင်လည်း အပစ်ခံရတတ်ပါတယ် 🥲🥲" 
-    } 
+    }
+]; // <-- Array ပိတ်ကွင်း '];' ထည့်ရန် လိုအပ်ပါသည်
 
+function loadDailyQuote() { ...
       function loadDailyQuote() {
           const now = new Date();
           const start = new Date(now.getFullYear(), 0, 0);
